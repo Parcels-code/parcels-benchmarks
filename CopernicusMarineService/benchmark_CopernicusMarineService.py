@@ -35,9 +35,8 @@ def run_benchmark(interpolator: str):
             """Bilinear interpolation on a rectilinear grid."""
             xi, xsi = position["X"]
             yi, eta = position["Y"]
-            zi, zeta = position["Z"]
 
-            data = field.data.isel({"time": slice(ti, ti + 2), "lat": slice(yi, yi + 2), "lon": slice(xi, xi + 2)}).data#.compute()
+            data = field.data.data[:, :, yi:yi + 2, xi:xi + 2]
             val_t0 =(
                 (1 - xsi) * (1 - eta) * data[0, 0, 0, 0]
                 + xsi * (1 - eta) * data[0, 0, 0, 1]
