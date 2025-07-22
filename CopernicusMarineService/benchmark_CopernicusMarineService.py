@@ -8,8 +8,8 @@ import numpy as np
 
 import parcels
 
-runtime = np.timedelta64(10, "D")
-dt = np.timedelta64(3, "h")
+runtime = np.timedelta64(2, "D")
+dt = np.timedelta64(15, "m")
 
 parcelsv4 = True
 try:
@@ -111,7 +111,7 @@ def run_benchmark(interpolator: str):
 
     kernel = parcels.AdvectionEE
 
-    for npart in [1, 10, 30, 50]:
+    for npart in [1, 10, 100, 1000, 10000]:
         lon = np.linspace(-10, 10, npart)
         lat = np.linspace(-30, -20, npart)
 
