@@ -27,7 +27,7 @@ pclass = parcels.Particle if parcelsv4 else parcels.JITParticle
 def DoNothing(particle, fieldset, time):
     pass
 
-for npart in [1, 10, 50, 100, 250, 500]:
+for npart in [1, 10, 100, 1000, 10000]:
     lon = np.linspace(-10, 10, npart)
     lat = np.linspace(-30, -20, npart)
 
