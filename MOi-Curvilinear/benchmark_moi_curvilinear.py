@@ -10,6 +10,7 @@ import parcels
 
 runtime = np.timedelta64(2, "D")
 dt = np.timedelta64(15, "m")
+depth_range = range(0, 2)  # only taking upper-two depth levels
 
 parcelsv4 = True
 try:
@@ -17,7 +18,7 @@ try:
 except ImportError:
     parcelsv4 = False
 
-DATA_ROOT = "/storage/shared/oceanparcels/input_data/MOi/GLO12"
+DATA_ROOT = "/storage/shared/oceanparcels/input_data/MOi"
 
 def run_benchmark(interpolator: str):
     if parcelsv4:
@@ -78,11 +79,12 @@ def run_benchmark(interpolator: str):
             return 0
 
 
-    fileroot = f"{DATA_ROOT}/psy4v3r1-daily"
-    filenames = {"U": f"{fileroot}_U*.nc", "V": f"{fileroot}_V*.nc", "W": f"{fileroot}_W*1.nc"}
-    mesh_mask = f"{DATA_ROOT}/PSY4V3R1_mesh_hgr.nc"
+    lon0_expected, lat0_expected = -10.128929, -29.721205  # values from v3 using from_netcf (so assuming A-grid!)
 
-    lon0_expected, lat0_expected = -9.820091, -30.106716  # values from v3
+    fileU = f"{DATA_ROOT}/GLO12/psy4v3r1-daily_U_2010-01-0[1-3].nc"
+    filenames = {"U": glob(fileU), "V": glob(fileU.replace("_U_", "_V_")), "W": glob(fileU.replace("_U_", "_W_"))}
+    mesh_mask = f"{DATA_ROOT}/domain_ORCA0083-N006/PSY4V3R1_mesh_hgr.nc"
+
     if parcelsv4:
         if interpolator == "BiRectiLinear":
             interp_method = BiRectiLinear
@@ -104,6 +106,7 @@ def run_benchmark(interpolator: str):
         ds_mesh = xr.open_dataset(mesh_mask)[["glamf", "gphif"]].isel(t=0)
 
         ds = xr.merge([ds_u, ds_v, ds_depth, ds_mesh], compat="identical").rename({"vozocrtx": "U", "vomecrty": "V"}).rename({"glamf": "lon", "gphif": "lat", "time_counter": "time", "depthw": "depth"})
+        ds = ds.isel(depth=depth_range)
 
         xgcm_grid = parcels.xgcm.Grid(
             ds,
@@ -125,16 +128,21 @@ def run_benchmark(interpolator: str):
         fieldset = parcels.FieldSet([U, V, UV])
     else:
         filenames = {
-            "U": {"lon": mesh_mask, "lat": mesh_mask, "data": filenames["U"]},
-            "V": {"lon": mesh_mask, "lat": mesh_mask, "data": filenames["V"]},
+            "U": {"lon": mesh_mask, "lat": mesh_mask, "depth": filenames["W"][0], "data": filenames["U"]},
+            "V": {"lon": mesh_mask, "lat": mesh_mask, "depth": filenames["W"][0], "data": filenames["V"]},
         }
         interpolator = "v3_default"
-        fieldset = parcels.FieldSet.from_netcdf(filenames, variables={"U": "vozocrtx", "V": "vomecrty"}, dimensions={"time": "time_counter", "lat": "gphif", "lon": "glamf"})
+        fieldset = parcels.FieldSet.from_netcdf(
+            filenames,
+            variables={"U": "vozocrtx", "V": "vomecrty"},
+            dimensions={"time": "time_counter", "lat": "gphif", "lon": "glamf", "depth": "depthw"},
+            indices={"depth": depth_range},
+        )
 
-    pclass = parcels.Particle if parcelsv4 else parcels.ScipyParticle
+    pclass = parcels.Particle if parcelsv4 else parcels.JITParticle
 
     for npart in [1, 10, 100, 1000, 5000, 10000]:
-        lon = np.linspace(170, 190, npart)
+        lon = np.linspace(-10, 10, npart)
         lat = np.linspace(-30, -20, npart)
 
         pset = parcels.ParticleSet(fieldset=fieldset, pclass=pclass, lon=lon, lat=lat)
