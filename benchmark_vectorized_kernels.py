@@ -73,7 +73,7 @@ else:
     fieldset = radial_rotation_fieldset()
     KernelEE = parcels.AdvectionEE
 
-pclass = parcels.Particle if parcelsv4 else parcels.JITParticle
+pclass = parcels.Particle if parcelsv4 else parcels.ScipyParticle
 
 for npart in [1, 10_000, 100_000, 500_000, 1_000_000]:
     lon = np.linspace(32, 50, npart)
