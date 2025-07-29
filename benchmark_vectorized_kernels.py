@@ -1,6 +1,7 @@
 import numpy as np
 import xarray as xr
 import parcels
+from parcels.application_kernels.interpolation import XBiLinear
 
 runtime = np.timedelta64(3, "h")
 dt = np.timedelta64(30, "s")
@@ -8,6 +9,7 @@ dt = np.timedelta64(30, "s")
 parcelsv4 = True
 try:
     from parcels._datasets.structured.generated import radial_rotation_dataset
+    from parcels.application_kernels.interpolation import XBiLinear
     from parcels.xgrid import XGrid
 except ImportError:
     from docs.examples.example_radial_rotation import radial_rotation_fieldset
@@ -26,9 +28,10 @@ def true_values(lon_start, age):  # Calculate the expected values for particle 2
 if parcelsv4:
     ds = radial_rotation_dataset()
     grid = XGrid.from_dataset(ds)
-    U = parcels.Field("U", ds["U"], grid, mesh_type="flat")
-    V = parcels.Field("V", ds["V"], grid, mesh_type="flat")
-    fieldset = parcels.FieldSet([U, V])
+    U = parcels.Field("U", ds["U"], grid, mesh_type="flat", interp_method=XBiLinear)
+    V = parcels.Field("V", ds["V"], grid, mesh_type="flat", interp_method=XBiLinear)
+    UV = parcels.VectorField("UV", U, V)
+    fieldset = parcels.FieldSet([U, V, UV])
 
     def KernelEE(pset, fieldset, time):
         dt = pset.dt / np.timedelta64(1, "s")
@@ -71,7 +74,8 @@ if parcelsv4:
 
 else:
     fieldset = radial_rotation_fieldset()
-    KernelEE = parcels.AdvectionEE
+
+KernelEE = parcels.AdvectionEE
 
 pclass = parcels.Particle if parcelsv4 else parcels.ScipyParticle
 
