@@ -31,10 +31,16 @@ if parcelsv4:
     fieldset = parcels.FieldSet([U, V])
 
     def KernelEE(pset, fieldset, time):
-        xi = np.floor(pset.lon / fieldset.U.grid.lon.data[1]).astype(int)
-        xsi = pset.lon % fieldset.U.grid.lon.data[1]
-        yi = np.floor(pset.lat / fieldset.U.grid.lat.data[1]).astype(int)
-        eta = pset.lat % fieldset.U.grid.lat.data[1]
+        dt = pset.dt / np.timedelta64(1, "s")
+        dx = fieldset.U.grid.lon.data[1]
+        dy = fieldset.U.grid.lat.data[1]
+
+        xi = np.floor(pset.lon / dx).astype(int)
+        xsi = (pset.lon - xi * dx) / dx
+
+        yi = np.floor(pset.lat / dy).astype(int)
+        eta = (pset.lat - yi * dy) / dy
+
         xi = xr.DataArray(xi, dims="points")
         yi = xr.DataArray(yi, dims="points")
         # ti = xr.DataArray(np.zeros_like(xi), dims="points")
@@ -46,10 +52,10 @@ if parcelsv4:
         u = (
             (1 - xsi) * (1 - eta) * U00
             + xsi * (1 - eta) * U10
-            + xsi * eta * U11
             + (1 - xsi) * eta * U01
+            + xsi * eta * U11
         )
-        pset.lon += u * pset.dt
+        pset.lon += u * dt
 
         V00 = fieldset.V.data.isel(XG=xi, YG=yi).values.flatten()
         V10 = fieldset.V.data.isel(XG=xi+1, YG=yi).values.flatten()
@@ -58,10 +64,10 @@ if parcelsv4:
         v = (
             (1 - xsi) * (1 - eta) * V00
             + xsi * (1 - eta) * V10
-            + xsi * eta * V11
             + (1 - xsi) * eta * V01
+            + xsi * eta * V11
         )
-        pset.lat += v * pset.dt
+        pset.lat += v * dt
 
 else:
     fieldset = radial_rotation_fieldset()
@@ -72,14 +78,18 @@ pclass = parcels.Particle if parcelsv4 else parcels.JITParticle
 for npart in [1, 10_000, 100_000, 500_000, 1_000_000]:
     lon = np.linspace(32, 50, npart)
     lat = np.ones(npart) * 30
+    time = np.timedelta64(0, "s") if parcelsv4 else 0.
 
-    pset = parcels.ParticleSet(fieldset=fieldset, pclass=pclass, lon=lon, lat=lat)
+    pset = parcels.ParticleSet(fieldset=fieldset, pclass=pclass, lon=lon, lat=lat, time=time)
 
     print(f"Running {len(lon)} particles with parcels v{4 if parcelsv4 else 3}")
     pset.execute(KernelEE, runtime=runtime, dt=dt)
 
+    if parcelsv4:
+        pset.time_nextloop = pset.time_nextloop / np.timedelta64(1, "s")
+
     vals = true_values(lon, pset.time_nextloop)
-    assert np.allclose(pset.lon, vals[0], atol=1e-1)
-    assert np.allclose(pset.lat, vals[1], atol=1e-1)
+    assert np.allclose(pset.lon, vals[0], atol=5e-2)
+    assert np.allclose(pset.lat, vals[1], atol=5e-2)
     runtime_float = runtime / np.timedelta64(1, "s")
     assert abs(pset.time_nextloop[0] - runtime_float) < 1e-6, f"Expected time_nextloop to be {runtime_float}, but got {pset.time_nextloop[0]}"
