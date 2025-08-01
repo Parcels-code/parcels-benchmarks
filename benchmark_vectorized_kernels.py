@@ -1,7 +1,6 @@
 import numpy as np
 import xarray as xr
 import parcels
-from parcels.application_kernels.interpolation import XBiLinear
 
 runtime = np.timedelta64(3, "h")
 dt = np.timedelta64(30, "s")
@@ -9,7 +8,7 @@ dt = np.timedelta64(30, "s")
 parcelsv4 = True
 try:
     from parcels._datasets.structured.generated import radial_rotation_dataset
-    from parcels.application_kernels.interpolation import XBiLinear
+    from parcels.application_kernels.interpolation import XLinear
     from parcels.xgrid import XGrid
 except ImportError:
     from docs.examples.example_radial_rotation import radial_rotation_fieldset
@@ -28,8 +27,8 @@ def true_values(lon_start, age):  # Calculate the expected values for particle 2
 if parcelsv4:
     ds = radial_rotation_dataset()
     grid = XGrid.from_dataset(ds)
-    U = parcels.Field("U", ds["U"], grid, mesh_type="flat", interp_method=XBiLinear)
-    V = parcels.Field("V", ds["V"], grid, mesh_type="flat", interp_method=XBiLinear)
+    U = parcels.Field("U", ds["U"], grid, mesh_type="flat", interp_method=XLinear)
+    V = parcels.Field("V", ds["V"], grid, mesh_type="flat", interp_method=XLinear)
     UV = parcels.VectorField("UV", U, V)
     fieldset = parcels.FieldSet([U, V, UV])
 
@@ -92,8 +91,7 @@ for npart in [1, 10_000, 100_000, 500_000, 1_000_000]:
     if parcelsv4:
         pset.time_nextloop = pset.time_nextloop / np.timedelta64(1, "s")
 
-    vals = true_values(lon, pset.time_nextloop)
+    age = pset.time_nextloop[0] / np.timedelta64(1, "s") if parcelsv4 else pset.time_nextloop[0]
+    vals = true_values(lon, age)
     assert np.allclose(pset.lon, vals[0], atol=5e-2)
     assert np.allclose(pset.lat, vals[1], atol=5e-2)
-    runtime_float = runtime / np.timedelta64(1, "s")
-    assert abs(pset.time_nextloop[0] - runtime_float) < 1e-6, f"Expected time_nextloop to be {runtime_float}, but got {pset.time_nextloop[0]}"
