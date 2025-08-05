@@ -14,6 +14,7 @@ dt = np.timedelta64(15, "m")
 parcelsv4 = True
 try:
     from parcels.xgrid import _XGRID_AXES
+    from parcels.application_kernels.interpolation import XLinear
 except ImportError:
     parcelsv4 = False
 
@@ -82,7 +83,9 @@ def run_benchmark(interpolator: str):
 
     lon0_expected, lat0_expected = -9.820091, -30.106716  # values from v3
     if parcelsv4:
-        if interpolator == "BiRectiLinear":
+        if interpolator == "XLinear":
+            interp_method = XLinear
+        elif interpolator == "BiRectiLinear":
             interp_method = BiRectiLinear
         elif interpolator == "PureXarrayInterp":
             interp_method = PureXarrayInterp
@@ -95,7 +98,7 @@ def run_benchmark(interpolator: str):
         ds = ds.drop_vars(["vsdx", "vsdy", "utide", "vtide", "utotal", "vtotal"])
         ds = ds.rename({"uo": "U", "vo": "V", "longitude": "lon", "latitude": "lat"})
 
-        xgcm_grid = parcels.xgcm.Grid(ds, coords={"X": {"left": "lon"}, "Y": {"left": "lat"}, "Z": {"left": "depth"}, "T": {"center": "time"}})
+        xgcm_grid = parcels.xgcm.Grid(ds, coords={"X": {"left": "lon"}, "Y": {"left": "lat"}, "Z": {"left": "depth"}, "T": {"center": "time"}}, periodic=False)
         grid = parcels.xgrid.XGrid(xgcm_grid)
 
         U = parcels.Field("U", ds["U"], grid, interp_method=interp_method)
@@ -113,7 +116,7 @@ def run_benchmark(interpolator: str):
 
     kernel = parcels.AdvectionEE
 
-    for npart in [1, 10, 100, 1000, 5000, 10000]:
+    for npart in [1, 10, 100, 1_000, 5_000, 10_000, 50_000, 100_000, 500_000, 1_000_000]:
         lon = np.linspace(-10, 10, npart)
         lat = np.linspace(-30, -20, npart)
 
@@ -133,7 +136,7 @@ def main(args=None):
         "-i",
         "--Interpolator",
         choices=("BiRectiLinear", "PureXarrayInterp", "NoFieldAccess"),
-        default="BiRectiLinear",
+        default="XLinear",
     )
 
     args = p.parse_args(args)
