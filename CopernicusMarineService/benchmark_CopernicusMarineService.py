@@ -1,6 +1,8 @@
 from argparse import ArgumentParser
 from pathlib import Path
 import xarray as xr
+import tracemalloc
+import time
 
 from glob import glob
 
@@ -20,7 +22,7 @@ except ImportError:
 
 DATA_ROOT = "/storage/shared/oceanparcels/input_data/CopernicusMarineService/GLOBAL_ANALYSIS_FORECAST_PHY_001_024_SMOC/"
 
-def run_benchmark(interpolator: str):
+def run_benchmark(interpolator: str, trace_memory: bool = False):
     if parcelsv4:
 
         def BiRectiLinear(
@@ -123,8 +125,23 @@ def run_benchmark(interpolator: str):
         pset = parcels.ParticleSet(fieldset=fieldset, pclass=pclass, lon=lon, lat=lat)
 
         print(f"Running {len(lon)} particles with parcels v{4 if parcelsv4 else 3} and {interpolator} interpolator")
-        pset.execute(kernel, runtime=runtime, dt=dt)
 
+        if trace_memory:
+            tracemalloc.start()
+        else:
+            start = time.time()
+
+        pset.execute(kernel, runtime=runtime, dt=dt, verbose_progress=False)
+
+        if trace_memory:
+            current, peak = tracemalloc.get_traced_memory()
+            tracemalloc.stop()
+            print(f"Memory usage: current={current / 1e6:.0f} MB, peak={peak / 1e6:.0f} MB")
+        else:
+            elapsed_time = time.time() - start
+            print(f"Execution time: {elapsed_time:.2f} seconds")
+
+        print("")
         assert np.allclose(pset[0].lon, lon0_expected, atol=1e-5), f"Expected lon {lon0_expected}, got {pset[0].lon}"
         assert np.allclose(pset[0].lat, lat0_expected, atol=1e-5), f"Expected lat {lat0_expected}, got {pset[0].lat}"
 
@@ -138,9 +155,15 @@ def main(args=None):
         choices=("BiRectiLinear", "PureXarrayInterp", "NoFieldAccess"),
         default="XLinear",
     )
+    p.add_argument(
+        "-m",
+        "--memory",
+        action="store_true",
+        help="Enable memory tracing (default: False)",
+    )
 
     args = p.parse_args(args)
-    run_benchmark(args.Interpolator)
+    run_benchmark(args.Interpolator, args.memory)
 
 
 if __name__ == "__main__":
