@@ -83,18 +83,32 @@ def run_benchmark(kernel_str: str, trace_memory: bool = False):
     elif kernel_str == "AdvectionRK4":
         kernel = parcels.AdvectionRK4
     elif kernel_str == "AdvectionRK4_thin":
-        def AdvectionRK4_thin(particle, fieldset, time):  # pragma: no cover
-            """Advection of particles using fourth-order Runge-Kutta integration, reusing intermediate variables."""
-            dt = particle.dt / np.timedelta64(1, "s")  # TODO: improve API for converting dt to seconds
-            (u1, v1) = fieldset.UV[particle]
-            lon, lat = (particle.lon + u1 * 0.5 * dt, particle.lat + v1 * 0.5 * dt)
-            (u2, v2) = fieldset.UV[time + 0.5 * particle.dt, particle.depth, lat, lon, particle]
-            lon, lat = (particle.lon + u2 * 0.5 * dt, particle.lat + v2 * 0.5 * dt)
-            (u3, v3) = fieldset.UV[time + 0.5 * particle.dt, particle.depth, lat, lon, particle]
-            lon, lat = (particle.lon + u3 * dt, particle.lat + v3 * dt)
-            (u4, v4) = fieldset.UV[time + particle.dt, particle.depth, lat, lon, particle]
-            particle.dlon += (u1 + 2 * u2 + 2 * u3 + u4) / 6.0 * dt
-            particle.dlat += (v1 + 2 * v2 + 2 * v3 + v4) / 6.0 * dt
+        if parcelsv4:
+            def AdvectionRK4_thin(particle, fieldset, time):  # pragma: no cover
+                """Advection of particles using fourth-order Runge-Kutta integration, reusing intermediate variables."""
+                dt = particle.dt / np.timedelta64(1, "s")
+                (u1, v1) = fieldset.UV[particle]
+                lon, lat = (particle.lon + u1 * 0.5 * dt, particle.lat + v1 * 0.5 * dt)
+                (u2, v2) = fieldset.UV[time + 0.5 * particle.dt, particle.depth, lat, lon, particle]
+                lon, lat = (particle.lon + u2 * 0.5 * dt, particle.lat + v2 * 0.5 * dt)
+                (u3, v3) = fieldset.UV[time + 0.5 * particle.dt, particle.depth, lat, lon, particle]
+                lon, lat = (particle.lon + u3 * dt, particle.lat + v3 * dt)
+                (u4, v4) = fieldset.UV[time + particle.dt, particle.depth, lat, lon, particle]
+                particle.dlon += (u1 + 2 * u2 + 2 * u3 + u4) / 6.0 * dt
+                particle.dlat += (v1 + 2 * v2 + 2 * v3 + v4) / 6.0 * dt
+        else:
+            def AdvectionRK4_thin(particle, fieldset, time):  # pragma: no cover
+                """Advection of particles using fourth-order Runge-Kutta integration, reusing intermediate variables."""
+                dt = particle.dt
+                (u1, v1) = fieldset.UV[particle]
+                lon, lat = (particle.lon + u1 * 0.5 * dt, particle.lat + v1 * 0.5 * dt)
+                (u2, v2) = fieldset.UV[time + 0.5 * particle.dt, particle.depth, lat, lon, particle]
+                lon, lat = (particle.lon + u2 * 0.5 * dt, particle.lat + v2 * 0.5 * dt)
+                (u3, v3) = fieldset.UV[time + 0.5 * particle.dt, particle.depth, lat, lon, particle]
+                lon, lat = (particle.lon + u3 * dt, particle.lat + v3 * dt)
+                (u4, v4) = fieldset.UV[time + particle.dt, particle.depth, lat, lon, particle]
+                particle_dlon += (u1 + 2 * u2 + 2 * u3 + u4) / 6.0 * dt
+                particle_dlat += (v1 + 2 * v2 + 2 * v3 + v4) / 6.0 * dt
 
         kernel = AdvectionRK4_thin
 
