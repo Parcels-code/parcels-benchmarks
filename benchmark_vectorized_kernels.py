@@ -84,7 +84,7 @@ def run_benchmark(kernel_str: str, trace_memory: bool = False):
         kernel = parcels.AdvectionRK4
     elif kernel_str == "AdvectionRK4_thin":
         def AdvectionRK4_thin(particle, fieldset, time):  # pragma: no cover
-            """Advection of particles using fourth-order Runge-Kutta integration."""
+            """Advection of particles using fourth-order Runge-Kutta integration, reusing intermediate variables."""
             dt = particle.dt / np.timedelta64(1, "s")  # TODO: improve API for converting dt to seconds
             (u1, v1) = fieldset.UV[particle]
             lon, lat = (particle.lon + u1 * 0.5 * dt, particle.lat + v1 * 0.5 * dt)
@@ -96,7 +96,7 @@ def run_benchmark(kernel_str: str, trace_memory: bool = False):
             particle.dlon += (u1 + 2 * u2 + 2 * u3 + u4) / 6.0 * dt
             particle.dlat += (v1 + 2 * v2 + 2 * v3 + v4) / 6.0 * dt
 
-        kernel = parcels.AdvectionRK4_thin
+        kernel = AdvectionRK4_thin
 
     pclass = parcels.Particle if parcelsv4 else parcels.JITParticle
 
@@ -107,7 +107,7 @@ def run_benchmark(kernel_str: str, trace_memory: bool = False):
 
         pset = parcels.ParticleSet(fieldset=fieldset, pclass=pclass, lon=lon, lat=lat, time=times)
 
-        print(f"Running {len(lon)} particles with parcels v{4 if parcelsv4 else 3} and {kernel_str}")
+        print(f"Running {len(lon):_} particles with parcels v{4 if parcelsv4 else 3} and {kernel_str}")
 
         if trace_memory:
             tracemalloc.start()
