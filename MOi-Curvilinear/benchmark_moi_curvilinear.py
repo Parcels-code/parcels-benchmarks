@@ -86,7 +86,7 @@ def run_benchmark(interpolator: str, trace_memory: bool = False):
 
         pset = parcels.ParticleSet(fieldset=fieldset, pclass=pclass, lon=lon, lat=lat)
 
-        print(f"Running {len(lon)} particles with parcels v{4 if parcelsv4 else 3} and {interpolator} interpolator")
+        print(f"Running {len(lon):_} particles with parcels v{4 if parcelsv4 else 3} and {interpolator} interpolator")
 
         if trace_memory:
             tracemalloc.start()
@@ -101,7 +101,7 @@ def run_benchmark(interpolator: str, trace_memory: bool = False):
             print(f"Memory usage: current={current / 1e6:.0f} MB, peak={peak / 1e6:.0f} MB")
         else:
             elapsed_time = time.time() - start
-            print(f"Execution time: {elapsed_time:.2f} seconds")
+            print(f"Execution time: {elapsed_time:.0f} seconds")
 
         print("")
 
