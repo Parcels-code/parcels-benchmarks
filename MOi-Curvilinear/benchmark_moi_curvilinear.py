@@ -22,7 +22,7 @@ except ImportError:
 
 DATA_ROOT = "/storage/shared/oceanparcels/input_data/MOi"
 
-def run_benchmark(interpolator: str, trace_memory: bool = False):
+def run_benchmark(interpolator: str, trace_memory: bool = False, surface_simulation=False):
 
     lon0_expected, lat0_expected = -10.128929, -29.721205  # values from v3 using from_netcf (so assuming A-grid!)
 
@@ -47,16 +47,17 @@ def run_benchmark(interpolator: str, trace_memory: bool = False):
 
         ds = xr.merge([ds_u, ds_v, ds_depth, ds_mesh], compat="identical").rename({"vozocrtx": "U", "vomecrty": "V"}).rename({"glamf": "lon", "gphif": "lat", "time_counter": "time", "depthw": "depth"})
 
-        xgcm_grid = parcels.xgcm.Grid(
-            ds,
-            coords={
-                "X": {"left": "x"},
-                "Y": {"left": "y"},
-                "Z": {"center": "deptht", "left": "depth"},
-                "T": {"center": "time"},
-            },
-            periodic=False,
-        )
+        coords={
+            "X": {"left": "x"},
+            "Y": {"left": "y"},
+            "T": {"center": "time"},
+        }
+        if surface_simulation:
+            ds = ds.isel(depth=0, deptht=0)
+        else:
+            coords["Z"] = {"center": "deptht", "left": "depth"}
+
+        xgcm_grid = parcels.xgcm.Grid(ds, coords=coords, periodic=False)
         grid = parcels.xgrid.XGrid(xgcm_grid)
 
         U = parcels.Field("U", ds["U"], grid, interp_method=interp_method)
@@ -72,10 +73,16 @@ def run_benchmark(interpolator: str, trace_memory: bool = False):
             "V": {"lon": mesh_mask, "lat": mesh_mask, "depth": filenames["W"][0], "data": filenames["V"]},
         }
         interpolator = "v3_default"
+        if surface_simulation:
+            indices={"depth": range(2)}
+        else:
+            indices=None
+
         fieldset = parcels.FieldSet.from_netcdf(
             filenames,
             variables={"U": "vozocrtx", "V": "vomecrty"},
             dimensions={"time": "time_counter", "lat": "gphif", "lon": "glamf", "depth": "depthw"},
+            indices=indices,
         )
 
     pclass = parcels.Particle if parcelsv4 else parcels.JITParticle
@@ -92,6 +99,10 @@ def run_benchmark(interpolator: str, trace_memory: bool = False):
             tracemalloc.start()
         else:
             start = time.time()
+
+        if surface_simulation and parcelsv4:
+            fieldset.U.data.load()
+            fieldset.V.data.load()
 
         pset.execute(parcels.AdvectionEE, runtime=runtime, dt=dt, verbose_progress=False)
 
@@ -126,8 +137,15 @@ def main(args=None):
         help="Enable memory tracing (default: False)",
     )
 
+    p.add_argument(
+        "-s",
+        "--surface",
+        action="store_true",
+        help="Run surface simulation with only 1 or 2 depth levels (default: False)",
+    )
+
     args = p.parse_args(args)
-    run_benchmark(args.Interpolator, args.memory)
+    run_benchmark(args.Interpolator, args.memory, args.surface)
 
 
 if __name__ == "__main__":
