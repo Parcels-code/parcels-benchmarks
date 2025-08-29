@@ -24,11 +24,10 @@ DATA_ROOT = "/storage/shared/oceanparcels/input_data/MOi"
 
 def run_benchmark(interpolator: str, trace_memory: bool = False, surface_simulation: bool =False, cycle_chunks: bool = False):
 
-    if surface_simulation:
-        lon0_expected, lat0_expected = -10.128929, -29.721205  # values from v3 using from_netcf (so assuming A-grid!)
+    lon0_expected, lat0_expected = -10.128929, -29.721205  # values from v3 using from_netcf (so assuming A-grid!)
 
     if cycle_chunks:
-        xy_chunks = [64, 128, 256, 512, 1024, 2084, 32, 18, 8, 4]
+        xy_chunks = [64, 128, 256, 512, 1024, 2084, 32, 16, 8, 4]
         nparts = [10_000]
     else:
         xy_chunks = [64]
