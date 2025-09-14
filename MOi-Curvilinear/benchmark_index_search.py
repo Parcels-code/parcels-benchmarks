@@ -13,6 +13,7 @@ import parcels
 parcelsv4 = True
 try:
     from parcels.xgrid import _XGRID_AXES
+    from parcels.application_kernels.interpolation import ZeroInterpolator
 except ImportError:
     parcelsv4 = False
 
@@ -49,8 +50,8 @@ def run_benchmark(trace_memory: bool = False):
         )
         grid = parcels.xgrid.XGrid(xgcm_grid)
 
-        U = parcels.Field("U", ds["U"], grid)
-        V = parcels.Field("V", ds["V"], grid)
+        U = parcels.Field("U", ds["U"], grid, interp_method=ZeroInterpolator)
+        V = parcels.Field("V", ds["V"], grid, interp_method=ZeroInterpolator)
         U.units = parcels.GeographicPolar()
         V.units = parcels.Geographic()
         UV = parcels.VectorField("UV", U, V)
@@ -74,24 +75,29 @@ def run_benchmark(trace_memory: bool = False):
         )
         lon = X.flatten()
         lat = Y.flatten()
+        depth = np.zeros_like(lon)
+        ptime = fieldset.time_interval.left
+
+        pset = parcels.ParticleSet(fieldset=fieldset, lon=lon, lat=lat, depth=depth, time=ptime)
 
         print(f"Running {len(lon):_} particles with parcels v{4 if parcelsv4 else 3}")
 
-        if trace_memory:
-            tracemalloc.start()
-        else:
-            start = time.time()
+        for i in range(2):
+            if trace_memory:
+                tracemalloc.start()
+            else:
+                start = time.time()
 
-        # Trigger search
-        fieldset.U.grid.search(0, lat, lon)
+            # Trigger search
+            fieldset.UV.eval(pset.time, pset.depth, pset.lat, pset.lon, pset)
 
-        if trace_memory:
-            current, peak = tracemalloc.get_traced_memory()
-            tracemalloc.stop()
-            print(f"Memory usage: current={current / 1e6:.0f} MB, peak={peak / 1e6:.0f} MB")
-        else:
-            elapsed_time = time.time() - start
-            print(f"Execution time: {elapsed_time:.0f} seconds")
+            if trace_memory:
+                current, peak = tracemalloc.get_traced_memory()
+                tracemalloc.stop()
+                print(f"Memory usage {i+1}: current={current / 1e6:.0f} MB, peak={peak / 1e6:.0f} MB")
+            else:
+                elapsed_time = time.time() - start
+                print(f"Execution time {i+1}: {elapsed_time:.0f} seconds")
 
         print("")
 
