@@ -7,6 +7,7 @@ import time
 from glob import glob
 
 import numpy as np
+import xgcm
 
 import parcels
 
@@ -30,7 +31,7 @@ def run_benchmark(interpolator: str, trace_memory: bool = False, surface_simulat
         xy_chunks = [64, 128, 256, 512, 1024, 2084, 32, 16, 8, 4]
         nparts = [10_000]
     else:
-        xy_chunks = [64]
+        xy_chunks = ["auto"]
         nparts = [1, 10, 100, 1_000, 5_000, 10_000, 50_000, 100_000, 500_000, 1_000_000]
     fileU = f"{DATA_ROOT}/GLO12/psy4v3r1-daily_U_2010-01-0[1-3].nc"
     filenames = {"U": glob(fileU), "V": glob(fileU.replace("_U_", "_V_")), "W": glob(fileU.replace("_U_", "_W_"))}
@@ -57,6 +58,11 @@ def run_benchmark(interpolator: str, trace_memory: bool = False, surface_simulat
             ds_mesh = xr.open_dataset(mesh_mask)[["glamf", "gphif"]].isel(t=0)
 
             ds = xr.merge([ds_u, ds_v, ds_depth, ds_mesh], compat="identical").rename({"vozocrtx": "U", "vomecrty": "V"}).rename({"glamf": "lon", "gphif": "lat", "time_counter": "time", "depthw": "depth"})
+            ds = xr.merge([ds_u, ds_v, ds_depth, ds_mesh], compat="identical")
+            ds = ds.rename({"vozocrtx": "U", "vomecrty": "V", "glamf": "lon", "gphif": "lat", "time_counter": "time", "depthw": "depth"})
+            ds.deptht.attrs["c_grid_axis_shift"] = -0.5
+
+            coords={"X": {"left": "x"}, "Y": {"left": "y"}, "T": {"center": "time"}}
 
             coords={
                 "X": {"left": "x"},
@@ -69,8 +75,7 @@ def run_benchmark(interpolator: str, trace_memory: bool = False, surface_simulat
                 coords["Z"] = {"center": "deptht", "left": "depth"}
             print(ds)
 
-            xgcm_grid = parcels.xgcm.Grid(ds, coords=coords, periodic=False)
-            grid = parcels.xgrid.XGrid(xgcm_grid)
+            grid = parcels.xgrid.XGrid(xgcm.Grid(ds, coords=coords, autoparse_metadata=False, periodic=False))
 
             U = parcels.Field("U", ds["U"], grid, interp_method=interp_method)
             V = parcels.Field("V", ds["V"], grid, interp_method=interp_method)
