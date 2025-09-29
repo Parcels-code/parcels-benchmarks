@@ -76,7 +76,7 @@ def run_benchmark(interpolator: str, trace_memory: bool = False, surface_simulat
                 coords["Z"] = {"center": "deptht", "left": "depth"}
             print(ds)
 
-            grid = parcels.xgrid.XGrid(xgcm.Grid(ds, coords=coords, autoparse_metadata=False, periodic=False))
+            grid = parcels.xgrid.XGrid(xgcm.Grid(ds, coords=coords, autoparse_metadata=False, periodic=False), mesh="spherical")
 
             U = parcels.Field("U", ds["U"], grid, interp_method=interp_method)
             V = parcels.Field("V", ds["V"], grid, interp_method=interp_method)
