@@ -64,7 +64,7 @@ def main():
     output_path = args.output
 
     ds = load_dataset(grid_file, data_path)
-    print(ds.uxgrid)
+    print(ds)
     grid = UxGrid(ds.uxgrid, z=ds.coords["nz"])
     # Note that the vertical coordinate is required to be the position of the layer interfaces ("nz"), not the mid-layers ("nz1")
     U = Field(name="U", data=ds.u, grid=grid, interp_method=UXPiecewiseConstantFace)
@@ -78,7 +78,13 @@ def main():
     ymin = ds.uxgrid.node_lat.min().item()
     ymax = ds.uxgrid.node_lat.max().item()
 
-    for npart in [10] : #[1000, 5000, 10000, 50000, 100000]:
+    # Warm up (initialize spatial hash)
+    lon = np.random.uniform(xmin, xmax, 1)
+    lat = np.random.uniform(ymin, ymax, 1)
+    depth = np.zeros_like(lon)
+    fieldset.U.grid.search(depth, lat, lon)
+
+    for npart in [1, 10, 100, 1000, 10000, 100000, 1000000]:
         lon = np.random.uniform(xmin, xmax, npart)
         lat = np.random.uniform(ymin, ymax, npart)
         depth = np.zeros_like(lon)
@@ -87,9 +93,6 @@ def main():
         fieldset.U.grid.search(depth, lat, lon)
         elapsed_time = time.time() - start
         print(f"Search time for {npart} particles: {elapsed_time:.3e} seconds")
-        #pset = ParticleSet(fieldset, pclass=Particle, lon=lon, lat=lat, depth=depth, time=[0])
-
-
 
 if __name__ == "__main__":
     main()
