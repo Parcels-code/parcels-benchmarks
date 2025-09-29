@@ -23,7 +23,7 @@ except ImportError:
 
 DATA_ROOT = "/storage/shared/oceanparcels/input_data/MOi"
 
-def run_benchmark(interpolator: str, trace_memory: bool = False, surface_simulation: bool =False, cycle_chunks: bool = False):
+def run_benchmark(interpolator: str, trace_memory: bool = False, surface_simulation: bool =False, preload: bool = False, cycle_chunks: bool = False):
 
     lon0_expected, lat0_expected = -10.128929, -29.721205  # values from v3 using from_netcf (so assuming A-grid!)
 
@@ -31,7 +31,7 @@ def run_benchmark(interpolator: str, trace_memory: bool = False, surface_simulat
         xy_chunks = [64, 128, 256, 512, 1024, 2084, 32, 16, 8, 4]
         nparts = [10_000]
     else:
-        xy_chunks = ["auto"]
+        xy_chunks = [256]
         nparts = [1, 10, 100, 1_000, 5_000, 10_000, 50_000, 100_000, 500_000, 1_000_000]
     fileU = f"{DATA_ROOT}/GLO12/psy4v3r1-daily_U_2010-01-0[1-3].nc"
     filenames = {"U": glob(fileU), "V": glob(fileU.replace("_U_", "_V_")), "W": glob(fileU.replace("_U_", "_W_"))}
@@ -49,8 +49,9 @@ def run_benchmark(interpolator: str, trace_memory: bool = False, surface_simulat
                 "data_vars": 'minimal',
                 "coords": 'minimal',
                 "compat": 'override',
-                "chunks": {"time_counter": 1, "depth":2, "y": chunk, "x": chunk}
             }
+            if chunk:
+                fileargs["chunks"] = {"time_counter": 1, "depth":2, "y": chunk, "x": chunk}
 
             ds_u = xr.open_mfdataset(filenames["U"], **fileargs)[["vozocrtx"]].drop_vars(["nav_lon", "nav_lat"])
             ds_v = xr.open_mfdataset(filenames["V"], **fileargs)[["vomecrty"]].drop_vars(["nav_lon", "nav_lat"])
@@ -104,6 +105,10 @@ def run_benchmark(interpolator: str, trace_memory: bool = False, surface_simulat
 
         pclass = parcels.Particle if parcelsv4 else parcels.JITParticle
 
+        if parcelsv4 and preload:
+            fieldset.U.data.load()
+            fieldset.V.data.load()
+
         for npart in nparts:
             if cycle_chunks:
                 X, Y = np.meshgrid(np.linspace(-10, 10, int(np.sqrt(npart))), np.linspace(-30, -20, int(np.sqrt(npart))))
@@ -115,16 +120,12 @@ def run_benchmark(interpolator: str, trace_memory: bool = False, surface_simulat
 
             pset = parcels.ParticleSet(fieldset=fieldset, pclass=pclass, lon=lon, lat=lat)
 
-            print(f"Running {len(lon):_} particles on {"surface" if surface_simulation else "3D"} with parcels v{4 if parcelsv4 else 3}, chunksize {chunk} and {interpolator} interpolator")
+            print(f"Running {len(lon):_} particles on {"surface" if surface_simulation else "3D"} with parcels v{4 if parcelsv4 else 3}, chunksize {chunk} ({'preloaded' if preload else 'not preloaded'}) and {interpolator} interpolator")
 
             if trace_memory:
                 tracemalloc.start()
             else:
                 start = time.time()
-
-            # if surface_simulation and parcelsv4:
-            #     fieldset.U.data.load()
-            #     fieldset.V.data.load()
 
             pset.execute(parcels.AdvectionEE, runtime=runtime, dt=dt, verbose_progress=False)
 
@@ -168,6 +169,13 @@ def main(args=None):
     )
 
     p.add_argument(
+        "-l",
+        "--preload",
+        action="store_true",
+        help="Preload data into memory (default: False)",
+    )
+
+    p.add_argument(
         "-c",
         "--chunks",
         action="store_true",
@@ -175,7 +183,7 @@ def main(args=None):
     )
 
     args = p.parse_args(args)
-    run_benchmark(args.Interpolator, args.memory, args.surface, args.chunks)
+    run_benchmark(args.Interpolator, args.memory, args.surface, args.preload, args.chunks)
 
 
 if __name__ == "__main__":
