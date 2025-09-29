@@ -7,7 +7,6 @@ import time
 from glob import glob
 
 import numpy as np
-import xgcm
 
 import parcels
 
@@ -16,6 +15,7 @@ dt = np.timedelta64(15, "m")
 
 parcelsv4 = True
 try:
+    import xgcm
     from parcels.xgrid import _XGRID_AXES
     from parcels.application_kernels.interpolation import XLinear
 except ImportError:
