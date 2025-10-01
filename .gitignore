@@ -1,0 +1,6 @@
+# pixi environments
+.pixi/*
+!.pixi/config.toml
+
+# TODO: commit the lockfile once deps are finalized for the environment. This is important.
+pixi.lock
