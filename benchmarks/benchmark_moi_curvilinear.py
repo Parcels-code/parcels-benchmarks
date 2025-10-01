@@ -1,3 +1,4 @@
+"""Mercator Ocean International model data based benchmark on a curvilinear grid."""
 from argparse import ArgumentParser
 from pathlib import Path
 import xarray as xr
