@@ -6,6 +6,8 @@ platforms = ["win-64", "linux-64", "osx-64", "osx-arm64"]
 
 [tasks]
 
+lint = "pre-commit run --all-files"
+
 [dependencies]
 
 python = "3.12.*"
@@ -14,3 +16,5 @@ parcels = "=4.0.0alpha1"
 xarray = ">=2025.09.0"
 uxarray = ">=2025.09.0"
 pooch = ">=1.8.2"
+
+pre_commit = "*"

@@ -1,0 +1,34 @@
+[tool.ruff.lint]
+select = [
+  "E", # Error
+  "F", # pyflakes
+  "I", # isort
+  "B", # Bugbear
+  "UP", # pyupgrade
+  "LOG", # logging
+  "ICN", # import conventions
+  "G", # logging-format
+  "RUF", # ruff
+  "ISC001", # single-line-implicit-string-concatenation
+  "TID", # flake8-tidy-imports
+  "T100", # Checks for the presence of debugger calls and imports
+]
+
+ignore = [
+  # line too long (82 > 79 characters)
+  "E501",
+  # ‘from module import *’ used; unable to detect undefined names
+  "F403",
+  # Mutable class attributes should be annotated with `typing.ClassVar`
+  "RUF012",
+  # Consider `(slice(2), *block)` instead of concatenation
+  "RUF005",
+  # Prefer `next(iter(variable.items()))` over single element slice
+  "RUF015",
+  # Use `X | Y` in `isinstance` (see https://github.com/home-assistant/core/issues/123850)
+  "UP038",
+  "RUF046", # Value being cast to `int` is already an integer
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"
