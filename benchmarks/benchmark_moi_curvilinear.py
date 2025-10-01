@@ -13,12 +13,8 @@ import parcels
 runtime = np.timedelta64(2, "D")
 dt = np.timedelta64(15, "m")
 
-parcelsv4 = True
-try:
-    import xgcm
-    from parcels.interpolators import XLinear
-except ImportError:
-    parcelsv4 = False
+import xgcm
+from parcels.interpolators import XLinear
 
 DATA_ROOT = "/storage/shared/oceanparcels/input_data/MOi"
 
@@ -37,74 +33,56 @@ def run_benchmark(interpolator: str, trace_memory: bool = False, surface_simulat
     mesh_mask = f"{DATA_ROOT}/domain_ORCA0083-N006/PSY4V3R1_mesh_hgr.nc"
 
     for chunk in xy_chunks:
-        if parcelsv4:
-            if interpolator == "XLinear":
-                interp_method = XLinear
-            else:
-                raise ValueError(f"Unknown interpolator: {interpolator}")
-
-            fileargs = {"concat_dim": "time_counter",
-                "combine": "nested",
-                "data_vars": 'minimal',
-                "coords": 'minimal',
-                "compat": 'override',
-            }
-            if chunk:
-                fileargs["chunks"] = {"time_counter": 1, "depth":2, "y": chunk, "x": chunk}
-
-            ds_u = xr.open_mfdataset(filenames["U"], **fileargs)[["vozocrtx"]].drop_vars(["nav_lon", "nav_lat"])
-            ds_v = xr.open_mfdataset(filenames["V"], **fileargs)[["vomecrty"]].drop_vars(["nav_lon", "nav_lat"])
-            ds_depth = xr.open_mfdataset(filenames["W"], **fileargs)[["depthw"]]
-            ds_mesh = xr.open_dataset(mesh_mask)[["glamf", "gphif"]].isel(t=0)
-
-            ds = xr.merge([ds_u, ds_v, ds_depth, ds_mesh], compat="identical").rename({"vozocrtx": "U", "vomecrty": "V"}).rename({"glamf": "lon", "gphif": "lat", "time_counter": "time", "depthw": "depth"})
-            ds = xr.merge([ds_u, ds_v, ds_depth, ds_mesh], compat="identical")
-            ds = ds.rename({"vozocrtx": "U", "vomecrty": "V", "glamf": "lon", "gphif": "lat", "time_counter": "time", "depthw": "depth"})
-            ds.deptht.attrs["c_grid_axis_shift"] = -0.5
-
-            coords={"X": {"left": "x"}, "Y": {"left": "y"}, "T": {"center": "time"}}
-
-            coords={
-                "X": {"left": "x"},
-                "Y": {"left": "y"},
-                "T": {"center": "time"},
-            }
-            if surface_simulation:
-                ds = ds.isel(depth=0, deptht=0)
-            else:
-                coords["Z"] = {"center": "deptht", "left": "depth"}
-            print(ds)
-
-            grid = parcels._core.xgrid.XGrid(xgcm.Grid(ds, coords=coords, autoparse_metadata=False, periodic=False), mesh="spherical")
-
-            U = parcels.Field("U", ds["U"], grid, interp_method=interp_method)
-            V = parcels.Field("V", ds["V"], grid, interp_method=interp_method)
-            U.units = parcels.GeographicPolar()
-            V.units = parcels.Geographic()
-            UV = parcels.VectorField("UV", U, V)
-
-            fieldset = parcels.FieldSet([U, V, UV])
+        if interpolator == "XLinear":
+            interp_method = XLinear
         else:
-            filenames = {
-                "U": {"lon": mesh_mask, "lat": mesh_mask, "depth": filenames["W"][0], "data": filenames["U"]},
-                "V": {"lon": mesh_mask, "lat": mesh_mask, "depth": filenames["W"][0], "data": filenames["V"]},
-            }
-            interpolator = "v3_default"
-            if surface_simulation:
-                indices={"depth": range(2)}
-            else:
-                indices=None
+            raise ValueError(f"Unknown interpolator: {interpolator}")
 
-            fieldset = parcels.FieldSet.from_netcdf(
-                filenames,
-                variables={"U": "vozocrtx", "V": "vomecrty"},
-                dimensions={"time": "time_counter", "lat": "gphif", "lon": "glamf", "depth": "depthw"},
-                indices=indices,
-            )
+        fileargs = {"concat_dim": "time_counter",
+            "combine": "nested",
+            "data_vars": 'minimal',
+            "coords": 'minimal',
+            "compat": 'override',
+        }
+        if chunk:
+            fileargs["chunks"] = {"time_counter": 1, "depth":2, "y": chunk, "x": chunk}
 
-        pclass = parcels.Particle if parcelsv4 else parcels.JITParticle
+        ds_u = xr.open_mfdataset(filenames["U"], **fileargs)[["vozocrtx"]].drop_vars(["nav_lon", "nav_lat"])
+        ds_v = xr.open_mfdataset(filenames["V"], **fileargs)[["vomecrty"]].drop_vars(["nav_lon", "nav_lat"])
+        ds_depth = xr.open_mfdataset(filenames["W"], **fileargs)[["depthw"]]
+        ds_mesh = xr.open_dataset(mesh_mask)[["glamf", "gphif"]].isel(t=0)
 
-        if parcelsv4 and preload:
+        ds = xr.merge([ds_u, ds_v, ds_depth, ds_mesh], compat="identical").rename({"vozocrtx": "U", "vomecrty": "V"}).rename({"glamf": "lon", "gphif": "lat", "time_counter": "time", "depthw": "depth"})
+        ds = xr.merge([ds_u, ds_v, ds_depth, ds_mesh], compat="identical")
+        ds = ds.rename({"vozocrtx": "U", "vomecrty": "V", "glamf": "lon", "gphif": "lat", "time_counter": "time", "depthw": "depth"})
+        ds.deptht.attrs["c_grid_axis_shift"] = -0.5
+
+        coords={"X": {"left": "x"}, "Y": {"left": "y"}, "T": {"center": "time"}}
+
+        coords={
+            "X": {"left": "x"},
+            "Y": {"left": "y"},
+            "T": {"center": "time"},
+        }
+        if surface_simulation:
+            ds = ds.isel(depth=0, deptht=0)
+        else:
+            coords["Z"] = {"center": "deptht", "left": "depth"}
+        print(ds)
+
+        grid = parcels._core.xgrid.XGrid(xgcm.Grid(ds, coords=coords, autoparse_metadata=False, periodic=False), mesh="spherical")
+
+        U = parcels.Field("U", ds["U"], grid, interp_method=interp_method)
+        V = parcels.Field("V", ds["V"], grid, interp_method=interp_method)
+        U.units = parcels.GeographicPolar()
+        V.units = parcels.Geographic()
+        UV = parcels.VectorField("UV", U, V)
+
+        fieldset = parcels.FieldSet([U, V, UV])
+
+        pclass = parcels.Particle
+
+        if preload:
             fieldset.U.data.load()
             fieldset.V.data.load()
 
@@ -119,7 +97,7 @@ def run_benchmark(interpolator: str, trace_memory: bool = False, surface_simulat
 
             pset = parcels.ParticleSet(fieldset=fieldset, pclass=pclass, lon=lon, lat=lat)
 
-            print(f"Running {len(lon):_} particles on {"surface" if surface_simulation else "3D"} with parcels v{4 if parcelsv4 else 3}, chunksize {chunk} ({'preloaded' if preload else 'not preloaded'}) and {interpolator} interpolator")
+            print(f"Running {len(lon):_} particles on {"surface" if surface_simulation else "3D"} with parcels v4, chunksize {chunk} ({'preloaded' if preload else 'not preloaded'}) and {interpolator} interpolator")
 
             if trace_memory:
                 tracemalloc.start()
