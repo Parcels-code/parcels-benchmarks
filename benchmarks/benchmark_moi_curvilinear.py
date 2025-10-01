@@ -157,7 +157,7 @@ def main(args=None):
     # TODO: do we want CLI args for chunks and npart?
 
     args = p.parse_args(args)
-    run_benchmark(args.Interpolator, args.memory, args.surface, args.preload, args.chunks)
+    run_benchmark(args.Interpolator, args.memory, args.surface, args.preload)
 
 
 if __name__ == "__main__":
