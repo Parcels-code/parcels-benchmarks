@@ -11,7 +11,7 @@ lint = "pre-commit run --all-files"
 [dependencies]
 
 python = "3.12.*"
-asv = ">=0.6.5"
+# asv = ">=0.6.5"
 parcels = "=4.0.0alpha1"
 xarray = ">=2025.09.0"
 uxarray = ">=2025.09.0"
