@@ -1,22 +1,15 @@
-from glob import glob
-import math
-import sys
+import time
 
 import numpy as np
 import uxarray as ux
 from parcels import (
-    AdvectionEE,
     Field,
-    VectorField,
     FieldSet,
     UXPiecewiseConstantFace,
-    Particle,
-    ParticleSet,
+    VectorField,
 )
 from parcels.uxgrid import UxGrid
 
-import time
-import pandas as pd
 
 def load_dataset(grid_file: str, data_path: str) -> ux.UxDataset:
     """
@@ -30,6 +23,7 @@ def load_dataset(grid_file: str, data_path: str) -> ux.UxDataset:
     """
     # Get list of netcdf files in the directory
     return ux.open_mfdataset(grid_file, f"{data_path}/*.nc", combine="by_coords")
+
 
 def cli():
     import argparse
@@ -56,12 +50,12 @@ def cli():
     args = parser.parse_args()
     return args
 
-def main():
 
+def main():
     args = cli()
     data_path = args.data_path
     grid_file = args.grid_file
-    output_path = args.output
+    _output_path = args.output
 
     ds = load_dataset(grid_file, data_path)
     print(ds)
@@ -69,8 +63,8 @@ def main():
     # Note that the vertical coordinate is required to be the position of the layer interfaces ("nz"), not the mid-layers ("nz1")
     U = Field(name="U", data=ds.u, grid=grid, interp_method=UXPiecewiseConstantFace)
     V = Field(name="V", data=ds.v, grid=grid, interp_method=UXPiecewiseConstantFace)
-    #W = Field(name="u", data=ds.w, grid=grid, interp_method=UXPiecewiseLinearFace)
-    UV = VectorField(name="UV", U=U, V=V) 
+    # W = Field(name="u", data=ds.w, grid=grid, interp_method=UXPiecewiseLinearFace)
+    UV = VectorField(name="UV", U=U, V=V)
     fieldset = FieldSet([UV, UV.U, UV.V])
 
     xmin = ds.uxgrid.node_lon.min().item()
@@ -93,6 +87,7 @@ def main():
         fieldset.U.grid.search(depth, lat, lon)
         elapsed_time = time.time() - start
         print(f"Search time for {npart} particles: {elapsed_time:.3e} seconds")
+
 
 if __name__ == "__main__":
     main()
