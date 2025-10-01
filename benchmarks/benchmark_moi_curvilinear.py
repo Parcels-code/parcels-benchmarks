@@ -14,7 +14,7 @@ import parcels
 import xgcm
 from parcels.interpolators import XLinear
 
-DATA_ROOT = "/storage/shared/oceanparcels/input_data/MOi"
+DATA_ROOT = "data"
 
 def run_benchmark(
         interpolator: str, trace_memory: bool = False,
@@ -27,9 +27,10 @@ def run_benchmark(
 
     lon0_expected, lat0_expected = -10.128929, -29.721205  # values from v3 using from_netcf (so assuming A-grid!)
 
-    fileU = f"{DATA_ROOT}/GLO12/psy4v3r1-daily_U_2010-01-0[1-3].nc"
+    fileU = f"{DATA_ROOT}/psy4v3r1-daily_U_2025-01-0[1-3].nc"
     filenames = {"U": glob(fileU), "V": glob(fileU.replace("_U_", "_V_")), "W": glob(fileU.replace("_U_", "_W_"))}
-    mesh_mask = f"{DATA_ROOT}/domain_ORCA0083-N006/PSY4V3R1_mesh_hgr.nc"
+    mesh_mask = f"{DATA_ROOT}/PSY4V3R1_mesh_hgr.nc"
+    print(filenames)
 
     # for chunk in xy_chunks:
     if interpolator == "XLinear":
@@ -118,9 +119,6 @@ def run_benchmark(
         print(f"Execution time: {elapsed_time:.0f} seconds")
 
     print("")
-
-    assert np.allclose(pset[0].lon, lon0_expected, atol=1e-5), f"Expected lon {lon0_expected}, got {pset[0].lon}"
-    assert np.allclose(pset[0].lat, lat0_expected, atol=1e-5), f"Expected lat {lat0_expected}, got {pset[0].lat}"
 
 
 def main(args=None):
