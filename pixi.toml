@@ -1,0 +1,16 @@
+[workspace]
+authors = ["parcels-benchmarks contributors"]
+channels = ["conda-forge", "https://repo.prefix.dev/parcels"]
+name = "parcels-benchmarks"
+platforms = ["win-64", "linux-64", "osx-64", "osx-arm64"]
+
+[tasks]
+
+[dependencies]
+
+python = "3.12.*"
+asv = ">=0.6.5"
+parcels = "=4.0.0alpha1"
+xarray = ">=2025.09.0"
+uxarray = ">=2025.09.0"
+pooch = ">=1.8.2"
