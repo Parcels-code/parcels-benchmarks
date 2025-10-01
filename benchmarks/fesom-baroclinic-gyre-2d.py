@@ -13,8 +13,15 @@ from parcels import (
 from parcels.kernels.advection import AdvectionEE
 from parcels.interpolators import UXPiecewiseConstantFace
 
+import pooch
 
-
+data_and_grid_files = pooch.retrieve(
+    "https://surfdrive.surf.nl/index.php/s/7xlfdOFaUGDEmpD/download?path=%2F&files=Parcels_Benchmarks_FESOM-baroclinic-gyre.zip",
+    processor=pooch.Unzip(),
+    known_hash="d8a52cbe43b25b12bbfe0db30ffe8e1fa9cfcac801e2964dd2ef0d00ea980429",
+)
+# data_files = ...
+# grid_file = ...
 
 def load_dataset(grid_file: str, data_path: str) -> ux.UxDataset:
     """
