@@ -11,9 +11,6 @@ import numpy as np
 
 import parcels
 
-runtime = np.timedelta64(2, "D")
-dt = np.timedelta64(15, "m")
-
 import xgcm
 from parcels.interpolators import XLinear
 
@@ -24,6 +21,8 @@ def run_benchmark(
         surface_simulation: bool =False, preload: bool = False,
         chunk: int = 256,
         npart: int = 10_000,
+        runtime: np.timedelta64 = np.timedelta64(2, "D"),
+        dt: np.timedelta64 = np.timedelta64(15, "m"),
     ):
 
     lon0_expected, lat0_expected = -10.128929, -29.721205  # values from v3 using from_netcf (so assuming A-grid!)
