@@ -16,8 +16,7 @@ dt = np.timedelta64(15, "m")
 parcelsv4 = True
 try:
     import xgcm
-    from parcels.xgrid import _XGRID_AXES
-    from parcels.application_kernels.interpolation import XLinear
+    from parcels.interpolators import XLinear
 except ImportError:
     parcelsv4 = False
 
@@ -76,7 +75,7 @@ def run_benchmark(interpolator: str, trace_memory: bool = False, surface_simulat
                 coords["Z"] = {"center": "deptht", "left": "depth"}
             print(ds)
 
-            grid = parcels.xgrid.XGrid(xgcm.Grid(ds, coords=coords, autoparse_metadata=False, periodic=False), mesh="spherical")
+            grid = parcels._core.xgrid.XGrid(xgcm.Grid(ds, coords=coords, autoparse_metadata=False, periodic=False), mesh="spherical")
 
             U = parcels.Field("U", ds["U"], grid, interp_method=interp_method)
             V = parcels.Field("V", ds["V"], grid, interp_method=interp_method)
@@ -127,7 +126,7 @@ def run_benchmark(interpolator: str, trace_memory: bool = False, surface_simulat
             else:
                 start = time.time()
 
-            pset.execute(parcels.AdvectionEE, runtime=runtime, dt=dt, verbose_progress=False)
+            pset.execute(parcels.kernels.AdvectionEE, runtime=runtime, dt=dt, verbose_progress=False)
 
             if trace_memory:
                 current, peak = tracemalloc.get_traced_memory()
