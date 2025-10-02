@@ -16,5 +16,7 @@ parcels = "=4.0.0alpha1"
 xarray = ">=2025.09.0"
 uxarray = ">=2025.09.0"
 pooch = ">=1.8.2"
+platform = "1.0.8"
+psutil = "7.0.0"
 
 pre_commit = "*"

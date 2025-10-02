@@ -1,12 +1,10 @@
 
 
 import platform
-from numpy import rint
 import psutil
 import cpuinfo
 import subprocess
 import json
-
 
 def get_cpuinfo():
     info = {}
