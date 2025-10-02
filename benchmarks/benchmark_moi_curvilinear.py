@@ -14,7 +14,13 @@ import parcels
 import xgcm
 from parcels.interpolators import XLinear
 
-DATA_ROOT = "data"
+from utils import retrieve_data_dir
+
+DATA_ROOT = retrieve_data_dir(
+    url="https://surfdrive.surf.nl/index.php/s/7xlfdOFaUGDEmpD/download?path=%2F&files=Parcels_Benchmarks_MOi_data.zip",
+    known_hash=None
+)
+
 
 def run_benchmark(
         interpolator: str, trace_memory: bool = False,
@@ -30,7 +36,6 @@ def run_benchmark(
     fileU = f"{DATA_ROOT}/psy4v3r1-daily_U_2025-01-0[1-3].nc"
     filenames = {"U": glob(fileU), "V": glob(fileU.replace("_U_", "_V_")), "W": glob(fileU.replace("_U_", "_W_"))}
     mesh_mask = f"{DATA_ROOT}/PSY4V3R1_mesh_hgr.nc"
-    print(filenames)
 
     # for chunk in xy_chunks:
     if interpolator == "XLinear":
@@ -68,7 +73,6 @@ def run_benchmark(
         ds = ds.isel(depth=0, deptht=0)
     else:
         coords["Z"] = {"center": "deptht", "left": "depth"}
-    print(ds)
 
     grid = parcels._core.xgrid.XGrid(xgcm.Grid(ds, coords=coords, autoparse_metadata=False, periodic=False), mesh="spherical")
 
