@@ -47,7 +47,6 @@ def get_diskinfo():
                 disk_info["description"] = item.get("description", "")
                 disk_info["logical_name"] = item.get("logicalname", "")
                 disk_info["size_GB"] = item.get("size", 0) / 1e9
-                disk_info["vendor"] = item.get("vendor", "")
                 info["disks"].append(disk_info)
 
     except Exception:
