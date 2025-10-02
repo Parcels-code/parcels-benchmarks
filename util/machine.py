@@ -18,7 +18,6 @@ def get_cpuinfo():
 
 def get_meminfo():
     info = {}
-    info["memory"] = {}
     try:
         out = subprocess.check_output(["sudo", "lshw", "-C", "memory", "-json"], stderr=subprocess.STDOUT, text=True)
         mem = json.loads(out)
@@ -31,7 +30,7 @@ def get_meminfo():
 
                 
     except Exception:
-        info = {}
+        info ["memory"] = {}
 
     return info
 
@@ -50,7 +49,7 @@ def get_diskinfo():
                 info["disks"].append(disk_info)
 
     except Exception:
-        info['disks'] = []
+        info = {}
 
     return info
 
