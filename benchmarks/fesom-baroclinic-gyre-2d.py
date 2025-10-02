@@ -13,17 +13,15 @@ from parcels import (
 from parcels.kernels.advection import AdvectionEE
 from parcels.interpolators import UXPiecewiseConstantFace
 
-import pooch
+from utils import retrieve_data_dir
 
-data_and_grid_files = pooch.retrieve(
-    "https://surfdrive.surf.nl/index.php/s/7xlfdOFaUGDEmpD/download?path=%2F&files=Parcels_Benchmarks_FESOM-baroclinic-gyre.zip",
-    processor=pooch.Unzip(),
-    known_hash="d8a52cbe43b25b12bbfe0db30ffe8e1fa9cfcac801e2964dd2ef0d00ea980429",
+data_dir = retrieve_data_dir(
+    url="https://surfdrive.surf.nl/index.php/s/7xlfdOFaUGDEmpD/download?path=%2F&files=Parcels_Benchmarks_FESOM-baroclinic-gyre_v2025.10.2.2.zip",
+    known_hash="8d849df2996e3cecf95344e6cde6ed873919d33d731b5fbed4ecacf1a57fbce3",
 )
-# data_files = ...
-# grid_file = ...
 
-def load_dataset(grid_file: str, data_path: str) -> ux.UxDataset:
+
+def load_dataset(grid_file: str, data_files: list) -> ux.UxDataset:
     """
     Load a dataset from a NetCDF file.
 
@@ -34,18 +32,19 @@ def load_dataset(grid_file: str, data_path: str) -> ux.UxDataset:
         ux.Dataset: The loaded dataset.
     """
     # Get list of netcdf files in the directory
-    return ux.open_mfdataset(grid_file, f"{data_path}/*.nc", combine="by_coords")
+    return ux.open_mfdataset(grid_file, data_files, combine="by_coords")
 
 def run_benchmark(
-        data_path="./data", 
-        grid_file="./data/mesh/fesom.mesh.diag.nc", 
-        npart=1000,
-        runtime=np.timedelta64(1, "D"),
-        dt=np.timedelta64(2400, "s"),
-        integrator=AdvectionEE,
+    data_dir=data_dir,
+    npart=1000,
+    runtime=np.timedelta64(1, "D"),
+    dt=np.timedelta64(2400, "s"),
+    integrator=AdvectionEE,
 ):
+    grid_file = f"{data_dir}/mesh/fesom.mesh.diag.nc"
+    data_files = f"{data_dir}/*.nc"
 
-    ds = load_dataset(grid_file, data_path)
+    ds = load_dataset(grid_file, data_files)
     grid = UxGrid(ds.uxgrid, z=ds.coords["nz"])
     U = Field(name="U", data=ds.u, grid=grid, interp_method=UXPiecewiseConstantFace)
     V = Field(name="V", data=ds.v, grid=grid, interp_method=UXPiecewiseConstantFace)
