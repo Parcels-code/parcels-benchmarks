@@ -18,9 +18,17 @@ def get_cpuinfo():
 
 def get_meminfo():
     info = {}
+    info["memory"] = {}
     try:
         out = subprocess.check_output(["sudo", "lshw", "-C", "memory", "-json"], stderr=subprocess.STDOUT, text=True)
-        info['memory'] = json.loads(out)
+        mem = json.loads(out)
+        for item in mem:
+            if "bank" in item.get("id", ""):
+                info["memory"]["description"] = item.get("description", "")
+                info["memory"]["width_bits"] = item.get("width", "")
+                info["memory"]["clock_MHz"] = item.get("clock", 0) / 1e6
+                break
+
                 
     except Exception:
         info = {}
@@ -29,12 +37,21 @@ def get_meminfo():
 
 def get_diskinfo():
     info = {}
+    info["disks"] = []
     try:
         out = subprocess.check_output(["sudo", "lshw", "-C", "disk", "-json"], stderr=subprocess.STDOUT, text=True)
-        info['disk'] = json.loads(out)
-                
+        disks = json.loads(out)
+        for item in disks:
+            if "configuration" in item.keys():
+                disk_info = {}
+                disk_info["description"] = item.get("description", "")
+                disk_info["logical_name"] = item.get("logicalname", "")
+                disk_info["size_GB"] = item.get("size", 0) / 1e9
+                disk_info["vendor"] = item.get("vendor", "")
+                info["disks"].append(disk_info)
+
     except Exception:
-        info['disk'] = {}
+        info['disks'] = []
 
     return info
 
