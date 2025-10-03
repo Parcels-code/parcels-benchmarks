@@ -1,8 +1,12 @@
 #!/usr/bin/env python3
 
+import psutil
 from util import get_machine
-from util import time_v
+#from util import time_v
 import os
+import subprocess
+import time
+import datetime as dt
 
 machine = get_machine()
 
@@ -12,8 +16,40 @@ machine = get_machine()
 record = []
 for script in os.listdir("benchmarks"):
     if script.endswith(".py"):
-        result = time_v(f"python benchmarks/{script}")
+        print(script)
+        #result = time_v(f"python benchmarks/{script}")
+        proc = subprocess.Popen(
+            ["python", f"benchmarks/{script}"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+        )
+        process = psutil.Process(proc.pid)
+        peak_memory_rss = 0  # Resident Set Size
+        peak_memory_vms = 0  # Virtual Memory Size
+        start_time = time.time()
+        while proc.poll() is None:  # While the subprocess is still running
+            try:
+                mem_info = process.memory_info()
+                peak_memory_rss = max(peak_memory_rss, mem_info.rss)
+                peak_memory_vms = max(peak_memory_vms, mem_info.vms)
+            except psutil.NoSuchProcess:
+                # The process might have terminated between the poll() and memory_info() call
+                break
+            time.sleep(0.01)  # Adjust sleep interval as needed for desired granularity
+        end_time = time.time()
+        result = {
+            "timestamp_utc": dt.datetime.utcnow().isoformat() + "Z",
+            "benchmark": script,
+            "max_rss_bytes": peak_memory_rss,
+            "runtime_s": end_time - start_time,
+            "exit_status": proc.returncode,
+
+        }
+
         record.append({**result, **machine})
+        break
+
 
 # Write a newline delimited json
 with open("benchmark_results.jsonl", "w") as f:
