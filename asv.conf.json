@@ -1,6 +1,6 @@
 {
     "version": 1,
-    "project": "asv_samples",
+    "project": "parcels",
     "project_url": "http://github.com/OceanParcels/parcels",
     "repo": "http://github.com/OceanParcels/parcels.git",
     "branches": ["v4-dev"],
