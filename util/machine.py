@@ -124,7 +124,6 @@ def get_machine():
         "disks": get_diskinfo(),
     }
 
-    
     return machine
     
 

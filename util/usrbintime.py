@@ -15,7 +15,6 @@ def parse_elapsed_to_seconds(s):
     Parse elapsed time string from `/usr/bin/time -v`, which can be h:mm:ss, m:ss, or s.ss.
     Returns seconds as float.
     """
-    print(s)
     if not s:
         return 0.0
     if s.count(':') == 2:
@@ -79,5 +78,5 @@ def time_v(cmd):
         "command": cmd
     }
     result.update(parse_time_v_output(err))
-    
+
     return result

@@ -1,0 +1,21 @@
+#!/usr/bin/env python3
+
+from util import get_machine
+from util import time_v
+import os
+
+machine = get_machine()
+
+# List all of the benchmark scripts in the benchmarks/ directory
+# and run them with /usr/bin/time -v, collecting the output.
+
+record = []
+for script in os.listdir("benchmarks"):
+    if script.endswith(".py"):
+        result = time_v(f"python benchmarks/{script}")
+        record.append({**result, **machine})
+
+# Write a newline delimited json
+with open("benchmark_results.jsonl", "w") as f:
+    for r in record:
+        f.write(f"{r}\n")
