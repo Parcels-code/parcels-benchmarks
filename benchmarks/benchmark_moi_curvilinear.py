@@ -14,7 +14,7 @@ import parcels
 import xgcm
 from parcels.interpolators import XLinear
 
-from utils import retrieve_data_dir
+from util import retrieve_data_dir
 
 DATA_ROOT = retrieve_data_dir(
     url="https://surfdrive.surf.nl/index.php/s/7xlfdOFaUGDEmpD/download?path=%2F&files=Parcels_Benchmarks_MOi_data.zip",

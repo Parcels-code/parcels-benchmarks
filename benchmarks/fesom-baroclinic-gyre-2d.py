@@ -13,7 +13,7 @@ from parcels import (
 from parcels.kernels.advection import AdvectionEE
 from parcels.interpolators import UXPiecewiseConstantFace
 
-from utils import retrieve_data_dir
+from util import retrieve_data_dir
 
 data_dir = retrieve_data_dir(
     url="https://surfdrive.surf.nl/index.php/s/7xlfdOFaUGDEmpD/download?path=%2F&files=Parcels_Benchmarks_FESOM-baroclinic-gyre_v2025.10.2.2.zip",
