@@ -26,13 +26,11 @@ for script in os.listdir("benchmarks"):
         )
         process = psutil.Process(proc.pid)
         peak_memory_rss = 0  # Resident Set Size
-        peak_memory_vms = 0  # Virtual Memory Size
         start_time = time.time()
         while proc.poll() is None:  # While the subprocess is still running
             try:
                 mem_info = process.memory_info()
                 peak_memory_rss = max(peak_memory_rss, mem_info.rss)
-                peak_memory_vms = max(peak_memory_vms, mem_info.vms)
             except psutil.NoSuchProcess:
                 # The process might have terminated between the poll() and memory_info() call
                 break
