@@ -1,0 +1,12 @@
+{
+    "version": 1,
+    "project": "asv_samples",
+    "project_url": "http://github.com/OceanParcels/parcels",
+    "repo": "http://github.com/OceanParcels/parcels.git",
+    "branches": ["v4-dev"],
+    "environment_type": "virtualenv",
+    "matrix": {},
+    "env_dir": ".asv/env",
+    "results_dir": ".asv/results",
+    "html_dir": ".asv/html"
+}
