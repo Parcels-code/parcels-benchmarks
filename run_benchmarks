@@ -46,8 +46,6 @@ for script in os.listdir("benchmarks"):
         }
 
         record.append({**result, **machine})
-        break
-
 
 # Write a newline delimited json
 with open("benchmark_results.jsonl", "w") as f:
