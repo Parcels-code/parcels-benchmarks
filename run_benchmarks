@@ -135,7 +135,7 @@ def main():
     machine = get_machine()
     record = []
     for script in os.listdir("benchmarks"):
-        if script.endswith(".py") and (not script.contains("util.py")):
+        if script.endswith(".py") and ("util.py" not in script):
             print(script)
             proc = subprocess.Popen(
                 ["python", f"benchmarks/{script}"],
