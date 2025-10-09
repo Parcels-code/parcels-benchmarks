@@ -211,7 +211,7 @@ def main():
             record.append({**result, **machine})
 
     # Write a newline delimited json
-    with open("benchmark_results.jsonl", "w") as f:
+    with open("benchmark_results.jsonl", "a") as f:
         for r in record:
             f.write(f"{r}\n")
 
