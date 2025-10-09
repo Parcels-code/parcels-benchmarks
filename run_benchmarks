@@ -12,32 +12,34 @@ import subprocess
 import json
 import os
 import socket
+from benchmarks.util import download_datasets
 
 def get_cpuinfo():
     info = {}
-    info["cpu"] = {}
-    info["cpu"]["architecture"] = platform.processor()
-    info["cpu"]["model"] = cpuinfo.get_cpu_info().get('brand_raw', 'unknown')
-    info["cpu"]["count"] = psutil.cpu_count(logical=False)
-    info["cpu"]["count_logical"] = psutil.cpu_count(logical=True)
-    info["cpu"]["freq_MHz"] = psutil.cpu_freq().max
+    info["cpu.architecture"] = platform.processor()
+    info["cpu.model"] = cpuinfo.get_cpu_info().get('brand_raw', 'unknown')
+    info["cpu.count"] = psutil.cpu_count(logical=False)
+    info["cpu.count_logical"] = psutil.cpu_count(logical=True)
+    info["cpu.freq_MHz"] = psutil.cpu_freq().max
     return info
 
 def get_meminfo():
     info = {}
     try:
-        out = subprocess.check_output(["sudo", "lshw", "-C", "memory", "-json"], stderr=subprocess.STDOUT, text=True)
+        out = subprocess.check_output(["lshw", "-C", "memory", "-json"], stderr=subprocess.STDOUT, text=True)
         mem = json.loads(out)
         for item in mem:
             if "bank" in item.get("id", ""):
-                info["description"] = item.get("description", "")
-                info["width_bits"] = item.get("width", "")
-                info["clock_MHz"] = item.get("clock", 0) / 1e6
+                info["mem.description"] = item.get("description", "")
+                info["mem.width_bits"] = item.get("width", "")
+                info["mem.clock_MHz"] = item.get("clock", 0) / 1e6
                 break
 
                 
     except Exception:
-        info = {}
+        info["mem.description"] = ""
+        info["mem.width_bits"] = ""
+        info["mem.clock_MHz"] = ""
 
     return info
 
@@ -75,8 +77,46 @@ def get_block_size_bytes(dev):
         return int(sectors) * 512
     except Exception:
         return None
-    
-def get_diskinfo():
+
+ 
+def get_diskinfo(cache_folder):
+    """
+    Gets information about the mount point and disk (if available) that is hosting the cache folder.
+    """
+    print(cache_folder)
+
+    # Get the device ID for the target path
+    try:
+        target_dev = os.stat(cache_folder).st_dev
+    except FileNotFoundError:
+        return f"Error: Path '{cache_folder}' not found."
+    # Loop through all mount points to find the matching one
+    # /proc/mounts is the most reliable on Linux
+    try:
+        with open("/proc/mounts", "r") as f:
+            for line in f:
+                parts = line.split()
+                device, mountpoint, fs_type = parts[0], parts[1], parts[2]
+                if mountpoint == '/': # Special case for root directory
+                    mountpoint_dev = os.stat(mountpoint).st_dev
+                elif os.path.isdir(mountpoint):
+                    mountpoint_dev = os.stat(mountpoint).st_dev
+                else:
+                    continue
+                
+                if target_dev == mountpoint_dev:
+                    mount = {
+                        "mount.path": cache_folder,
+                        "mount.device": device,
+                        "mount.fs_type": fs_type
+                    }
+    except FileNotFoundError:
+        # Fallback for systems without /proc/mounts
+        mount = {
+                        "mount.path": cache_folder,
+                        "mount.device": "unknown",
+                        "mount.fs_type": "unknown"
+                    }
     disks = []
     for dev in list_block_devices():
         # Skip virtual devices we don't want to attribute capacity to (loop, ram, dm- are mappers)
@@ -106,33 +146,37 @@ def get_diskinfo():
         disks.append({
             "device": dev,
             "size_gb": size_b/1e9,
-            "rotational": rot,  # True=HDD, False=SSD (NVMe/SATA SSD)
             "interface": interface,
             "model": model,
             "vendor": vendor,
         })
 
+    print(mount)
+    print(disks)
+
     return disks
 
-def get_machine():
+def get_machine(cache_folder):
 
     machine = {
         "hostname": socket.gethostname(),
-        "os": {
-            "system": platform.system(),
-            "release": platform.release(),
-            "version": platform.version(),
-            "machine": platform.machine(),
-        },
-        "cpu": get_cpuinfo(),
-        "memory": get_meminfo(),
-        "disks": get_diskinfo(),
+        "os.system": platform.system(),
+        "os.release": platform.release(),
+        "os.version": platform.version(),
+        "os.machine": platform.machine(),
     }
+    machine.append(get_cpuinfo())
+    machine.append(get_meminfo())
+    machine.append(get_diskinfo(cache_folder))
 
     return machine
 
+
 def main():
-    machine = get_machine()
+
+    dataset_folders, cache_folder = download_datasets()
+
+    machine = get_machine(cache_folder)
     record = []
     for script in os.listdir("benchmarks"):
         if script.endswith(".py") and ("util.py" not in script):
@@ -156,11 +200,11 @@ def main():
                 time.sleep(0.01)  # Adjust sleep interval as needed for desired granularity
             end_time = time.time()
             result = {
-                "timestamp_utc": dt.datetime.utcnow().isoformat() + "Z",
-                "benchmark": script,
-                "max_rss_bytes": peak_memory_rss,
-                "runtime_s": end_time - start_time,
-                "exit_status": proc.returncode,
+                "benchmark.timestamp_utc": dt.datetime.utcnow().isoformat() + "Z",
+                "benchmark.script": script,
+                "benchmark.max_rss_bytes": peak_memory_rss,
+                "benchmark.runtime_s": end_time - start_time,
+                "benchmark.exit_status": proc.returncode,
 
             }
 
