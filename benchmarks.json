@@ -1,0 +1,20 @@
+{
+  "os_cache_parentdir": "~/.cache", 
+  "project": "parcels-benchmarks",
+  "data_url": "https://surfdrive.surf.nl/index.php/s/7xlfdOFaUGDEmpD/download?path=%2F&files=",
+  "benchmarks":
+  [
+    {
+      "name": "MOi-curvilinear",
+      "path": "benchmarks/benchmark_moi_curvilinear.py",
+      "file": "Parcels_Benchmarks_MOi_data.zip",
+      "known_hash": "f7816d872897c089eeb07a4e32b7fbcc96a0023ef01ac6c3792f88d8d8893885"
+    },
+    {
+      "name": "FESOM-baroclinic-gyre",
+      "path": "benchmarks/fesom-baroclinic-gyre-2d.py",
+      "file": "Parcels_Benchmarks_FESOM-baroclinic-gyre_v2025.10.2.2.zip",
+      "known_hash": "8d849df2996e3cecf95344e6cde6ed873919d33d731b5fbed4ecacf1a57fbce3"
+    }
+  ]
+}

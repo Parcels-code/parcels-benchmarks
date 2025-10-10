@@ -16,7 +16,7 @@ __all__ = ["download_example_dataset","download_datasets"]
 
 # When modifying existing datasets in a backwards incompatible way,
 # make a new release in the repo and update the DATA_REPO_TAG to the new tag
-with open(Path(__file__).parent / "benchmarks.json", "r") as f:
+with open(Path(__file__).parent / "../benchmarks.json", "r") as f:
     config = json.load(f)
 
 DATA_URL = config.get("data_url", "https://surfdrive.surf.nl/index.php/s/7xlfdOFaUGDEmpD/download?path=%2F&files=")
@@ -35,7 +35,7 @@ DATA_URL = config.get("data_url", "https://surfdrive.surf.nl/index.php/s/7xlfdOF
 # See instructions at https://github.com/OceanParcels/parcels-data for adding new datasets
 EXAMPLE_DATA_FILES = {}
 for benchmark in config["benchmarks"]:
-    EXAMPLE_DATA_FILES[benchmark["name"]] = [benchmark["data_url"]]
+    EXAMPLE_DATA_FILES[benchmark["name"]] = [benchmark["file"]]
 
 def _create_pooch_registry() -> dict[str, None]:
     """Collapses the mapping of dataset names to filenames into a pooch registry.
