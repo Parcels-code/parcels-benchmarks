@@ -58,6 +58,7 @@ def _get_pooch(data_home=None):
     if data_home is None:
         data_home = pooch.os_cache("parcels-benchmarks")
 
+    data_home.parent.mkdir(exist_ok=True)
     return pooch.create(
         path=data_home,
         base_url=DATA_URL,
