@@ -83,7 +83,6 @@ def get_diskinfo(cache_folder):
     """
     Gets information about the mount point and disk (if available) that is hosting the cache folder.
     """
-    print(cache_folder)
 
     # Get the device ID for the target path
     try:
@@ -105,56 +104,72 @@ def get_diskinfo(cache_folder):
                     continue
                 
                 if target_dev == mountpoint_dev:
+                    mount_path = mountpoint
                     mount = {
-                        "mount.path": cache_folder,
-                        "mount.device": device,
                         "mount.fs_type": fs_type
                     }
     except FileNotFoundError:
-        # Fallback for systems without /proc/mounts
-        mount = {
-                        "mount.path": cache_folder,
-                        "mount.device": "unknown",
-                        "mount.fs_type": "unknown"
-                    }
-    disks = []
-    for dev in list_block_devices():
-        # Skip virtual devices we don't want to attribute capacity to (loop, ram, dm- are mappers)
-        if dev.startswith("loop") or dev.startswith("ram") or dev.startswith("fd") or dev.startswith("dm-"):
-            continue
-        size_b = get_block_size_bytes(dev)
-        rot = is_rotational(dev)
-        model = get_device_attr(dev, "model")
-        vendor = get_device_attr(dev, "vendor")
-        # NVMe sometimes uses different attributes
-        if model is None and dev.startswith("nvme"):
-            model = get_device_attr(dev, "model") or read_first_matching_line(f"/sys/block/{dev}/device/device/model")
-            vendor = get_device_attr(dev, "vendor") or read_first_matching_line(f"/sys/block/{dev}/device/device/vendor")
+        mount = {"mount.fs_type": "unknown"}
 
-        # Interface type guess (very rough)
-        interface = None
-        try:
-            # e.g., /sys/block/sda/device/subsystem -> .../scsi/
-            subsys = os.path.realpath(f"/sys/block/{dev}/device/subsystem")
-            if "nvme" in subsys:
-                interface = "NVMe"
-            elif "scsi" in subsys:
-                interface = "SCSI/SATA/SAS"
-        except Exception:
-            pass
+    # Seek out the parent physical device that hosts the mount point
+    # This ensures that we identify the physical device, based on whether
+    # it or any of its children partitions host the mount point.
+    try:
+        lsblk_output = subprocess.check_output(["lsblk", "--json"], text=True)
+        lsblk_data = json.loads(lsblk_output)
+    except Exception:
+        lsblk_data = {"blockdevices": []}
 
-        disks.append({
-            "device": dev,
-            "size_gb": size_b/1e9,
-            "interface": interface,
-            "model": model,
-            "vendor": vendor,
-        })
+    for block_device in lsblk_data.get("blockdevices", []):
+        if mount_path in block_device.get("mountpoints"):
+            mount["mount.device"] = block_device.get("name")
+            break
 
-    print(mount)
-    print(disks)
+        if "children" in block_device:
+            # Check children (partitions)
+            for child in block_device.get("children", []):
+                if mount_path in child.get("mountpoints"):
+                    mount["mount.device"] = block_device.get("name")
+                    break
 
-    return disks
+                # Additional children check for virtual devices like LVM, RAID, etc.
+                if "children" in child:
+                    for grandchild in child.get("children", []):
+                        if mount_path in grandchild.get("mountpoints"):
+                            mount["mount.device"] = block_device.get("name")
+                            break
+
+    # Now that we know the block device name, we can get more info about it
+
+    size_b = get_block_size_bytes(mount["mount.device"]) if "mount.device" in mount else None
+    rot = is_rotational(mount["mount.device"]) if "mount.device" in mount else None
+    model = get_device_attr(mount["mount.device"], "model") if "mount.device" in mount else None
+    vendor = get_device_attr(mount["mount.device"], "vendor") if "mount.device" in mount else None
+    # NVMe sometimes uses different attributes
+    if model is None and mount["mount.device"].startswith("nvme"):
+        model = get_device_attr(mount["mount.device"], "model") or read_first_matching_line(f"/sys/block/{mount['mount.device']}/device/device/model")
+        vendor = get_device_attr(mount["mount.device"], "vendor") or read_first_matching_line(f"/sys/block/{mount['mount.device']}/device/device/vendor")
+
+    # Interface type guess (very rough)
+    interface = None
+    try:
+        # e.g., /sys/block/sda/device/subsystem -> .../scsi/
+        subsys = os.path.realpath(f"/sys/block/{mount['mount.device']}/device/subsystem")
+        if "nvme" in subsys:
+            interface = "NVMe"
+        elif "scsi" in subsys:
+            interface = "SCSI/SATA/SAS"
+    except Exception:
+        pass
+
+    mount = mount | {
+            "mount.size_gb": size_b/1e9,
+            "mount.interface": interface,
+            "mount.model": model,
+            "mount.vendor": vendor,
+        }
+
+    return mount
 
 def get_machine(cache_folder):
 
@@ -165,18 +180,21 @@ def get_machine(cache_folder):
         "os.version": platform.version(),
         "os.machine": platform.machine(),
     }
-    machine.append(get_cpuinfo())
-    machine.append(get_meminfo())
-    machine.append(get_diskinfo(cache_folder))
+    machine = machine | get_cpuinfo()
+    machine = machine | get_meminfo()
+    machine = machine | get_diskinfo(cache_folder)
 
     return machine
 
 
 def main():
 
-    dataset_folders, cache_folder = download_datasets()
+    cache_folder = download_datasets()
+    cache_folder = list(cache_folder.values())[0]
+
 
     machine = get_machine(cache_folder)
+
     record = []
     for script in os.listdir("benchmarks"):
         if script.endswith(".py") and ("util.py" not in script):

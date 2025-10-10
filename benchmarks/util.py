@@ -92,13 +92,13 @@ def download_example_dataset(dataset: str, data_home=None):
     odie = _get_pooch(data_home=data_home)
 
     cache_folder = Path(odie.path)
-    dataset_folder = cache_folder / dataset
+    #dataset_folder = cache_folder / dataset
 
     for file_name in odie.registry:
         if file_name.startswith(dataset):
             odie.fetch(file_name)
 
-    return dataset_folder, cache_folder
+    return cache_folder
 
 def download_datasets(data_home=None):
     """Download all datasets listed in the config file to the specified location.
