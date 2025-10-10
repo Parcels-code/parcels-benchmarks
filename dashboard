@@ -1,0 +1,29 @@
+#!/usr/bin/env python3
+
+import pandas as pd
+import json
+
+def read_ndjson(filepath):
+    """
+    Reads a newline-delimited JSON file and returns a list of Python dictionaries.
+    """
+    data = []
+    with open(filepath, 'r', encoding='utf-8') as f:
+        for line in f:
+            # Strip whitespace (including the newline character) from the line
+            # replace single quotes with double quotes for valid JSON
+            stripped_line = line.strip().replace("'", '"')
+            if stripped_line:  # Ensure the line is not empty
+                try:
+                    json_object = json.loads(stripped_line)
+                    data.append(json_object)
+                except json.JSONDecodeError as e:
+                    print(f"Error decoding JSON on line: {stripped_line}. Error: {e}")
+    return data
+
+data = read_ndjson("benchmark_results.jsonl")
+df = pd.DataFrame(data)
+print(df)
+
+
+# TODO : interactive plotting/dashboard
