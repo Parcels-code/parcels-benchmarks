@@ -141,7 +141,7 @@ def get_diskinfo(cache_folder):
 
     # Now that we know the block device name, we can get more info about it
 
-    size_b = get_block_size_bytes(mount["mount.device"]) if "mount.device" in mount else None
+    size_b = get_block_size_bytes(mount["mount.device"]) if "mount.device" in mount else -1
     rot = is_rotational(mount["mount.device"]) if "mount.device" in mount else None
     model = get_device_attr(mount["mount.device"], "model") if "mount.device" in mount else None
     vendor = get_device_attr(mount["mount.device"], "vendor") if "mount.device" in mount else None
