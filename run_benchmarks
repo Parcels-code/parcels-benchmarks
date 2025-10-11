@@ -14,6 +14,18 @@ import os
 import socket
 from benchmarks.util import download_datasets
 
+
+def catch_err(func, nullval=None):
+    """Decorator / wrapper to catch any error and return a reasonable Null value."""
+    def inner(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except Exception:
+            return nullval
+
+    return inner
+
+
 def get_cpuinfo():
     info = {}
     info["cpu.architecture"] = platform.processor()
@@ -174,15 +186,15 @@ def get_diskinfo(cache_folder):
 def get_machine(cache_folder):
 
     machine = {
-        "hostname": socket.gethostname(),
-        "os.system": platform.system(),
-        "os.release": platform.release(),
-        "os.version": platform.version(),
-        "os.machine": platform.machine(),
+        "hostname": catch_err(socket.gethostname, nullval="")(),
+        "os.system": catch_err(platform.system, nullval="")(),
+        "os.release": catch_err(platform.release, nullval="")(),
+        "os.version": catch_err(platform.version, nullval="")(),
+        "os.machine": catch_err(platform.machine, nullval="")(),
     }
-    machine = machine | get_cpuinfo()
-    machine = machine | get_meminfo()
-    machine = machine | get_diskinfo(cache_folder)
+    machine = machine | catch_err(get_cpuinfo, nullval={})()
+    machine = machine | catch_err(get_meminfo, nullval={})()
+    machine = machine | catch_err(get_diskinfo, nullval={})(cache_folder)
 
     return machine
 
