@@ -14,52 +14,158 @@ import os
 import socket
 from benchmarks.util import download_datasets
 
-def get_cpuinfo():
-    info = {}
-    info["cpu.architecture"] = platform.processor()
-    info["cpu.model"] = cpuinfo.get_cpu_info().get('brand_raw', 'unknown')
-    info["cpu.count"] = psutil.cpu_count(logical=False)
-    info["cpu.count_logical"] = psutil.cpu_count(logical=True)
-    info["cpu.freq_MHz"] = psutil.cpu_freq().max
-    return info
 
-def get_meminfo():
-    info = {}
-    try:
-        out = subprocess.check_output(["lshw", "-C", "memory", "-json"], stderr=subprocess.STDOUT, text=True)
-        mem = json.loads(out)
-        for item in mem:
+import functools
+
+
+def catch_err(default_val=None):
+    def decorator(func):
+        @functools.wraps(func)
+        def inner(*args, **kwargs):
+            try:
+                return func(*args, **kwargs)
+            except Exception:
+                return default_val
+
+        return inner
+
+    return decorator
+
+
+class PropertyCollection:
+    @property
+    def __name__(self):
+        return self.__class__.__name__.lower()
+
+    def to_dict(self):
+        """Create dict for all public (no leading underscores) properties.
+
+        Keys will be f'{self.__name__}.{propertyname}' with `self.__name__` defaulting to `self.__class__.__name__.lower()`.
+        """
+        info = {}
+        for attrname, attr in self.__class__.__dict__.items():
+            if isinstance(attr, property) and not attrname.startswith("_"):
+                info |= {f"{self.__name__}.{attrname}": getattr(self, attrname)}
+        return info
+
+
+class CPU(PropertyCollection):
+    @property
+    @catch_err(default_val="")
+    def architecture(self):
+        return platform.processor()
+
+    @property
+    @catch_err(default_val="")
+    def model(self):
+        return cpuinfo.get_cpu_info().get("brand_raw", "unknown")
+
+    @property
+    @catch_err(default_val=-1)
+    def count(self):
+        return psutil.cpu_count(logical=12345)
+
+    @property
+    @catch_err(default_val=-1)
+    def count_logical(self):
+        return psutil.cpu_count(logical=True)
+
+    @property
+    @catch_err(default_val=-1)
+    def freq_MHz(self):
+        return psutil.cpu_freq().max
+
+
+class Host(PropertyCollection):
+    @property
+    @catch_err(default_val="")
+    def hostname(self):
+        return socket.gethostname()
+
+
+class OS(PropertyCollection):
+    @property
+    @catch_err(default_val="")
+    def system(self):
+        return platform.system()
+
+    @property
+    @catch_err(default_val="")
+    def release(self):
+        return platform.release()
+
+    @property
+    @catch_err(default_val="")
+    def version(self):
+        return platform.version()
+
+    @property
+    @catch_err(default_val="")
+    def machine(self):
+        return platform.machine()
+
+
+class Memory(PropertyCollection):
+    @property
+    def __mem_json__(self):
+        out = subprocess.check_output(
+            ["lshw", "-C", "memory", "-json"], stderr=subprocess.STDOUT, text=True
+        )
+        to_json = json.loads(out)
+        for item in to_json:
             if "bank" in item.get("id", ""):
-                info["mem.description"] = item.get("description", "")
-                info["mem.width_bits"] = item.get("width", "")
-                info["mem.clock_MHz"] = item.get("clock", 0) / 1e6
-                break
+                return item
 
-                
-    except Exception:
-        info["mem.description"] = ""
-        info["mem.width_bits"] = ""
-        info["mem.clock_MHz"] = ""
+    @property
+    @catch_err(default_val="")
+    def description(self):
+        return self.__mem_json__.get("description", "")
 
-    return info
+    @property
+    @catch_err(default_val="")
+    def width_bits(self):
+        return self.__mem_json__.get("width", "")
+
+    @property
+    @catch_err(default_val=-1)
+    def freq_MHz(self):
+        return self.__mem_json__.get("clock", 0) / 1e6
+
+
+class Machine:
+    operators = (CPU, Memory, OS, Host)
+
+    def to_dict(self):
+        info = {}
+        for op in self.operators:
+            info |= op().to_dict()
+        return info
+
 
 def read_first_matching_line(path):
     try:
-        with open(path, 'r', encoding='utf-8', errors='ignore') as f:
+        with open(path, "r", encoding="utf-8", errors="ignore") as f:
             return f.read().strip()
     except Exception:
         return ""
-    
+
+
 def get_device_attr(dev, attr):
     # Works for SATA/SAS/NVMe with slight differences; many expose device/{model,vendor}
     p = f"/sys/block/{dev}/device/{attr}"
     return read_first_matching_line(p)
 
+
 def list_block_devices():
     try:
-        return sorted(d for d in os.listdir("/sys/block") if os.path.exists(f"/sys/block/{d}/device"))
+        return sorted(
+            d
+            for d in os.listdir("/sys/block")
+            if os.path.exists(f"/sys/block/{d}/device")
+        )
     except Exception:
         return []
+
 
 def is_rotational(dev):
     path = f"/sys/block/{dev}/queue/rotational"
@@ -67,6 +173,7 @@ def is_rotational(dev):
     if val is None:
         return None
     return val.strip() == "1"
+
 
 def get_block_size_bytes(dev):
     # sector count * 512 (Linux logical sector default; could read /sys/block/DEV/queue/hw_sector_size if needed)
@@ -78,7 +185,7 @@ def get_block_size_bytes(dev):
     except Exception:
         return None
 
- 
+
 def get_diskinfo(cache_folder):
     """
     Gets information about the mount point and disk (if available) that is hosting the cache folder.
@@ -96,18 +203,16 @@ def get_diskinfo(cache_folder):
             for line in f:
                 parts = line.split()
                 device, mountpoint, fs_type = parts[0], parts[1], parts[2]
-                if mountpoint == '/': # Special case for root directory
+                if mountpoint == "/":  # Special case for root directory
                     mountpoint_dev = os.stat(mountpoint).st_dev
                 elif os.path.isdir(mountpoint):
                     mountpoint_dev = os.stat(mountpoint).st_dev
                 else:
                     continue
-                
+
                 if target_dev == mountpoint_dev:
                     mount_path = mountpoint
-                    mount = {
-                        "mount.fs_type": fs_type
-                    }
+                    mount = {"mount.fs_type": fs_type}
     except FileNotFoundError:
         mount = {"mount.fs_type": "unknown"}
 
@@ -141,20 +246,40 @@ def get_diskinfo(cache_folder):
 
     # Now that we know the block device name, we can get more info about it
 
-    size_b = get_block_size_bytes(mount["mount.device"]) if "mount.device" in mount else -1
+    size_b = (
+        get_block_size_bytes(mount["mount.device"]) if "mount.device" in mount else -1e9
+    )
     rot = is_rotational(mount["mount.device"]) if "mount.device" in mount else None
-    model = get_device_attr(mount["mount.device"], "model") if "mount.device" in mount else None
-    vendor = get_device_attr(mount["mount.device"], "vendor") if "mount.device" in mount else None
+    model = (
+        get_device_attr(mount["mount.device"], "model")
+        if "mount.device" in mount
+        else None
+    )
+    vendor = (
+        get_device_attr(mount["mount.device"], "vendor")
+        if "mount.device" in mount
+        else None
+    )
     # NVMe sometimes uses different attributes
     if model is None and mount.get("mount.device", "").startswith("nvme"):
-        model = get_device_attr(mount["mount.device"], "model") or read_first_matching_line(f"/sys/block/{mount['mount.device']}/device/device/model")
-        vendor = get_device_attr(mount["mount.device"], "vendor") or read_first_matching_line(f"/sys/block/{mount['mount.device']}/device/device/vendor")
+        model = get_device_attr(
+            mount["mount.device"], "model"
+        ) or read_first_matching_line(
+            f"/sys/block/{mount['mount.device']}/device/device/model"
+        )
+        vendor = get_device_attr(
+            mount["mount.device"], "vendor"
+        ) or read_first_matching_line(
+            f"/sys/block/{mount['mount.device']}/device/device/vendor"
+        )
 
     # Interface type guess (very rough)
     interface = None
     try:
         # e.g., /sys/block/sda/device/subsystem -> .../scsi/
-        subsys = os.path.realpath(f"/sys/block/{mount['mount.device']}/device/subsystem")
+        subsys = os.path.realpath(
+            f"/sys/block/{mount['mount.device']}/device/subsystem"
+        )
         if "nvme" in subsys:
             interface = "NVMe"
         elif "scsi" in subsys:
@@ -163,27 +288,21 @@ def get_diskinfo(cache_folder):
         pass
 
     mount = mount | {
-            "mount.size_gb": size_b/1e9,
-            "mount.interface": interface,
-            "mount.model": model,
-            "mount.vendor": vendor,
-        }
+        "mount.size_gb": size_b / 1e9,
+        "mount.interface": interface,
+        "mount.model": model,
+        "mount.vendor": vendor,
+    }
 
     return mount
 
+
 def get_machine(cache_folder):
-
-    machine = {
-        "hostname": socket.gethostname(),
-        "os.system": platform.system(),
-        "os.release": platform.release(),
-        "os.version": platform.version(),
-        "os.machine": platform.machine(),
-    }
-    machine = machine | get_cpuinfo()
-    machine = machine | get_meminfo()
-    machine = machine | get_diskinfo(cache_folder)
-
+    machine = Machine().to_dict()
+    try:
+        machine |= get_diskinfo(cache_folder)
+    except Exception:
+        pass
     return machine
 
 
@@ -191,7 +310,6 @@ def main():
 
     cache_folder = download_datasets()
     cache_folder = list(cache_folder.values())[0]
-
 
     machine = get_machine(cache_folder)
 
@@ -215,7 +333,9 @@ def main():
                 except psutil.NoSuchProcess:
                     # The process might have terminated between the poll() and memory_info() call
                     break
-                time.sleep(0.01)  # Adjust sleep interval as needed for desired granularity
+                time.sleep(
+                    0.01
+                )  # Adjust sleep interval as needed for desired granularity
             end_time = time.time()
             result = {
                 "benchmark.timestamp_utc": dt.datetime.utcnow().isoformat() + "Z",
@@ -223,7 +343,6 @@ def main():
                 "benchmark.max_rss_bytes": peak_memory_rss,
                 "benchmark.runtime_s": end_time - start_time,
                 "benchmark.exit_status": proc.returncode,
-
             }
 
             record.append({**result, **machine})
@@ -232,6 +351,7 @@ def main():
     with open("benchmark_results.jsonl", "a") as f:
         for r in record:
             f.write(f"{r}\n")
+
 
 if __name__ == "__main__":
     main()
