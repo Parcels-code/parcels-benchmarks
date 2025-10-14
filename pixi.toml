@@ -18,3 +18,5 @@ uxarray = ">=2025.09.0"
 pooch = ">=1.8.2"
 
 pre_commit = "*"
+psutil = ">=7.1.0,<8"
+py-cpuinfo = ">=9.0.0,<10"

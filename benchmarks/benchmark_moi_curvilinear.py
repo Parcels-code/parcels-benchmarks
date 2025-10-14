@@ -14,14 +14,16 @@ import parcels
 import xgcm
 from parcels.interpolators import XLinear
 
-from utils import retrieve_data_dir
+from util import retrieve_data_dir
 
 DATA_ROOT = retrieve_data_dir(
     url="https://surfdrive.surf.nl/index.php/s/7xlfdOFaUGDEmpD/download?path=%2F&files=Parcels_Benchmarks_MOi_data.zip",
     known_hash="f7816d872897c089eeb07a4e32b7fbcc96a0023ef01ac6c3792f88d8d8893885",
 )
 
-
+def time_moi_curvilinear():
+    run_benchmark()
+    
 def run_benchmark(
         interpolator: str, trace_memory: bool = False,
         surface_simulation: bool =False, preload: bool = False,
