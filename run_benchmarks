@@ -13,7 +13,7 @@ import json
 import os
 import socket
 from benchmarks.util import download_datasets
-
+from importlib.metadata import version
 
 import functools
 
@@ -338,6 +338,7 @@ def main():
                 )  # Adjust sleep interval as needed for desired granularity
             end_time = time.time()
             result = {
+                "benchmark.parcels_version": version("parcels"),
                 "benchmark.timestamp_utc": dt.datetime.utcnow().isoformat() + "Z",
                 "benchmark.script": script,
                 "benchmark.max_rss_bytes": peak_memory_rss,
