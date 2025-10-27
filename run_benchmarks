@@ -434,6 +434,10 @@ def main():
     df = pd.DataFrame(record)
     print(df)
 
+    with open("benchmark_results.jsonl", "a") as f:
+        for r in record:
+            f.write(f"{r}\n")
+            
     if args.upload:
         df = pd.DataFrame(record)
         append_to_google_sheets(df)
