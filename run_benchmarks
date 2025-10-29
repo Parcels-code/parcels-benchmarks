@@ -14,9 +14,84 @@ import os
 import socket
 from benchmarks.util import download_datasets
 from importlib.metadata import version
-
+import os.path
+from google.auth.transport.requests import Request
+from google.oauth2.credentials import Credentials
+from google_auth_oauthlib.flow import InstalledAppFlow
+from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
+import pandas as pd
 import functools
 
+
+# If modifying these scopes, delete the file token.json.
+SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
+
+# The ID and range of a sample spreadsheet.
+SPREADSHEET_ID = "1GcM_i7ROwIblnura0zgv7CS31HfISrzPRyhbN89Q8zs"
+SHEET_NAME = "benchmark_results"
+
+
+def google_auth_workflow():
+  creds = None
+  # The file token.json stores the user's access and refresh tokens, and is
+  # created automatically when the authorization flow completes for the first
+  # time.
+  if os.path.exists("token.json"):
+    creds = Credentials.from_authorized_user_file("token.json", SCOPES)
+  # If there are no (valid) credentials available, let the user log in.
+  if not creds or not creds.valid:
+    if creds and creds.expired and creds.refresh_token:
+      creds.refresh(Request())
+    else:
+      flow = InstalledAppFlow.from_client_secrets_file(
+          "credentials.json", SCOPES
+      )
+      creds = flow.run_local_server(port=0)
+    # Save the credentials for the next run
+    with open("token.json", "w") as token:
+      token.write(creds.to_json())
+
+  return creds
+
+def get_google_sheet_header(svc):
+    resp = svc.spreadsheets().values().get(
+        spreadsheetId=SPREADSHEET_ID, range=f"benchmark_results!1:1"
+    ).execute()
+    return resp.get("values", [[]])[0]
+
+def append_to_google_sheets(df):
+    """Appends the DataFrame `df` to the Google Sheets spreadsheet specified by SPREADSHEET_ID.
+    The DataFrame columns are aligned with the existing sheet header. Missing columns are filled with empty strings.
+    """
+
+    creds = google_auth_workflow()
+
+    # Create the Sheets API service
+    try:
+        service = build("sheets", "v4", credentials=creds)
+
+        # Call the Sheets API
+        sheet = service.spreadsheets()
+    except HttpError as err:
+        print(err)
+
+    header = get_google_sheet_header(service)
+
+    aligned = df.reindex(columns=header or df.columns).fillna("").astype(str)
+    rows = aligned.values.tolist()
+
+    # Simple retry for 429/5xx
+    try:
+        service.spreadsheets().values().append(
+            spreadsheetId=SPREADSHEET_ID,
+            range=f"benchmark_results!A1",
+            valueInputOption="USER_ENTERED",      # let Sheets parse numbers/dates
+            insertDataOption="INSERT_ROWS",
+            body={"values": rows},
+        ).execute()
+    except HttpError as e:
+        raise
 
 def catch_err(default_val=None):
     def decorator(func):
@@ -305,9 +380,17 @@ def get_machine(cache_folder):
         pass
     return machine
 
+def cli():
+    import argparse
+    parser = argparse.ArgumentParser(description="Run benchmarks and record results.")
+    # Add boolean flag for whether or not to upload to Google Sheets
+    parser.add_argument("--upload", action="store_true", help="Upload results to Google Sheets.", default=False)
+    args = parser.parse_args()
+    return args
 
 def main():
 
+    args = cli()
     cache_folder = download_datasets()
     cache_folder = list(cache_folder.values())[0]
 
@@ -347,11 +430,17 @@ def main():
             }
 
             record.append({**result, **machine})
+    
+    df = pd.DataFrame(record)
+    print(df)
 
-    # Write a newline delimited json
     with open("benchmark_results.jsonl", "a") as f:
         for r in record:
             f.write(f"{r}\n")
+            
+    if args.upload:
+        df = pd.DataFrame(record)
+        append_to_google_sheets(df)
 
 
 if __name__ == "__main__":

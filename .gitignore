@@ -4,3 +4,7 @@
 
 # TODO: commit the lockfile once deps are finalized for the environment. This is important.
 pixi.lock
+
+# Prevent users from accidentally committing their auth token and app credentials
+token.json
+credentials.json
