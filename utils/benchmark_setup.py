@@ -41,7 +41,6 @@ def _create_pooch_registry() -> dict[str, None]:
 
 
 POOCH_REGISTRY = _create_pooch_registry()
-print(f"Registry: {POOCH_REGISTRY}")
 
 def _get_pooch(data_home=None):
     if data_home is None:
@@ -82,11 +81,13 @@ def download_example_dataset(dataset: str, data_home=None):
     odie = _get_pooch(data_home=data_home)
     print(f"dataset: {dataset}")
     print(f"Fetching: {DATA_FILES[dataset]}")
-    odie.fetch(DATA_FILES[dataset])
-    cache_folder = Path(odie.path)
+    listing = odie.fetch(DATA_FILES[dataset],processor=pooch.Unzip())
 
-    return cache_folder
+    # as pooch currently returns a file listing while we want a dir,
+    # we find the common parent dir to all files
+    common_parent_dir = min([Path(f) for f in listing], key=lambda f: len(f.parents)).parent
 
+    return common_parent_dir
 
 def download_datasets(data_home=None):
     """Download all datasets listed in the config file to the specified location.
