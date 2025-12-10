@@ -4,5 +4,9 @@
   "project_url": "https://github.com/Parcels-Code/parcels",
   "repo": "https://github.com/Parcels-Code/parcels.git",
   "branches": "v4-dev",
-  "environment_type": "existing"
+  "environment_type": "virtualenv",
+  "default_benchmark_timeout": 1800,
+  "env_dir": ".asv/env",
+  "results_dir": ".asv/results",
+  "html_dir": ".asv/html"
 }
