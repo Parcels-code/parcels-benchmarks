@@ -8,3 +8,9 @@ pixi.lock
 # Prevent users from accidentally committing their auth token and app credentials
 token.json
 credentials.json
+
+# Local package build artifacts
+*.egg-info
+__pycache__
+build/
+parcels/
