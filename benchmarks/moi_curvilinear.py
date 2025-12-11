@@ -71,13 +71,15 @@ class MOICurvilinear:
 
     def time_load_data_3d(self,data_home,interpolator,chunk,npart):
         """Benchmark that times loading the 'U' and 'V' data arrays only for 3-D"""
-        self.ds["U"].load()
-        self.ds["V"].load()
+        for i in range(min(self.ds.coords["time"], 50)):
+            u = self.ds["U"].isel(time=i).load()
+            v = self.ds["V"].isel(time=i).load()
 
     def time_load_data_2d(self,data_home,interpolator,chunk,npart):
         """Benchmark that times loading the 'U' and 'V' data arrays only for 3-D"""
-        self.ds["U"].isel(depth=0, deptht=0).load()
-        self.ds["V"].isel(depth=0, deptht=0).load()
+        for i in range(min(self.ds.coords["time"], 50)):
+            u = self.ds["U"].isel(depth=0, deptht=0,time=i).load()
+            v = self.ds["V"].isel(depth=0, deptht=0,time=i).load()
 
     def time_pset_execute_3d(self,data_home,interpolator,chunk,npart):
         self.coords["Z"] = {"center": "deptht", "left": "depth"}
@@ -106,10 +108,10 @@ class MOICurvilinear:
     def time_pset_execute_surface(self,data_home,interpolator,chunk,npart): 
         ds = self.ds.isel(depth=0, deptht=0)
 
-        grid = parcels._core.xgrid.XGrid(xgcm.Grid(ds, coords=coords, autoparse_metadata=False, periodic=False), mesh="spherical")
+        grid = parcels._core.xgrid.XGrid(xgcm.Grid(ds, coords=self.coords, autoparse_metadata=False, periodic=False), mesh="spherical")
     
-        U = parcels.Field("U", ds["U"], grid, interp_method=interp_method)
-        V = parcels.Field("V", ds["V"], grid, interp_method=interp_method)
+        U = parcels.Field("U", ds["U"], grid, interp_method=self.interp_method)
+        V = parcels.Field("V", ds["V"], grid, interp_method=self.interp_method)
         U.units = parcels.GeographicPolar()
         V.units = parcels.Geographic()
         UV = parcels.VectorField("UV", U, V)
@@ -125,15 +127,15 @@ class MOICurvilinear:
 
         pset.execute(parcels.kernels.AdvectionEE, runtime=runtime, dt=dt, verbose_progress=False)
 
-    def mem_pset_execute_3d(self,data_home,interpolator,chunk,npart):
+    def peakmem_pset_execute_3d(self,data_home,interpolator,chunk,npart):
         self.coords["Z"] = {"center": "deptht", "left": "depth"}
 
         ds = self.ds
 
         grid = parcels._core.xgrid.XGrid(xgcm.Grid(ds, coords=self.coords, autoparse_metadata=False, periodic=False), mesh="spherical")
 
-        U = parcels.Field("U", ds["U"], grid, interp_method=interp_method)
-        V = parcels.Field("V", ds["V"], grid, interp_method=interp_method)
+        U = parcels.Field("U", ds["U"], grid, interp_method=self.interp_method)
+        V = parcels.Field("V", ds["V"], grid, interp_method=self.interp_method)
         U.units = parcels.GeographicPolar()
         V.units = parcels.Geographic()
         UV = parcels.VectorField("UV", U, V)
@@ -149,13 +151,13 @@ class MOICurvilinear:
 
         pset.execute(parcels.kernels.AdvectionEE, runtime=runtime, dt=dt, verbose_progress=False)
         
-    def mem_pset_execute_surface(self,data_home,interpolator,chunk,npart): 
+    def peakmem_pset_execute_surface(self,data_home,interpolator,chunk,npart): 
         ds = self.ds.isel(depth=0, deptht=0)
 
-        grid = parcels._core.xgrid.XGrid(xgcm.Grid(ds, coords=coords, autoparse_metadata=False, periodic=False), mesh="spherical")
+        grid = parcels._core.xgrid.XGrid(xgcm.Grid(ds, coords=self.coords, autoparse_metadata=False, periodic=False), mesh="spherical")
     
-        U = parcels.Field("U", ds["U"], grid, interp_method=interp_method)
-        V = parcels.Field("V", ds["V"], grid, interp_method=interp_method)
+        U = parcels.Field("U", ds["U"], grid, interp_method=self.interp_method)
+        V = parcels.Field("V", ds["V"], grid, interp_method=self.interp_method)
         U.units = parcels.GeographicPolar()
         V.units = parcels.Geographic()
         UV = parcels.VectorField("UV", U, V)
