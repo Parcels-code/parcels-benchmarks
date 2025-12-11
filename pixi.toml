@@ -12,13 +12,9 @@ lint = "pre-commit run --all-files"
 
 python = "3.12.*"
 asv = ">=0.6.5"
-parcels = "=4.0.0alpha1"
-xarray = ">=2025.09.0"
-uxarray = ">=2025.09.0"
 pooch = ">=1.8.2"
 pre_commit = "*"
-psutil = ">=7.1.0,<8"
-py-cpuinfo = ">=9.0.0,<10"
+py-rattler = "0.15.*"
 
 [pypi-dependencies]
 utils = { path = ".", editable = true}
