@@ -44,14 +44,14 @@ class FESOM2:
     def time_load_data(self,data_home,npart,integrator):
         ds = _load_ds(self.datapath)
         for i in range(min(ds.coords["time"].size, 2)):
-            u = ds["U"].isel(time=i).compute()
-            v = ds["V"].isel(time=i).compute()
+            u = ds["u"].isel(time=i).compute()
+            v = ds["v"].isel(time=i).compute()
 
     def time_pset_execute(self,data_home,npart,integrator):
         ds = _load_ds(self.datapath)
         grid = UxGrid(ds.uxgrid, z=ds.coords["nz"], mesh="flat")
-        U = Field(name="U", data=ds.u, grid=grid, interp_method=UXPiecewiseConstantFace)
-        V = Field(name="V", data=ds.v, grid=grid, interp_method=UXPiecewiseConstantFace)
+        U = Field(name="U", data=ds.u, grid=grid, interp_method=UxPiecewiseConstantFace)
+        V = Field(name="V", data=ds.v, grid=grid, interp_method=UxPiecewiseConstantFace)
         U.units = GeographicPolar()
         V.units = Geographic()
         UV = VectorField(name="UV", U=U, V=V) 
@@ -65,9 +65,9 @@ class FESOM2:
 
     def peakmem_pset_execute(self,data_home,npart,integrator):
         ds = _load_ds(self.datapath)
-        grid = UxGrid(ds.uxgrid, z=ds.coords["nz"])
-        U = Field(name="U", data=ds.u, grid=grid, interp_method=UXPiecewiseConstantFace)
-        V = Field(name="V", data=ds.v, grid=grid, interp_method=UXPiecewiseConstantFace)
+        grid = UxGrid(ds.uxgrid, z=ds.coords["nz"], mesh="flat")
+        U = Field(name="U", data=ds.u, grid=grid, interp_method=UxPiecewiseConstantFace)
+        V = Field(name="V", data=ds.v, grid=grid, interp_method=UxPiecewiseConstantFace)
         U.units = GeographicPolar()
         V.units = Geographic()
         UV = VectorField(name="UV", U=U, V=V) 
