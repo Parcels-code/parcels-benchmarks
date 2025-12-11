@@ -63,9 +63,11 @@ class MOICurvilinear:
     def time_load_data_3d(self,data_home,interpolator,chunk,npart):
         """Benchmark that times loading the 'U' and 'V' data arrays only for 3-D"""
 
+        # To have a reasonable runtime, we only consider the time it takes to load two time levels
+        # and two depth levels (at most)
         ds = _load_ds(self.datapath,chunk)
-        for j in range(ds.coords["deptht"].size):
-            for i in range(min(ds.coords["time"].size, 10)):
+        for j in range(min(ds.coords["deptht"].size,2)):
+            for i in range(min(ds.coords["time"].size, 2)):
                 u = ds["U"].isel(deptht=j,time=i).compute()
                 v = ds["V"].isel(deptht=j,time=i).compute()
 
