@@ -6,9 +6,9 @@ This repository houses performance benchmarks for [Parcels](https://github.com/O
 
 ## Development instructions
 
-- install Pixi
+- [install Pixi](https://pixi.sh/dev/installation/) `curl -fsSL https://pixi.sh/install.sh | bash`
 - `pixi install`
-- `pixi run benchmarks`  # not functional yet
+- `pixi run asv run`
 
 You can run the linting with `pixi run lint`
 
