@@ -10,18 +10,27 @@ import xgcm
 from parcels.interpolators import XLinear
 from utils.benchmark_setup import download_example_dataset
 
-data_home = None
-preload = False
-interpolator = "XLinear"
-chunk = 256
-npart = 10000
 runtime = np.timedelta64(2, "D")
 dt = np.timedelta64(15, "m")
 
 class MOICurvilinear:
     """Mercator Ocean International model data based benchmark on a curvilinear grid."""
 
-    def setup(self):
+    params = ( 
+            [None],
+            [False],
+            ["XLinear"],
+            [256],
+            [1000, 10000],
+    )
+    param_names = [
+            "data_home",
+            "preload",
+            "interpolator",
+            "chunk",
+            "npart",
+        ]
+    def setup(self,data_home,preload,interpolator,chunk,npart):
         # Ensure the dataset is downloaded in the desired data_home
         # and obtain the path to the dataset
         datapath = download_example_dataset("MOi-curvilinear", data_home=data_home)
@@ -47,7 +56,7 @@ class MOICurvilinear:
         self.ds = self.ds.rename({"vozocrtx": "U", "vomecrty": "V", "glamf": "lon", "gphif": "lat", "time_counter": "time", "depthw": "depth"})
         self.ds.deptht.attrs["c_grid_axis_shift"] = -0.5
 
-    def teardown(self):
+    def teardown(self,data_home,preload,interpolator,chunk,npart):
         del self.ds
 
 
