@@ -17,19 +17,72 @@ You can run the linting with `pixi run lint`
 
 
 ## Contributing benchmark runs
+We value seeing how Parcels benchmarks perform on a variety of systems. This repository is also used to track the performance of Parcels over time and on systems contributed by each of the developers and willing members of the Parcels community. 
+
+When you run the benchmarks on your system, this will update the benchmark data stored in the `.asv/` directory. You can contribute those changes via a pull request.
+
+### Parcels Developers
+To contribute data as a developer who has write access to this repository,
+
+1. Clone this repository and create a new branch, e.g.
+```
+git clone git@github.com:Parcels-code/parcels-benchmarks.git ~/parcels-benchmarks/
+cd ~/parcels-benchmarks && git checkout -b benchmark-data
+```
+
+2. Run the benchmarks
+```
+pixi run asv run
+```
+
+3. Commit & push your changes
+```
+git add .asv
+git commit
+git push -u origin benchmark-data
+```
+
+4. Open a pull request
+
+### Community members
+Members of the Parcels community without write access to this repository must first [fork this repository](https://github.com/Parcels-code/parcels-benchmarks/fork). Once forked,  you can follow these steps:
+
+
+1. Clone your fork of this repository, e.g.
+```
+git clone git@github.com:<your-github-handle>/parcels-benchmarks.git ~/parcels-benchmarks/
+cd ~/parcels-benchmarks
+```
+
+2. Run the benchmarks
+```
+pixi run asv run
+```
+
+3. Commit & push your changes
+```
+git add .asv
+git commit
+git push
+```
+
+4. Open a pull request
+
 
 ## Adding benchmarks
-You can add benchmarks by including a python script in the `benchmarks/` subdirectory. Additionally, you will need to add the benchmark details to [`benchmarks.json`](./benchmarks.json). Each benchmark entry has the following items :
+Adding benchmarks for parcels typically involves adding a dataset and defining the benchmarks you want to run. 
+
+Data is hosted remotely on a SurfDrive managed by the Parcels developers. You will need to open an issue on this repository to start the process of getting your data hosted in the shared SurfDrive.
+Once your data is hosted, you can add an entry to the `parcels_benchmarks.benchmark_setup.DATA_FILES` list. Each entry has the following attributes
 
 ```
 {
-      "name": "MOi-curvilinear", # Name of the benchmark
-      "path": "benchmarks/benchmark_moi_curvilinear.py", # Path, relative to the root directory of this repository to the benchmark script
-      "file": "Parcels_Benchmarks_MOi_data.zip", # Path, relative to the data_url, to the .zip file containing the benchmark data
-      "known_hash": "f7816d872897c089eeb07a4e32b7fbcc96a0023ef01ac6c3792f88d8d8893885" # Pooch hash of the zip file (currently unused and not required)
+      "name": str # Name of the dataset that you can reference in the benchmarks
+      "file": str, # Path, relative to the data_url, to the .zip file containing the benchmark data
+      "known_hash": str | None # Pooch hash of the zip file; set to None if it is unknown
 },
 ```
 
-## Data availability
+This repository uses [ASV](https://asv.readthedocs.io/) for running benchmarks. You can add benchmarks by including a python script in the `benchmarks/` subdirectory. Within each `benchmarks/*.py` file, we ask that you define a class for the set of benchmarks you plan to run for your dataset. You can use the existing benchmarks as a good starting point for writing your benchmarks.
 
-Data for the benchmarks is hosted at...
+To learn more about writing benchmarks compatible with ASV, see the [ASV "Writing Benchmarks" documentation](https://asv.readthedocs.io/en/latest/writing_benchmarks.html)
