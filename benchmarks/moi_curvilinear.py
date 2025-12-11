@@ -71,13 +71,13 @@ class MOICurvilinear:
 
     def time_load_data_3d(self,data_home,interpolator,chunk,npart):
         """Benchmark that times loading the 'U' and 'V' data arrays only for 3-D"""
-        for i in range(min(self.ds.coords["time"], 50)):
+        for i in range(min(self.ds.coords["time"].size, 50)):
             u = self.ds["U"].isel(time=i).load()
             v = self.ds["V"].isel(time=i).load()
 
     def time_load_data_2d(self,data_home,interpolator,chunk,npart):
         """Benchmark that times loading the 'U' and 'V' data arrays only for 3-D"""
-        for i in range(min(self.ds.coords["time"], 50)):
+        for i in range(min(self.ds.coords["time"].size, 50)):
             u = self.ds["U"].isel(depth=0, deptht=0,time=i).load()
             v = self.ds["V"].isel(depth=0, deptht=0,time=i).load()
 
