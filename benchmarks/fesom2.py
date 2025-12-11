@@ -49,7 +49,7 @@ class FESOM2:
 
     def time_pset_execute(self,data_home,npart,integrator):
         ds = _load_ds(self.datapath)
-        grid = UxGrid(ds.uxgrid, z=ds.coords["nz"])
+        grid = UxGrid(ds.uxgrid, z=ds.coords["nz"], mesh="flat")
         U = Field(name="U", data=ds.u, grid=grid, interp_method=UXPiecewiseConstantFace)
         V = Field(name="V", data=ds.v, grid=grid, interp_method=UXPiecewiseConstantFace)
         U.units = GeographicPolar()
