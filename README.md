@@ -15,6 +15,10 @@ You can run the linting with `pixi run lint`
 > [!IMPORTANT]
 > We recommend that you download the benchmark data before running benchmarks using `pixi run python -m utils.bechmark_setup download --all`. Currently, you will need at least 50GB of disk space available to store the benchmark data.
 
+To view the benchmark data
+
+- `pixi run asv publish`
+- `pixi run asv preview`
 
 ## Contributing benchmark runs
 We value seeing how Parcels benchmarks perform on a variety of systems. This repository is also used to track the performance of Parcels over time and on systems contributed by each of the developers and willing members of the Parcels community. 
