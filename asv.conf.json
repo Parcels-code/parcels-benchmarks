@@ -9,5 +9,13 @@
   "default_benchmark_timeout": 1800,
   "env_dir": ".asv/env",
   "results_dir": ".asv/results",
-  "html_dir": ".asv/html"
+  "html_dir": ".asv/html",
+  "build_command": [],
+  "install_command": [
+    "in-dir={conf_dir} python -m pip install .",
+    "in-dir={build_dir} python -m pip install ."
+  ],
+  "uninstall_command": [
+    "return-code=any python -m pip uninstall -y parcels parcels_benchmarks"
+  ]
 }

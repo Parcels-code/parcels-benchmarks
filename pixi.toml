@@ -17,4 +17,4 @@ pre_commit = "*"
 py-rattler = "0.15.*"
 
 [pypi-dependencies]
-utils = { path = ".", editable = true}
+parcels_benchmarks = { path = ".", editable = true}
