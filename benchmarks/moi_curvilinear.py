@@ -88,8 +88,8 @@ class MOICurvilinear:
 
         grid = parcels._core.xgrid.XGrid(xgcm.Grid(ds, coords=self.coords, autoparse_metadata=False, periodic=False), mesh="spherical")
 
-        U = parcels.Field("U", ds["U"], grid, interp_method=interp_method)
-        V = parcels.Field("V", ds["V"], grid, interp_method=interp_method)
+        U = parcels.Field("U", ds["U"], grid, interp_method=self.interp_method)
+        V = parcels.Field("V", ds["V"], grid, interp_method=self.interp_method)
         U.units = parcels.GeographicPolar()
         V.units = parcels.Geographic()
         UV = parcels.VectorField("UV", U, V)
