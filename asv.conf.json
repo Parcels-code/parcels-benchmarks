@@ -5,6 +5,7 @@
   "repo": "https://github.com/Parcels-Code/parcels.git",
   "branches": ["v4-dev"],
   "environment_type": "rattler",
+  "conda_channels": ["conda-forge", "defaults", "https://repo.prefix.dev/parcels"],
   "default_benchmark_timeout": 1800,
   "env_dir": ".asv/env",
   "results_dir": ".asv/results",

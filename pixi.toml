@@ -1,6 +1,6 @@
 [workspace]
 authors = ["parcels-benchmarks contributors"]
-channels = ["conda-forge", "https://repo.prefix.dev/parcels"]
+channels = ["conda-forge"]
 name = "parcels-benchmarks"
 platforms = ["win-64", "linux-64", "osx-64", "osx-arm64"]
 
