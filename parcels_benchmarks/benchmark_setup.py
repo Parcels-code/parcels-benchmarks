@@ -63,9 +63,8 @@ def download_example_dataset(dataset: str, data_home=None):
     dataset : str
         Name of the dataset to load.
     data_home : pathlike, optional
-        The directory in which to cache data. If not specified, the value
-        of the ``PARCELS_EXAMPLE_DATA`` environment variable, if any, is used.
-        Otherwise the default location is assigned by :func:`get_data_home`.
+        The directory in which to cache data. If not specified, defaults to wherever
+        pooch.os_cache("parcels-benchmarks") goes on your system.
 
     Returns
     -------
