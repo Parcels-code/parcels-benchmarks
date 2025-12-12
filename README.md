@@ -13,7 +13,9 @@ This repository houses performance benchmarks for [Parcels](https://github.com/O
 You can run the linting with `pixi run lint`
 
 > [!IMPORTANT]
-> We recommend that you download the benchmark data before running benchmarks using `pixi run python -m utils.bechmark_setup download --all`. Currently, you will need at least 50GB of disk space available to store the benchmark data.
+> The default path for the benchmark data is set by [pooch.os_cache](https://www.fatiando.org/pooch/latest/api/generated/pooch.os_cache.html), which typically is a subdirectory of your home directory. Currently, you will need at least 50GB of disk space available to store the benchmark data. 
+> To change the location of the benchmark data cache, you can set the environment variable `PARCELS_DATADIR` to a preferred location to store the benchmark data. 
+
 
 To view the benchmark data
 
