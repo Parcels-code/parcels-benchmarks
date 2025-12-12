@@ -195,18 +195,6 @@ def cli() -> argparse.ArgumentParser:
         help="Name of the dataset.",
     )
 
-    # retrieve-archive (optional, wraps retrieve_data_dir)
-    retrieve_parser = subparsers.add_parser(
-        "retrieve-archive",
-        help="Retrieve and unpack an arbitrary archive via pooch.retrieve.",
-    )
-    retrieve_parser.add_argument("url", help="URL of the archive to retrieve.")
-    retrieve_parser.add_argument(
-        "--hash",
-        dest="known_hash",
-        default=None,
-        help="Known hash for the archive (e.g. 'md5:...').",
-    )
 
     return parser
 
