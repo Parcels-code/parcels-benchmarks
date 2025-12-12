@@ -2,7 +2,6 @@ import argparse
 from datetime import datetime, timedelta
 import json
 import os
-from parcels._v3to4 import patch_dataset_v4_compat
 from pathlib import Path
 import pooch
 import sys
