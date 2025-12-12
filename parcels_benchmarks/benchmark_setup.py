@@ -128,10 +128,8 @@ def retrieve_data_dir(
 
 def list_datasets():
     """Print available dataset names and their files."""
-    for name, files in DATA_FILES.items():
-        print(f"{name}:")
-        for f in files:
-            print(f"  - {f}")
+    for name, file in DATA_FILES.items():
+        print(f"{name}: {file}")
 
 
 def dataset_cache_root(data_home=None) -> Path:
