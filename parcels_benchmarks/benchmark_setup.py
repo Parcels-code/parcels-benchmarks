@@ -159,8 +159,8 @@ def cli() -> argparse.ArgumentParser:
         type=str,
         default=None,
         help=(
-            "Directory in which to cache data. Defaults to $PARCELS_EXAMPLE_DATA "
-            "or the pooch cache directory if not set."
+            'Directory in which to cache data. Defaults to wherever pooch.os_cache("parcels-benchmarks")'
+            'goes on your system.'
         ),
     )
 
