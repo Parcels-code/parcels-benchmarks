@@ -234,10 +234,6 @@ def main(argv=None) -> int:
             print(f"  {p}")
         return 0
 
-    if args.command == "retrieve-archive":
-        local_dir = retrieve_data_dir(args.url, known_hash=args.known_hash)
-        print(local_dir)
-        return 0
 
     parser.error(f"Unknown command {args.command!r}")
 
