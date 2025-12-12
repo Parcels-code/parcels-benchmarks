@@ -23,56 +23,8 @@ To view the benchmark data
 - `pixi run asv preview`
 
 ## Contributing benchmark runs
-We value seeing how Parcels benchmarks perform on a variety of systems. This repository is also used to track the performance of Parcels over time and on systems contributed by each of the developers and willing members of the Parcels community. 
+We value seeing how Parcels benchmarks perform on a variety of systems. At this time, the Parcels developers are discussing strategies for centrally managing benchmarks contributed by all of the developers and the Parcels community. 
 
-When you run the benchmarks on your system, this will update the benchmark data stored in the `.asv/` directory. You can contribute those changes via a pull request.
-
-### Parcels Developers
-To contribute data as a developer who has write access to this repository,
-
-1. Clone this repository and create a new branch, e.g.
-```
-git clone git@github.com:Parcels-code/parcels-benchmarks.git ~/parcels-benchmarks/
-cd ~/parcels-benchmarks && git checkout -b benchmark-data
-```
-
-2. Run the benchmarks
-```
-pixi run asv run
-```
-
-3. Commit & push your changes
-```
-git add .asv
-git commit
-git push -u origin benchmark-data
-```
-
-4. Open a pull request
-
-### Community members
-Members of the Parcels community without write access to this repository must first [fork this repository](https://github.com/Parcels-code/parcels-benchmarks/fork). Once forked,  you can follow these steps:
-
-
-1. Clone your fork of this repository, e.g.
-```
-git clone git@github.com:<your-github-handle>/parcels-benchmarks.git ~/parcels-benchmarks/
-cd ~/parcels-benchmarks
-```
-
-2. Run the benchmarks
-```
-pixi run asv run
-```
-
-3. Commit & push your changes
-```
-git add .asv
-git commit
-git push
-```
-
-4. Open a pull request
 
 
 ## Adding benchmarks

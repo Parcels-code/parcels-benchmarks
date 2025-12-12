@@ -14,4 +14,5 @@ credentials.json
 __pycache__
 build/
 parcels/
-.asv/env
+.asv/
+
