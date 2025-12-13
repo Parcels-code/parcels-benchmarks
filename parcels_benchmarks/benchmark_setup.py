@@ -7,7 +7,7 @@ import pooch
 import sys
 import xarray as xr
 
-PARCELS_DATADIR = os.getenv("PARCELS_DATADIR",default=None)
+PARCELS_DATADIR = Path(os.getenv("PARCELS_DATADIR", default=None))
 # When modifying existing datasets in a backwards incompatible way,
 # make a new release in the repo and update the DATA_REPO_TAG to the new tag
 BENCHMARK_DATA = [
