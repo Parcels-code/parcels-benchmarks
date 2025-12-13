@@ -109,9 +109,6 @@ def download_datasets(data_home=None):
 
 
 def main(argv=None) -> int:
-    parser = cli()
-    args = parser.parse_args(argv)
-
     folders = download_datasets(data_home=PARCELS_DATADIR)
     print("Downloaded datasets:")
     for name, folder in folders.items():
