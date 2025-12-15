@@ -1,3 +1,23 @@
+[build-system]
+requires = ["setuptools>=61", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "parcels_benchmarks"
+version = "0.1.0"
+description = "Helper utilities for Parcels benchmarks"
+requires-python = ">=3.10"
+authors = [{ name = "Parcels team" }]
+dependencies = [
+  "xarray",
+  "pooch",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["parcels_benchmarks"]
+
+
 [tool.ruff.lint]
 select = [
   "E", # Error

@@ -1,6 +1,6 @@
 [workspace]
 authors = ["parcels-benchmarks contributors"]
-channels = ["conda-forge", "https://repo.prefix.dev/parcels"]
+channels = ["conda-forge"]
 name = "parcels-benchmarks"
 platforms = ["win-64", "linux-64", "osx-64", "osx-arm64"]
 
@@ -11,15 +11,10 @@ lint = "pre-commit run --all-files"
 [dependencies]
 
 python = "3.12.*"
-# asv = ">=0.6.5"
-parcels = "=4.0.0alpha1"
-xarray = ">=2025.09.0"
-uxarray = ">=2025.09.0"
+asv = ">=0.6.5"
 pooch = ">=1.8.2"
-google-api-python-client = "*"
-google-auth-httplib2 = "*"
-google-auth-oauthlib = "*"
-
 pre_commit = "*"
-psutil = ">=7.1.0,<8"
-py-cpuinfo = ">=9.0.0,<10"
+py-rattler = "0.15.*"
+
+[pypi-dependencies]
+parcels_benchmarks = { path = ".", editable = true}
