@@ -23,7 +23,32 @@ To view the benchmark data
 - `pixi run asv preview`
 
 ## Contributing benchmark runs
-We value seeing how Parcels benchmarks perform on a variety of systems. At this time, the Parcels developers are discussing strategies for centrally managing benchmarks contributed by all of the developers and the Parcels community. 
+We value seeing how Parcels benchmarks perform on a variety of systems. When you run the benchmarks, this adds data to the `results/` subdirectory in this repository. After running the benchmarks, you can commit the changes made to the `results/` subdirectory and open a pull request to contribute your benchmark results.
+
+### Parcels Community Members
+Members of the Parcels community can contribute benchmark data using the following steps
+
+1. [Create a fork of this repository](https://github.com/Parcels-code/parcels-benchmarks/fork)
+
+2. Clone your fork onto your system
+```
+git clone git@github.com:<your-github-handle>/parcels-benchmarks.git ~/parcels-benchmarks
+```
+
+3. Run the benchmarks
+```
+cd ~/parcels-benchmarks
+pixi run asv run
+```
+
+4. Commit your benchmark data and push the changes back to your fork, e.g.
+```
+git add results
+git commit -m "Add benchmark data"
+git push origin main
+```
+
+5. [Open a pull request from your fork](https://github.com/Parcels-code/parcels-benchmarks/compare)
 
 
 

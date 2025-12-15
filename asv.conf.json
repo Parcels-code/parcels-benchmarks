@@ -8,8 +8,8 @@
   "conda_channels": ["conda-forge", "defaults", "https://repo.prefix.dev/parcels"],
   "default_benchmark_timeout": 1800,
   "env_dir": ".asv/env",
-  "results_dir": ".asv/results",
-  "html_dir": ".asv/html",
+  "results_dir": "results",
+  "html_dir": "html",
   "build_command": [],
   "install_command": [
     "in-dir={conf_dir} python -m pip install .",

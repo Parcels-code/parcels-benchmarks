@@ -1,0 +1,153 @@
+{
+    "fesom2.FESOM2.peakmem_pset_execute": {
+        "code": "class FESOM2:\n    def peakmem_pset_execute(self,npart,integrator):\n        self.pset_execute(npart,integrator)\n\n    def setup(self,npart,integrator):\n        # Ensure the dataset is downloaded in the desired data_home\n        # and obtain the path to the dataset\n        self.datapath = download_example_dataset(\"FESOM-baroclinic-gyre\", data_home=PARCELS_DATADIR)",
+        "name": "fesom2.FESOM2.peakmem_pset_execute",
+        "param_names": [
+            "npart",
+            "integrator"
+        ],
+        "params": [
+            [
+                "10000"
+            ],
+            [
+                "<function AdvectionEE>"
+            ]
+        ],
+        "type": "peakmemory",
+        "unit": "bytes",
+        "version": "ab7f8816471a66025031355439b0d0e5758db62a01943003c975155bf7937a41"
+    },
+    "fesom2.FESOM2.time_load_data": {
+        "code": "class FESOM2:\n    def time_load_data(self,npart,integrator):\n        ds = _load_ds(self.datapath)\n        for i in range(min(ds.coords[\"time\"].size, 2)):\n            u = ds[\"u\"].isel(time=i).compute()\n            v = ds[\"v\"].isel(time=i).compute()\n\n    def setup(self,npart,integrator):\n        # Ensure the dataset is downloaded in the desired data_home\n        # and obtain the path to the dataset\n        self.datapath = download_example_dataset(\"FESOM-baroclinic-gyre\", data_home=PARCELS_DATADIR)",
+        "min_run_count": 2,
+        "name": "fesom2.FESOM2.time_load_data",
+        "number": 0,
+        "param_names": [
+            "npart",
+            "integrator"
+        ],
+        "params": [
+            [
+                "10000"
+            ],
+            [
+                "<function AdvectionEE>"
+            ]
+        ],
+        "repeat": 0,
+        "rounds": 2,
+        "sample_time": 0.01,
+        "type": "time",
+        "unit": "seconds",
+        "version": "7defb4b61a8585cb3c651b48644d56889df18164cf2e698aae38c77ec76fb217",
+        "warmup_time": -1
+    },
+    "fesom2.FESOM2.time_pset_execute": {
+        "code": "class FESOM2:\n    def time_pset_execute(self,npart,integrator):\n        self.pset_execute(npart,integrator)\n\n    def setup(self,npart,integrator):\n        # Ensure the dataset is downloaded in the desired data_home\n        # and obtain the path to the dataset\n        self.datapath = download_example_dataset(\"FESOM-baroclinic-gyre\", data_home=PARCELS_DATADIR)",
+        "min_run_count": 2,
+        "name": "fesom2.FESOM2.time_pset_execute",
+        "number": 0,
+        "param_names": [
+            "npart",
+            "integrator"
+        ],
+        "params": [
+            [
+                "10000"
+            ],
+            [
+                "<function AdvectionEE>"
+            ]
+        ],
+        "repeat": 0,
+        "rounds": 2,
+        "sample_time": 0.01,
+        "type": "time",
+        "unit": "seconds",
+        "version": "6882e5d728e7deaae781532989e23a08bcb4c0f83a9d39856368789cfd1b6422",
+        "warmup_time": -1
+    },
+    "moi_curvilinear.MOICurvilinear.peakmem_pset_execute_3d": {
+        "code": "class MOICurvilinear:\n    def peakmem_pset_execute_3d(self,interpolator,chunk,npart):\n        self.pset_execute_3d(interpolator,chunk,npart)\n\n    def setup(self,interpolator,chunk,npart):\n        self.datapath = download_example_dataset(\"MOi-curvilinear\", data_home=PARCELS_DATADIR)",
+        "name": "moi_curvilinear.MOICurvilinear.peakmem_pset_execute_3d",
+        "param_names": [
+            "interpolator",
+            "chunk",
+            "npart"
+        ],
+        "params": [
+            [
+                "'XLinear'"
+            ],
+            [
+                "256"
+            ],
+            [
+                "10000"
+            ]
+        ],
+        "type": "peakmemory",
+        "unit": "bytes",
+        "version": "1670e704892efb7d270195da9c37d8662e61c8cd8f1f32313bcc9cfe582fbe0a"
+    },
+    "moi_curvilinear.MOICurvilinear.time_load_data_3d": {
+        "code": "class MOICurvilinear:\n    def time_load_data_3d(self,interpolator,chunk,npart):\n        \"\"\"Benchmark that times loading the 'U' and 'V' data arrays only for 3-D\"\"\"\n    \n        # To have a reasonable runtime, we only consider the time it takes to load two time levels\n        # and two depth levels (at most)\n        ds = _load_ds(self.datapath,chunk)\n        for j in range(min(ds.coords[\"deptht\"].size,2)):\n            for i in range(min(ds.coords[\"time\"].size, 2)):\n                u = ds[\"U\"].isel(deptht=j,time=i).compute()\n                v = ds[\"V\"].isel(deptht=j,time=i).compute()\n\n    def setup(self,interpolator,chunk,npart):\n        self.datapath = download_example_dataset(\"MOi-curvilinear\", data_home=PARCELS_DATADIR)",
+        "min_run_count": 2,
+        "name": "moi_curvilinear.MOICurvilinear.time_load_data_3d",
+        "number": 0,
+        "param_names": [
+            "interpolator",
+            "chunk",
+            "npart"
+        ],
+        "params": [
+            [
+                "'XLinear'"
+            ],
+            [
+                "256"
+            ],
+            [
+                "10000"
+            ]
+        ],
+        "repeat": 0,
+        "rounds": 2,
+        "sample_time": 0.01,
+        "type": "time",
+        "unit": "seconds",
+        "version": "4a280bad870a3ba30b64c7d0c2e6b0bd6203a9eb48f9177a4fa6c787dfe27bdd",
+        "warmup_time": -1
+    },
+    "moi_curvilinear.MOICurvilinear.time_pset_execute_3d": {
+        "code": "class MOICurvilinear:\n    def time_pset_execute_3d(self,interpolator,chunk,npart):\n        self.pset_execute_3d(interpolator,chunk,npart)\n\n    def setup(self,interpolator,chunk,npart):\n        self.datapath = download_example_dataset(\"MOi-curvilinear\", data_home=PARCELS_DATADIR)",
+        "min_run_count": 2,
+        "name": "moi_curvilinear.MOICurvilinear.time_pset_execute_3d",
+        "number": 0,
+        "param_names": [
+            "interpolator",
+            "chunk",
+            "npart"
+        ],
+        "params": [
+            [
+                "'XLinear'"
+            ],
+            [
+                "256"
+            ],
+            [
+                "10000"
+            ]
+        ],
+        "repeat": 0,
+        "rounds": 2,
+        "sample_time": 0.01,
+        "type": "time",
+        "unit": "seconds",
+        "version": "b594c41edc1306b933a679751dba7268cf03f760f34f74b8823dbf25be7641bf",
+        "warmup_time": -1
+    },
+    "version": 2
+}
