@@ -65,71 +65,42 @@ class MOICurvilinear:
                 v = ds["V"].isel(deptht=j,time=i).compute()
 
 
+    def pset_execute_3d(self,interpolator,chunk,npart):
+        ds = _load_ds(self.datapath,chunk)
+        coords={
+            "X": {"left": "x"},
+            "Y": {"left": "y"},
+            "Z": {"center": "deptht", "left": "depth"},
+            "T": {"center": "time"},
+        }
+
+        grid = parcels._core.xgrid.XGrid(xgcm.Grid(ds, coords=coords, autoparse_metadata=False, periodic=False), mesh="spherical")
+
+        if interpolator == "XLinear":
+            interp_method = XLinear
+        else:
+            raise ValueError(f"Unknown interpolator: {interpolator}")
+
+        U = parcels.Field("U", ds["U"], grid, interp_method=interp_method)
+        V = parcels.Field("V", ds["V"], grid, interp_method=interp_method)
+        U.units = parcels.GeographicPolar()
+        V.units = parcels.Geographic()
+        UV = parcels.VectorField("UV", U, V)
+    
+        fieldset = parcels.FieldSet([U, V, UV])
+    
+        pclass = parcels.Particle
+
+        lon = np.linspace(-10, 10, npart)
+        lat = np.linspace(-30, -20, npart)
+
+        pset = parcels.ParticleSet(fieldset=fieldset, pclass=pclass, lon=lon, lat=lat)
+
+        pset.execute(parcels.kernels.AdvectionEE, runtime=runtime, dt=dt, verbose_progress=False)
+
     def time_pset_execute_3d(self,interpolator,chunk,npart):
+        self.pset_execute_3d(interpolator,chunk,npart)
 
-        ds = _load_ds(self.datapath,chunk)
-        coords={
-            "X": {"left": "x"},
-            "Y": {"left": "y"},
-            "Z": {"center": "deptht", "left": "depth"},
-            "T": {"center": "time"},
-        }
-
-        grid = parcels._core.xgrid.XGrid(xgcm.Grid(ds, coords=coords, autoparse_metadata=False, periodic=False), mesh="spherical")
-
-        if interpolator == "XLinear":
-            interp_method = XLinear
-        else:
-            raise ValueError(f"Unknown interpolator: {interpolator}")
-
-        U = parcels.Field("U", ds["U"], grid, interp_method=interp_method)
-        V = parcels.Field("V", ds["V"], grid, interp_method=interp_method)
-        U.units = parcels.GeographicPolar()
-        V.units = parcels.Geographic()
-        UV = parcels.VectorField("UV", U, V)
-    
-        fieldset = parcels.FieldSet([U, V, UV])
-    
-        pclass = parcels.Particle
-
-        lon = np.linspace(-10, 10, npart)
-        lat = np.linspace(-30, -20, npart)
-
-        pset = parcels.ParticleSet(fieldset=fieldset, pclass=pclass, lon=lon, lat=lat)
-
-        pset.execute(parcels.kernels.AdvectionEE, runtime=runtime, dt=dt, verbose_progress=False)
-        
     def peakmem_pset_execute_3d(self,interpolator,chunk,npart):
+        self.pset_execute_3d(interpolator,chunk,npart)
 
-
-        ds = _load_ds(self.datapath,chunk)
-        coords={
-            "X": {"left": "x"},
-            "Y": {"left": "y"},
-            "Z": {"center": "deptht", "left": "depth"},
-            "T": {"center": "time"},
-        }
-
-        grid = parcels._core.xgrid.XGrid(xgcm.Grid(ds, coords=coords, autoparse_metadata=False, periodic=False), mesh="spherical")
-
-        if interpolator == "XLinear":
-            interp_method = XLinear
-        else:
-            raise ValueError(f"Unknown interpolator: {interpolator}")
-
-        U = parcels.Field("U", ds["U"], grid, interp_method=interp_method)
-        V = parcels.Field("V", ds["V"], grid, interp_method=interp_method)
-        U.units = parcels.GeographicPolar()
-        V.units = parcels.Geographic()
-        UV = parcels.VectorField("UV", U, V)
-    
-        fieldset = parcels.FieldSet([U, V, UV])
-    
-        pclass = parcels.Particle
-
-        lon = np.linspace(-10, 10, npart)
-        lat = np.linspace(-30, -20, npart)
-
-        pset = parcels.ParticleSet(fieldset=fieldset, pclass=pclass, lon=lon, lat=lat)
-
-        pset.execute(parcels.kernels.AdvectionEE, runtime=runtime, dt=dt, verbose_progress=False)
