@@ -45,7 +45,7 @@ class FESOM2:
             u = ds["u"].isel(time=i).compute()
             v = ds["v"].isel(time=i).compute()
 
-    def time_pset_execute(self,npart,integrator):
+    def pset_execute(self,npart,integrator):
         ds = _load_ds(self.datapath)
         grid = UxGrid(ds.uxgrid, z=ds.coords["nz"], mesh="flat")
         U = Field(name="U", data=ds.u, grid=grid, interp_method=UxPiecewiseConstantFace)
@@ -60,19 +60,9 @@ class FESOM2:
 
         pset = ParticleSet(fieldset=fieldset, pclass=Particle, lon=lon, lat=lat)
         pset.execute(runtime=runtime, dt=dt, pyfunc=integrator)
+
+    def time_pset_execute(self,npart,integrator):
+        self.pset_execute(npart,integrator)
 
     def peakmem_pset_execute(self,npart,integrator):
-        ds = _load_ds(self.datapath)
-        grid = UxGrid(ds.uxgrid, z=ds.coords["nz"], mesh="flat")
-        U = Field(name="U", data=ds.u, grid=grid, interp_method=UxPiecewiseConstantFace)
-        V = Field(name="V", data=ds.v, grid=grid, interp_method=UxPiecewiseConstantFace)
-        U.units = GeographicPolar()
-        V.units = Geographic()
-        UV = VectorField(name="UV", U=U, V=V) 
-        fieldset = FieldSet([UV, UV.U, UV.V])
-
-        lon = np.linspace(2.0,15.0,npart)
-        lat = np.linspace(32.0,19.0,npart)
-
-        pset = ParticleSet(fieldset=fieldset, pclass=Particle, lon=lon, lat=lat)
-        pset.execute(runtime=runtime, dt=dt, pyfunc=integrator)
+        self.pset_execute(npart,integrator)
