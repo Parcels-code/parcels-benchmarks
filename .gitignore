@@ -15,4 +15,5 @@ __pycache__
 build/
 parcels/
 .asv/
+html/
 
