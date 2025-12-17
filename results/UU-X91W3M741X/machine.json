@@ -1,0 +1,9 @@
+{
+    "arch": "arm64",
+    "cpu": "Apple M1 Pro",
+    "machine": "UU-X91W3M741X",
+    "num_cpu": "8",
+    "os": "Darwin 25.1.0",
+    "ram": "17179869184",
+    "version": 1
+}
