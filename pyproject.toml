@@ -11,11 +11,21 @@ authors = [{ name = "Parcels team" }]
 dependencies = [
   "xarray",
   "pooch",
+  "typer>=0.9",
 ]
+
+# This creates an installable CLI command: `parcels-benchmarks ...`
+[project.scripts]
+parcels-benchmarks = "parcels_benchmarks.benchmark_setup:main"
+
 
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["parcels_benchmarks"]
+
+# Include the benchmarks manifest in the wheel/sdist
+[tool.setuptools.package-data]
+parcels_benchmarks = ["*.json"]
 
 
 [tool.ruff.lint]
