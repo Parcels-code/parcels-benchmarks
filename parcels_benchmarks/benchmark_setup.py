@@ -75,7 +75,7 @@ def _create_pooch_registry(manifest: dict) -> dict[str, str | None]:
 
 
 def _get_pooch(manifest: dict, data_home: Path | None=None)->pooch.Pooch:
-    cache_dir = _cache_dire(data_home)
+    cache_dir = _cache_dir(data_home)
     registry = _create_pooch_registry(manifest)
     cache_dir.parent.mkdir(parents=True,exist_ok=True)
     return pooch.create(
@@ -140,8 +140,8 @@ def download_all(
         dataset_folders[dataset] = folder
     return dataset_folders
 
-@app.command("add-remote")
-def add_remote_dataset(
+@app.command("add-dataset")
+def add_dataset(
     name: str = typer.Option(..., help="New dataset name to add to the manifest."),
     file: str = typer.Option(..., help="Zip filename available at data_url (e.g. Foo.zip)."),
     manifest: Path = typer.Option(DEFAULT_MANIFEST, help="Path to benchmarks manifest JSON."),
@@ -156,9 +156,9 @@ def add_remote_dataset(
     - append {name,file,known_hash} to the manifest
     """
     m = _load_manifest(manifest)
-    by_name = _dataset_by_name(m)
+    datasets = _datasets_by_name(m)
 
-    if name in by_name:
+    if name in datasets:
         raise typer.BadParameter(f"Dataset {name!r} already exists in manifest.")
 
     # Also prevent duplicates by file
@@ -179,7 +179,7 @@ def add_remote_dataset(
         path=cache_dir,
         processor=None,
     )
-    typer.echo(f"  Downloaded zip -> {zip_path}")
+    typer.echo(f"  Downloaded zip -> {Path(result)}")
 
     digest = pooch.file_hash(Path(result))
     known_hash = f"sha256:{digest}"
@@ -192,7 +192,9 @@ def add_remote_dataset(
         path=cache_dir,
         processor=pooch.Unzip(),
     )
-    typer.echo(f"  Unzipped -> {folder}")
+    files = [Path(p) for p in result]
+    common_parent_dir = min(files, key=lambda p: len(p.parents)).parent
+    typer.echo(f"  Unzipped -> {common_parent_dir}")
 
     # Append to manifest
     m["datasets"].append({"name": name, "file": file, "known_hash": known_hash})
