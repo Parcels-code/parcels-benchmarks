@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 import json
 import os
 from pathlib import Path
+from typing import Any
 import pooch
 import sys
 import xarray as xr
@@ -72,8 +73,6 @@ def _create_pooch_registry(manifest: dict) -> dict[str, str | None]:
         registry[data["file"]] = data.get("known_hash")
     return registry
 
-
-POOCH_REGISTRY = _create_pooch_registry()
 
 def _get_pooch(manifest: dict, data_home: Path | None=None)->pooch.Pooch:
     cache_dir = _cache_dire(data_home)

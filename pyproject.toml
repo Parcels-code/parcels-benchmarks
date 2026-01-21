@@ -14,9 +14,9 @@ dependencies = [
   "typer>=0.9",
 ]
 
-# This creates an installable CLI command: `parcels-benchmarks ...`
+# This creates an installable CLI command: `benchmark-setup ...`
 [project.scripts]
-parcels-benchmarks = "parcels_benchmarks.benchmark_setup:main"
+benchmark-setup = "parcels_benchmarks.benchmark_setup:main"
 
 
 [tool.setuptools.packages.find]
