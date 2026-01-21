@@ -69,7 +69,7 @@ def _create_pooch_registry(manifest: dict) -> dict[str, str | None]:
     Hashes are set to None for all files.
     """
     registry: dict[str, str | None] = {}
-    for data in manifests["datasets"]:
+    for data in manifest["datasets"]:
         registry[data["file"]] = data.get("known_hash")
     return registry
 

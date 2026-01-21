@@ -3,15 +3,12 @@ import uxarray as ux
 from parcels import (
     Field,
     FieldSet,
-    Geographic,
-    GeographicPolar,
     Particle,
     ParticleSet,
     UxGrid,
     VectorField,
 )
-from parcels.kernels.advection import AdvectionEE
-from parcels.interpolators import UxPiecewiseConstantFace
+from parcels.kernels import AdvectionEE
 from parcels_benchmarks.benchmark_setup import download_example_dataset, PARCELS_DATADIR
 
 runtime=np.timedelta64(1, "D")
@@ -47,13 +44,7 @@ class FESOM2:
 
     def pset_execute(self,npart,integrator):
         ds = _load_ds(self.datapath)
-        grid = UxGrid(ds.uxgrid, z=ds.coords["nz"], mesh="flat")
-        U = Field(name="U", data=ds.u, grid=grid, interp_method=UxPiecewiseConstantFace)
-        V = Field(name="V", data=ds.v, grid=grid, interp_method=UxPiecewiseConstantFace)
-        U.units = GeographicPolar()
-        V.units = Geographic()
-        UV = VectorField(name="UV", U=U, V=V) 
-        fieldset = FieldSet([UV, UV.U, UV.V])
+        fieldset = FieldSet.from_fesom2(ds)
 
         lon = np.linspace(2.0,15.0,npart)
         lat = np.linspace(32.0,19.0,npart)
