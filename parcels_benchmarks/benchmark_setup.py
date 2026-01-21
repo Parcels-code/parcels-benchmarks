@@ -126,7 +126,7 @@ def download_example_dataset(dataset: str, manifest_path: Path = DEFAULT_MANIFES
 
 @app.command("download-all")
 def download_all(
-    manifest: Path = typer.Option(DEFAULT_MANIFEST, help="Path to benchmarks manifest JSON."),
+    manifest_path: Path = typer.Option(DEFAULT_MANIFEST, help="Path to benchmarks manifest JSON."),
     data_home: Path | None = typer.Option(PARCELS_DATADIR, help="Override cache directory."),
 ) -> None:
     """Download all datasets listed in benchmarks manifest file."""
