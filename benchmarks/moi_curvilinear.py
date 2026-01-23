@@ -83,8 +83,6 @@ class MOICurvilinear:
 
         U = parcels.Field("U", ds["U"], grid, interp_method=interp_method)
         V = parcels.Field("V", ds["V"], grid, interp_method=interp_method)
-        U.units = parcels.GeographicPolar()
-        V.units = parcels.Geographic()
         UV = parcels.VectorField("UV", U, V)
     
         fieldset = parcels.FieldSet([U, V, UV])
