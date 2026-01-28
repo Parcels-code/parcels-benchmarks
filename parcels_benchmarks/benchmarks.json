@@ -1,0 +1,20 @@
+{
+  "data_url": "https://surfdrive.surf.nl/index.php/s/7xlfdOFaUGDEmpD/download?path=%2F&files=",
+  "datasets": [
+    {
+      "name": "FESOM-baroclinic-gyre",
+      "file": "Parcels_Benchmarks_FESOM-baroclinic-gyre_v2025.10.2.2.zip",
+      "known_hash": "sha256:8d849df2996e3cecf95344e6cde6ed873919d33d731b5fbed4ecacf1a57fbce3"
+    },
+    {
+      "name": "Global ICON Data",
+      "file": "Parcels_Benchmarks_ICON.zip",
+      "known_hash": "sha256:06e80941050d16b89ddce758fb6a1030e3facaba9d32bf9085f1e1e497731903"
+    },
+    {
+      "name": "MOi-curvilinear",
+      "file": "Parcels_Benchmarks_MOi_data.zip",
+      "known_hash": "sha256:f7816d872897c089eeb07a4e32b7fbcc96a0023ef01ac6c3792f88d8d8893885"
+    }
+  ]
+}

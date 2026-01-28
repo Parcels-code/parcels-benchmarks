@@ -55,17 +55,17 @@ git push origin main
 ## Adding benchmarks
 Adding benchmarks for parcels typically involves adding a dataset and defining the benchmarks you want to run. 
 
+
+### Adding new data
 Data is hosted remotely on a SurfDrive managed by the Parcels developers. You will need to open an issue on this repository to start the process of getting your data hosted in the shared SurfDrive.
-Once your data is hosted, you can add an entry to the `parcels_benchmarks.benchmark_setup.DATA_FILES` list. Each entry has the following attributes
-
+Once your data is hosted in the shared SurfDrive, you can easily add your dataset to the benchmark dataset manifest using
 ```
-{
-      "name": str # Name of the dataset that you can reference in the benchmarks
-      "file": str, # Path, relative to the data_url, to the .zip file containing the benchmark data
-      "known_hash": str | None # Pooch hash of the zip file; set to None if it is unknown
-},
+pixi run benchmark-setup pixi add-dataset --name "Name for your dataset" --file "Path to ZIP archive in the SurfDrive"
 ```
 
+During this process, the dataset will be downloaded and a complete entry will be added to the [parcels_benchmarks/benchmarks.json](./parcels_benchmarks/benchmarks.json) manifest file. Once updated, this file can be committed to this repository and contributed via a pull request.
+ 
+### Writing the benchmarks
 This repository uses [ASV](https://asv.readthedocs.io/) for running benchmarks. You can add benchmarks by including a python script in the `benchmarks/` subdirectory. Within each `benchmarks/*.py` file, we ask that you define a class for the set of benchmarks you plan to run for your dataset. You can use the existing benchmarks as a good starting point for writing your benchmarks.
 
 To learn more about writing benchmarks compatible with ASV, see the [ASV "Writing Benchmarks" documentation](https://asv.readthedocs.io/en/latest/writing_benchmarks.html)
