@@ -1,6 +1,7 @@
 import numpy as np
 import uxarray as ux
 from parcels import (
+    convert,
     Field,
     FieldSet,
     Particle,
@@ -44,7 +45,8 @@ class FESOM2:
 
     def pset_execute(self,npart,integrator):
         ds = _load_ds(self.datapath)
-        fieldset = FieldSet.from_fesom2(ds)
+        ds = convert.fesom_to_ugrid(ds)
+        fieldset = FieldSet.from_ugrid_conventions(ds)
 
         lon = np.linspace(2.0,15.0,npart)
         lat = np.linspace(32.0,19.0,npart)
