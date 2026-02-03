@@ -137,7 +137,7 @@ def download_all(
     dataset_folders: dict[str, Path] = {}
     for dataset_name in datasets.keys():
         folder = download_example_dataset(dataset_name, manifest_path=manifest_path, data_home=data_home)
-        dataset_folders[dataset] = folder
+        dataset_folders[dataset_name] = folder
     return dataset_folders
 
 @app.command("add-dataset")
