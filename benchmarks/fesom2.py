@@ -9,7 +9,7 @@ from parcels import (
     UxGrid,
     VectorField,
 )
-from parcels.kernels import AdvectionEE
+from parcels.kernels import AdvectionRK2_3D
 from parcels_benchmarks.benchmark_setup import download_example_dataset, PARCELS_DATADIR
 
 runtime=np.timedelta64(1, "D")
@@ -26,7 +26,7 @@ def _load_ds(datapath):
 class FESOM2:
     params = (
             [10000],
-            [AdvectionEE]
+            [AdvectionRK2_3D]
         )
     param_names = [
             "npart",
