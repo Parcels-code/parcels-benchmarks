@@ -9,7 +9,7 @@ from parcels import (
     UxGrid,
     VectorField,
 )
-from parcels.kernels import AdvectionRK2_3D
+from parcels.kernels import AdvectionRK2
 from parcels_benchmarks.benchmark_setup import download_example_dataset, PARCELS_DATADIR
 
 runtime=np.timedelta64(1, "D")
@@ -26,7 +26,7 @@ def _load_ds(datapath):
 class FESOM2:
     params = (
             [10000],
-            [AdvectionRK2_3D]
+            [AdvectionRK2]
         )
     param_names = [
             "npart",
@@ -52,7 +52,7 @@ class FESOM2:
         lat = np.linspace(32.0,19.0,npart)
 
         pset = ParticleSet(fieldset=fieldset, pclass=Particle, lon=lon, lat=lat)
-        pset.execute(runtime=runtime, dt=dt, pyfunc=integrator)
+        pset.execute([integrator],runtime=runtime, dt=dt)
 
     def time_pset_execute(self,npart,integrator):
         self.pset_execute(npart,integrator)
