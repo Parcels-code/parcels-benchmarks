@@ -14,7 +14,7 @@ def _load_ds(datapath, chunk):
     """Helper function to load xarray dataset from datapath with or without chunking"""
 
     fileU = f"{datapath}/psy4v3r1-daily_U_2025-01-0[1-3].nc"
-    filenames = {"U": glob(fileU), "V": glob(fileU.replace("_U_", "_V_")), "W": glob(fileU.replace("_U_", "_W_"))}
+    filenames = {"U": sorted(glob(fileU)), "V": sorted(glob(fileU.replace("_U_", "_V_"))), "W": sorted(glob(fileU.replace("_U_", "_W_")))}
     mesh_mask = f"{datapath}/PSY4V3R1_mesh_hgr.nc"
     fileargs = {"concat_dim": "time_counter",
        "combine": "nested",
