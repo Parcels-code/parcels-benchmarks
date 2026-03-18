@@ -3,7 +3,6 @@ from glob import glob
 import numpy as np
 import parcels
 import xarray as xr
-import xgcm
 from parcels.interpolators import XLinear
 
 from parcels_benchmarks.benchmark_setup import PARCELS_DATADIR, download_example_dataset
@@ -14,7 +13,6 @@ dt = np.timedelta64(15, "m")
 
 def _load_ds(datapath, chunk):
     """Helper function to load xarray dataset from datapath with or without chunking"""
-
     fileU = f"{datapath}/psy4v3r1-daily_U_2025-01-0[1-3].nc"
     filenames = {
         "U": glob(fileU),
@@ -32,27 +30,16 @@ def _load_ds(datapath, chunk):
     if chunk:
         fileargs["chunks"] = {"time_counter": 1, "depth": 2, "y": chunk, "x": chunk}
 
-    ds_u = xr.open_mfdataset(filenames["U"], **fileargs)[["vozocrtx"]].drop_vars(
-        ["nav_lon", "nav_lat"]
+    ds_u = xr.open_mfdataset(filenames["U"], **fileargs)[["vozocrtx"]].rename_vars(
+        {"vozocrtx": "U"}
     )
-    ds_v = xr.open_mfdataset(filenames["V"], **fileargs)[["vomecrty"]].drop_vars(
-        ["nav_lon", "nav_lat"]
+    ds_v = xr.open_mfdataset(filenames["V"], **fileargs)[["vomecrty"]].rename_vars(
+        {"vomecrty": "V"}
     )
-    ds_depth = xr.open_mfdataset(filenames["W"], **fileargs)[["depthw"]]
+    da_depth = xr.open_mfdataset(filenames["W"], **fileargs)["depthw"]
     ds_mesh = xr.open_dataset(mesh_mask)[["glamf", "gphif"]].isel(t=0)
-
-    ds = xr.merge([ds_u, ds_v, ds_depth, ds_mesh], compat="identical")
-    ds = ds.rename(
-        {
-            "vozocrtx": "U",
-            "vomecrty": "V",
-            "glamf": "lon",
-            "gphif": "lat",
-            "time_counter": "time",
-            "depthw": "depth",
-        }
-    )
-    ds.deptht.attrs["c_grid_axis_shift"] = -0.5
+    ds_mesh["depthw"] = da_depth
+    ds = parcels.convert.nemo_to_sgrid(fields=dict(U=ds_u, V=ds_v), coords=ds_mesh)
 
     return ds
 
@@ -89,30 +76,12 @@ class MOICurvilinear:
 
     def pset_execute_3d(self, interpolator, chunk, npart):
         ds = _load_ds(self.datapath, chunk)
-        coords = {
-            "X": {"left": "x"},
-            "Y": {"left": "y"},
-            "Z": {"center": "deptht", "left": "depth"},
-            "T": {"center": "time"},
-        }
-
-        grid = parcels._core.xgrid.XGrid(
-            xgcm.Grid(ds, coords=coords, autoparse_metadata=False, periodic=False),
-            mesh="spherical",
-        )
-
+        fieldset = parcels.FieldSet.from_sgrid_conventions(ds)
         if interpolator == "XLinear":
-            interp_method = XLinear
+            fieldset.U.interp_method = XLinear
+            fieldset.V.interp_method = XLinear
         else:
             raise ValueError(f"Unknown interpolator: {interpolator}")
-
-        U = parcels.Field("U", ds["U"], grid, interp_method=interp_method)
-        V = parcels.Field("V", ds["V"], grid, interp_method=interp_method)
-        U.units = parcels.GeographicPolar()
-        V.units = parcels.Geographic()
-        UV = parcels.VectorField("UV", U, V)
-
-        fieldset = parcels.FieldSet([U, V, UV])
 
         pclass = parcels.Particle
 
