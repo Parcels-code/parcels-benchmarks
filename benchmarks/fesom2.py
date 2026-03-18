@@ -1,6 +1,5 @@
 import numpy as np
 import uxarray as ux
-
 from parcels import (
     FieldSet,
     Particle,
@@ -8,6 +7,7 @@ from parcels import (
     convert,
 )
 from parcels.kernels import AdvectionRK2_3D
+
 from parcels_benchmarks.benchmark_setup import PARCELS_DATADIR, download_example_dataset
 
 runtime = np.timedelta64(1, "D")
