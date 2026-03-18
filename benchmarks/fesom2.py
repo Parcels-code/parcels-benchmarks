@@ -36,8 +36,8 @@ class FESOM2:
     def time_load_data(self, npart, integrator):
         ds = _load_ds(self.datapath)
         for i in range(min(ds.coords["time"].size, 2)):
-            u = ds["u"].isel(time=i).compute()
-            v = ds["v"].isel(time=i).compute()
+            _u = ds["u"].isel(time=i).compute()
+            _v = ds["v"].isel(time=i).compute()
 
     def pset_execute(self, npart, integrator):
         ds = _load_ds(self.datapath)

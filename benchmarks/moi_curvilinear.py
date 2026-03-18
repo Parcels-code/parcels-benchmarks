@@ -84,8 +84,8 @@ class MOICurvilinear:
         ds = _load_ds(self.datapath, chunk)
         for j in range(min(ds.coords["deptht"].size, 2)):
             for i in range(min(ds.coords["time"].size, 2)):
-                u = ds["U"].isel(deptht=j, time=i).compute()
-                v = ds["V"].isel(deptht=j, time=i).compute()
+                _u = ds["U"].isel(deptht=j, time=i).compute()
+                _v = ds["V"].isel(deptht=j, time=i).compute()
 
     def pset_execute_3d(self, interpolator, chunk, npart):
         ds = _load_ds(self.datapath, chunk)

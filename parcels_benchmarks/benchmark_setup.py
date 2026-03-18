@@ -234,7 +234,7 @@ def list_datasets(
     List datasets in the manifest.
     """
     m = _load_manifest(manifest)
-    by_name = _dataset_by_name(m)
+    by_name = _dataset_by_name(m)  # noqa: F821
     for name, entry in sorted(by_name.items(), key=lambda kv: kv[0]):
         typer.echo(f"{name}: {entry['file']} ({entry.get('known_hash', 'no-hash')})")
 
