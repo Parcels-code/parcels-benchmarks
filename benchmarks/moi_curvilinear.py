@@ -3,7 +3,6 @@ from glob import glob
 import numpy as np
 import parcels
 import xarray as xr
-import xgcm
 from parcels.interpolators import XLinear
 
 from parcels_benchmarks.benchmark_setup import PARCELS_DATADIR, download_example_dataset
@@ -31,11 +30,15 @@ def _load_ds(datapath, chunk):
     if chunk:
         fileargs["chunks"] = {"time_counter": 1, "depth": 2, "y": chunk, "x": chunk}
 
-    ds_u = xr.open_mfdataset(filenames["U"], **fileargs)[["vozocrtx"]].rename_vars({"vozocrtx": "U"})
-    ds_v = xr.open_mfdataset(filenames["V"], **fileargs)[["vomecrty"]].rename_vars({"vomecrty": "V"})
+    ds_u = xr.open_mfdataset(filenames["U"], **fileargs)[["vozocrtx"]].rename_vars(
+        {"vozocrtx": "U"}
+    )
+    ds_v = xr.open_mfdataset(filenames["V"], **fileargs)[["vomecrty"]].rename_vars(
+        {"vomecrty": "V"}
+    )
     da_depth = xr.open_mfdataset(filenames["W"], **fileargs)["depthw"]
     ds_mesh = xr.open_dataset(mesh_mask)[["glamf", "gphif"]].isel(t=0)
-    ds_mesh['depthw'] = da_depth
+    ds_mesh["depthw"] = da_depth
     ds = parcels.convert.nemo_to_sgrid(fields=dict(U=ds_u, V=ds_v), coords=ds_mesh)
 
     return ds
