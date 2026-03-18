@@ -58,6 +58,7 @@ ignore = [
   # Use `X | Y` in `isinstance` (see https://github.com/home-assistant/core/issues/123850)
   "UP038",
   "RUF046", # Value being cast to `int` is already an integer
+  "B008", # Do not perform function call in argument defaults
 ]
 
 [tool.ruff.lint.pydocstyle]
