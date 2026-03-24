@@ -139,7 +139,7 @@ def download_all(
     data_home: Path | None = typer.Option(
         PARCELS_DATADIR, help="Override cache directory."
     ),
-) -> None:
+) -> dict[str, Path]:
     """Download all datasets listed in benchmarks manifest file."""
 
     manifest = _load_manifest(manifest_path)
@@ -224,19 +224,20 @@ def add_dataset(
     typer.echo(f"Added {name!r} to {manifest}")
 
 
-@app.command("list")
-def list_datasets(
-    manifest: Path = typer.Option(
-        DEFAULT_MANIFEST, help="Path to benchmarks manifest JSON."
-    ),
-) -> None:
-    """
-    List datasets in the manifest.
-    """
-    m = _load_manifest(manifest)
-    by_name = _dataset_by_name(m)  # noqa: F821
-    for name, entry in sorted(by_name.items(), key=lambda kv: kv[0]):
-        typer.echo(f"{name}: {entry['file']} ({entry.get('known_hash', 'no-hash')})")
+# TODO: Is this function needed? if so define `_dataset_by_name`
+# @app.command("list")
+# def list_datasets(
+#     manifest: Path = typer.Option(
+#         DEFAULT_MANIFEST, help="Path to benchmarks manifest JSON."
+#     ),
+# ) -> None:
+#     """
+#     List datasets in the manifest.
+#     """
+#     m = _load_manifest(manifest)
+#     by_name = _dataset_by_name(m)
+#     for name, entry in sorted(by_name.items(), key=lambda kv: kv[0]):
+#         typer.echo(f"{name}: {entry['file']} ({entry.get('known_hash', 'no-hash')})")
 
 
 def main() -> None:
