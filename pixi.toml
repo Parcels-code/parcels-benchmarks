@@ -11,10 +11,13 @@ lint = "pre-commit run --all-files"
 [dependencies]
 
 python = "3.12.*"
-asv = ">=0.6.5"
 pooch = ">=1.8.2"
-pre_commit = "*"
+asv = ">=0.6.5"
 py-rattler = "0.15.*"
+
+pre_commit = "*"
+ty = "*"
+typer = "*"
 
 [pypi-dependencies]
 parcels_benchmarks = { path = ".", editable = true }
