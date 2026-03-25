@@ -7,7 +7,6 @@ This repository houses performance benchmarks for [Parcels](https://github.com/O
 ## Development instructions
 
 - [install Pixi](https://pixi.sh/dev/installation/) `curl -fsSL https://pixi.sh/install.sh | bash`
-- `git clone git@github.com:Parcels-code/parcels Parcels`
 - `pixi install`
 - `pixi run asv run`
 
@@ -35,7 +34,7 @@ Members of the Parcels community can contribute benchmark data using the followi
 2. Clone your fork onto your system
 
 ```
-git clone git@github.com:<your-github-handle>/parcels-benchmarks.git ~/parcels-benchmarks
+git clone --recurse-submodules git@github.com:<your-github-handle>/parcels-benchmarks.git
 ```
 
 3. Run the benchmarks
