@@ -2,7 +2,7 @@
   "version": 1,
   "project": "parcels",
   "project_url": "https://github.com/Parcels-Code/parcels",
-  "repo": "https://github.com/Parcels-Code/parcels.git",
+  "repo": "./Parcels",
   "branches": ["main"],
   "environment_type": "rattler",
   "conda_channels": [

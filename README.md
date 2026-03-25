@@ -7,6 +7,7 @@ This repository houses performance benchmarks for [Parcels](https://github.com/O
 ## Development instructions
 
 - [install Pixi](https://pixi.sh/dev/installation/) `curl -fsSL https://pixi.sh/install.sh | bash`
+- `git clone git@github.com:Parcels-code/parcels Parcels`
 - `pixi install`
 - `pixi run asv run`
 
