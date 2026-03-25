@@ -17,7 +17,6 @@ py-rattler = "0.15.*"
 
 pre_commit = "*"
 ty = "*"
-typer = "*"
 
 [pypi-dependencies]
 parcels_benchmarks = { path = ".", editable = true }
