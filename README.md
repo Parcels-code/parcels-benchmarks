@@ -34,7 +34,7 @@ Members of the Parcels community can contribute benchmark data using the followi
 2. Clone your fork onto your system
 
 ```
-git clone git@github.com:<your-github-handle>/parcels-benchmarks.git ~/parcels-benchmarks
+git clone --recurse-submodules git@github.com:<your-github-handle>/parcels-benchmarks.git
 ```
 
 3. Run the benchmarks
@@ -64,7 +64,7 @@ Data is hosted remotely on a SurfDrive managed by the Parcels developers. You wi
 Once your data is hosted in the shared SurfDrive, you can easily add your dataset to the benchmark dataset manifest using
 
 ```
-pixi run benchmark-setup pixi add-dataset --name "Name for your dataset" --file "Path to ZIP archive in the SurfDrive"
+pixi run benchmark-setup add-dataset --name "Name for your dataset" --file "Path to ZIP archive in the SurfDrive"
 ```
 
 During this process, the dataset will be downloaded and a complete entry will be added to the [parcels_benchmarks/benchmarks.json](./parcels_benchmarks/benchmarks.json) manifest file. Once updated, this file can be committed to this repository and contributed via a pull request.
