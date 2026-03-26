@@ -12,3 +12,6 @@ __pycache__
 build/
 .asv/
 html/
+.DS_Store
+
+output

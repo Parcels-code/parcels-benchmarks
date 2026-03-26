@@ -1,4 +1,5 @@
 # zip_url: https://surfdrive.surf.nl/index.php/s/cmdSy8wBtCLDaGJ/download?path=%2F&files=
+# ^ Do not remove this line! Used by the download script to find the data source
 plugins:
   source:
     - module: intake_xarray
@@ -20,6 +21,44 @@ sources:
     driver: netcdf
     args:
       urlpath: "{{ CATALOG_DIR }}/parcels-examples/GlobCurrent_example_data/*.nc"
+      chunks: {}
+      xarray_kwargs:
+        engine: "netcdf4"
+  MITgcm_example_data:
+    description: MITgcm_example_data
+    driver: netcdf
+    args:
+      urlpath: "{{ CATALOG_DIR }}/parcels-examples/MITgcm_example_data/*.nc"
+      chunks: {}
+      xarray_kwargs:
+        engine: "netcdf4"
+  MovingEddies_data:
+    description: MovingEddies_data
+    driver: netcdf
+    args:
+      urlpath: "{{ CATALOG_DIR }}/parcels-examples/MovingEddies_data/*.nc"
+      chunks: {}
+      xarray_kwargs:
+        engine: "netcdf4"
+
+  # NemoCurvilinear_data:
+  # NemoNorthSeaORCA025-N006_data:
+  # OFAM_example_data
+  # Peninsula_data
+  # SWASH_data
+  SWASH_data:
+    description: SWASH_data
+    driver: netcdf
+    args:
+      urlpath: "{{ CATALOG_DIR }}/parcels-examples/SWASH_data/*.nc"
+      chunks: {}
+      xarray_kwargs:
+        engine: "netcdf4"
+  WOA_data:
+    description: WOA_data
+    driver: netcdf
+    args:
+      urlpath: "{{ CATALOG_DIR }}/parcels-examples/WOA_data/*.nc"
       chunks: {}
       xarray_kwargs:
         engine: "netcdf4"
