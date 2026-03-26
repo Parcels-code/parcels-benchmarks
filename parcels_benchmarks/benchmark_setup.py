@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pooch
 import typer
-from pydantic import BaseModel, Field, HttpUrl
+from pydantic import BaseModel, Field, HttpUrl, model_validator
 
 
 class Dataset(BaseModel):
@@ -25,6 +25,18 @@ class DatasetsManifest(BaseModel):
     datasets: list[Dataset] = Field(
         default_factory=list, description="List of available datasets"
     )
+
+    @model_validator(mode="after")
+    def validate_unique_names(self) -> "DatasetsManifest":
+        """Ensure all dataset names are unique."""
+        names = [dataset.name for dataset in self.datasets]
+        duplicates = [name for name in names if names.count(name) > 1]
+        if duplicates:
+            unique_duplicates = sorted(set(duplicates))
+            raise ValueError(
+                f"Duplicate dataset name(s) in manifest: {', '.join(unique_duplicates)}"
+            )
+        return self
 
 
 app = typer.Typer(add_completion=False)
@@ -60,8 +72,6 @@ def _cache_dir(data_home: Path | None) -> Path:
 def _datasets_by_name(manifest: DatasetsManifest) -> dict[str, Dataset]:
     out: dict[str, Dataset] = {}
     for dataset in manifest.datasets:
-        if dataset.name in out:
-            raise ValueError(f"Duplicate dataset name in manifest: {dataset.name}")
         out[dataset.name] = dataset
     return out
 
