@@ -12,7 +12,7 @@ sources:
     #    regex: ''
     #    type: file
     args:
-      urlpath: "{{ CATALOG_DIR }}/parcels-examples/CROCOidealized_data/CROCO_idealized.nc"
+      urlpath: "{{ CATALOG_DIR }}/data/CROCOidealized_data/CROCO_idealized.nc"
       chunks: {}
       xarray_kwargs:
         engine: "netcdf4"
@@ -20,7 +20,7 @@ sources:
     description: GlobCurrent_example_data
     driver: netcdf
     args:
-      urlpath: "{{ CATALOG_DIR }}/parcels-examples/GlobCurrent_example_data/*.nc"
+      urlpath: "{{ CATALOG_DIR }}/data/GlobCurrent_example_data/*.nc"
       chunks: {}
       xarray_kwargs:
         engine: "netcdf4"
@@ -28,7 +28,7 @@ sources:
     description: MITgcm_example_data
     driver: netcdf
     args:
-      urlpath: "{{ CATALOG_DIR }}/parcels-examples/MITgcm_example_data/*.nc"
+      urlpath: "{{ CATALOG_DIR }}/data/MITgcm_example_data/*.nc"
       chunks: {}
       xarray_kwargs:
         engine: "netcdf4"
@@ -36,7 +36,7 @@ sources:
     description: MovingEddies_data
     driver: netcdf
     args:
-      urlpath: "{{ CATALOG_DIR }}/parcels-examples/MovingEddies_data/*.nc"
+      urlpath: "{{ CATALOG_DIR }}/data/MovingEddies_data/*.nc"
       chunks: {}
       xarray_kwargs:
         engine: "netcdf4"
@@ -50,7 +50,7 @@ sources:
     description: SWASH_data
     driver: netcdf
     args:
-      urlpath: "{{ CATALOG_DIR }}/parcels-examples/SWASH_data/*.nc"
+      urlpath: "{{ CATALOG_DIR }}/data/SWASH_data/*.nc"
       chunks: {}
       xarray_kwargs:
         engine: "netcdf4"
@@ -58,7 +58,7 @@ sources:
     description: WOA_data
     driver: netcdf
     args:
-      urlpath: "{{ CATALOG_DIR }}/parcels-examples/WOA_data/*.nc"
+      urlpath: "{{ CATALOG_DIR }}/data/WOA_data/*.nc"
       chunks: {}
       xarray_kwargs:
         engine: "netcdf4"

@@ -23,13 +23,7 @@ def extract_zip_url(catalogue_path: Path) -> str:
 def download_file(url: str, dest_dir: Path) -> Path:
     response = requests.get(url, stream=True)
     response.raise_for_status()
-    cd = response.headers.get("Content-Disposition", "")
-    filename = "archive.zip"
-    if "filename=" in cd:
-        filename = cd.split("filename=")[-1].strip().strip('"')
-    if not filename.endswith(".zip"):
-        filename += ".zip"
-    dest = dest_dir / filename
+    dest = dest_dir / "data.zip"
     print(f"Downloading {url} -> {dest}")
     with dest.open("wb") as f:
         for chunk in response.iter_content(chunk_size=8192):
@@ -61,6 +55,10 @@ def main() -> None:
     parser.add_argument("catalogue", type=Path, help="Path to catalogue.yml")
     parser.add_argument("output_dir", type=Path, help="Directory to extract into")
     args = parser.parse_args()
+
+    if args.output_dir.exists():
+        print("Output directory already exists! Exiting...")
+        return
 
     if not args.catalogue.is_file():
         raise SystemExit(f"catalogue file not found: {args.catalogue}")
