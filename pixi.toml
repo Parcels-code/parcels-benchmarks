@@ -16,11 +16,11 @@ download-catalogue = { cmd = "python scripts/download-catalogue.py {{ catalogue_
 setup-data = { depends-on = [
   { task = "download-catalogue", args = [
     { catalogue_file = "catalogues/parcels-benchmarks/catalogue.yaml" },
-    { output_dir = "data/parcels-examples" },
+    { output_dir = "surf-data/parcels-examples" },
   ] },
   { task = "download-catalogue", args = [
     { catalogue_file = "catalogues/parcels-benchmarks/catalogue.yaml" },
-    { output_dir = "data/parcels-benchmarks" },
+    { output_dir = "surf-data/parcels-benchmarks" },
   ] }
 ]}
 
