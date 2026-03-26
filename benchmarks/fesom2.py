@@ -1,5 +1,6 @@
 import numpy as np
 import uxarray as ux
+
 from parcels import (
     FieldSet,
     Particle,
@@ -7,8 +8,7 @@ from parcels import (
     convert,
 )
 from parcels.kernels import AdvectionRK2_3D
-
-from parcels_benchmarks.benchmark_setup import PARCELS_DATADIR, download_example_dataset
+from parcels_benchmarks.benchmark_setup import PARCELS_DATADIR, download_dataset
 
 runtime = np.timedelta64(1, "D")
 dt = np.timedelta64(2400, "s")
@@ -29,7 +29,7 @@ class FESOM2:
     def setup(self, npart, integrator):
         # Ensure the dataset is downloaded in the desired data_home
         # and obtain the path to the dataset
-        self.datapath = download_example_dataset(
+        self.datapath = download_dataset(
             "FESOM-baroclinic-gyre", data_home=PARCELS_DATADIR
         )
 

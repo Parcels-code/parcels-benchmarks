@@ -1,12 +1,12 @@
 from glob import glob
 
 import numpy as np
-import parcels
 import xarray as xr
 import xgcm
-from parcels.interpolators import XLinear
 
-from parcels_benchmarks.benchmark_setup import PARCELS_DATADIR, download_example_dataset
+import parcels
+from parcels.interpolators import XLinear
+from parcels_benchmarks.benchmark_setup import PARCELS_DATADIR, download_dataset
 
 runtime = np.timedelta64(2, "D")
 dt = np.timedelta64(15, "m")
@@ -72,9 +72,7 @@ class MOICurvilinear:
     ]
 
     def setup(self, interpolator, chunk, npart):
-        self.datapath = download_example_dataset(
-            "MOi-curvilinear", data_home=PARCELS_DATADIR
-        )
+        self.datapath = download_dataset("MOi-curvilinear", data_home=PARCELS_DATADIR)
 
     def time_load_data_3d(self, interpolator, chunk, npart):
         """Benchmark that times loading the 'U' and 'V' data arrays only for 3-D"""

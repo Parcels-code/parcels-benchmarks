@@ -97,7 +97,7 @@ def _get_pooch(
     )
 
 
-def download_example_dataset(
+def download_dataset(
     dataset: str, manifest_path: Path = DEFAULT_MANIFEST, data_home: Path | None = None
 ) -> Path:
     """Load a dataset listed in the provided manifest
@@ -158,7 +158,7 @@ def download_all(
 
     dataset_folders: dict[str, Path] = {}
     for dataset_name in datasets.keys():
-        folder = download_example_dataset(
+        folder = download_dataset(
             dataset_name, manifest_path=manifest_path, data_home=data_home
         )
         dataset_folders[dataset_name] = folder
