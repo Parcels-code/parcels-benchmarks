@@ -14,4 +14,4 @@ build/
 html/
 .DS_Store
 
-output
+data

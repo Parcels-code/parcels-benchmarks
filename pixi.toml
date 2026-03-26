@@ -17,8 +17,12 @@ cmd = "asv run"
 depends-on = [
   # Downloads the datasets. The catalogue files in the scripts will live at (e.g.,) `data/parcels-examples/catalogue.yaml`
   { task = "download-catalogue", args = [
-    { catalogue_file = "parcels-examples.catalogue.yaml" },
+    { catalogue_file = "catalogues/parcels-benchmarks/catalogue.yaml" },
     { output_dir = "data/parcels-examples" },
+  ] },
+  { task = "download-catalogue", args = [
+    { catalogue_file = "catalogues/parcels-benchmarks/catalogue.yaml" },
+    { output_dir = "data/parcels-benchmarks" },
   ] },
 ]
 
