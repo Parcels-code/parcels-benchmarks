@@ -12,7 +12,7 @@ PARCELS_DATADIR = os.getenv("PARCELS_DATADIR", default=None)
 if PARCELS_DATADIR is not None:
     PARCELS_DATADIR = Path(PARCELS_DATADIR)
 
-DEFAULT_MANIFEST = Path(__file__).with_name("benchmarks.json")
+DEFAULT_MANIFEST = Path(__file__).with_name("datasets.json")
 
 
 def _load_manifest(path: Path) -> dict:
