@@ -89,9 +89,9 @@ def _get_pooch(manifest: dict, data_home: Path | None = None) -> pooch.Pooch:
 def download_example_dataset(
     dataset: str, manifest_path: Path = DEFAULT_MANIFEST, data_home: Path | None = None
 ) -> Path:
-    """Load an example dataset listed in the provided manifest
+    """Load a dataset listed in the provided manifest
 
-    This function provides quick access to a small number of example datasets
+    This function provides quick access to a small number of datasets
     that are useful in documentation and testing in parcels.
 
     Parameters
