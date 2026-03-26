@@ -7,7 +7,12 @@ import zipfile
 from pathlib import Path
 
 import requests
+import os
 
+try:
+    PARCELS_BENCHMARKS_DATA_FOLDER = Path(os.environ["PARCELS_BENCHMARKS_DATA_FOLDER"])
+except KeyError as e:
+    raise RuntimeError("Set the PARCELS_BENCHMARKS_DATA_FOLDER environment variable to specify where the data should be downloaded.") from e
 
 def extract_zip_url(catalogue_path: Path) -> str:
     with catalogue_path.open() as f:
@@ -53,23 +58,23 @@ def main() -> None:
         description="Download and extract a catalogue archive."
     )
     parser.add_argument("catalogue", type=Path, help="Path to catalogue.yml")
-    parser.add_argument("output_dir", type=Path, help="Directory to extract into")
+    parser.add_argument("output_dir", type=str, help="Subdirectory in PARCELS_BENCHMARKS_DATA_FOLDER to extract into")
     args = parser.parse_args()
-
-    if args.output_dir.exists():
+    output_dir = PARCELS_BENCHMARKS_DATA_FOLDER / args.output_dir
+    if output_dir.exists():
         print("Output directory already exists! Exiting...")
         return
 
     if not args.catalogue.is_file():
         raise SystemExit(f"catalogue file not found: {args.catalogue}")
 
-    args.output_dir.mkdir(parents=True, exist_ok=True)
+    output_dir.mkdir(parents=True, exist_ok=True)
 
     url = extract_zip_url(args.catalogue)
-    download_file(url, args.output_dir)
-    unzip_recursive(args.output_dir)
+    download_file(url, output_dir)
+    unzip_recursive(output_dir)
 
-    shutil.copy(args.catalogue, args.output_dir / args.catalogue.name)
+    shutil.copy(args.catalogue, output_dir / args.catalogue.name)
     print("Done.")
 
 
