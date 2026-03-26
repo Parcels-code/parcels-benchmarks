@@ -7,15 +7,13 @@ platforms = ["win-64", "linux-64", "osx-64", "osx-arm64"]
 [tasks]
 
 lint = "pre-commit run --all-files"
-download-catalogue = { cmd = "python download-catalogue.py {{ catalogue_file }} {{ output_dir }}", args = [
+# Downloads the datasets. The catalogue file which should be used will be housed at `output_dir/catalogue_file.name`
+download-catalogue = { cmd = "python scripts/download-catalogue.py {{ catalogue_file }} {{ output_dir }}", args = [
   "catalogue_file",
   "output_dir",
 ] }
 
-[tasks.benchmark]
-cmd = "asv run"
-depends-on = [
-  # Downloads the datasets. The catalogue files in the scripts will live at (e.g.,) `data/parcels-examples/catalogue.yaml`
+setup-data = { depends-on = [
   { task = "download-catalogue", args = [
     { catalogue_file = "catalogues/parcels-benchmarks/catalogue.yaml" },
     { output_dir = "data/parcels-examples" },
@@ -23,8 +21,12 @@ depends-on = [
   { task = "download-catalogue", args = [
     { catalogue_file = "catalogues/parcels-benchmarks/catalogue.yaml" },
     { output_dir = "data/parcels-benchmarks" },
-  ] },
-]
+  ] }
+]}
+
+[tasks.benchmark]
+cmd = "asv run"
+depends-on = ["setup-data"]
 
 [dependencies]
 
