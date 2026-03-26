@@ -24,11 +24,6 @@ def _load_manifest(path: Path) -> dict:
     if "datasets" not in manifest or not isinstance(manifest["datasets"], list):
         raise ValueError("Manifest must contain a top-level 'datasets' list")
 
-    # Provide default URL if omitted
-    manifest.setdefault(
-        "data_url",
-        "https://surfdrive.surf.nl/index.php/s/7xlfdOFaUGDEmpD/download?path=%2F&files=",
-    )
     return manifest
 
 
