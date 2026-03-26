@@ -70,10 +70,7 @@ def _cache_dir(data_home: Path | None) -> Path:
 
 
 def _datasets_by_name(manifest: DatasetsManifest) -> dict[str, Dataset]:
-    out: dict[str, Dataset] = {}
-    for dataset in manifest.datasets:
-        out[dataset.name] = dataset
-    return out
+    return {dataset.name: dataset for dataset in manifest.datasets}
 
 
 def _create_pooch_registry(manifest: DatasetsManifest) -> dict[str, str | None]:
