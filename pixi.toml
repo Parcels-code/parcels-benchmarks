@@ -7,19 +7,19 @@ platforms = ["win-64", "linux-64", "osx-64", "osx-arm64"]
 [tasks]
 
 lint = "pre-commit run --all-files"
-# Downloads the datasets. The catalogue file which should be used will be housed at `output_dir/catalogue_file.name`
-download-catalogue = { cmd = "python scripts/download-catalogue.py {{ catalogue_file }} {{ output_dir }}", args = [
-  "catalogue_file",
+# Downloads the datasets. The catalog file which should be used will be housed at `output_dir/catalog_file.name`
+download-catalog = { cmd = "python scripts/download-catalog.py {{ catalog_file }} {{ output_dir }}", args = [
+  "catalog_file",
   "output_dir",
 ] }
 
 setup-data = { depends-on = [
-  { task = "download-catalogue", args = [
-    { catalogue_file = "catalogues/parcels-examples/catalogue.yaml" },
+  { task = "download-catalog", args = [
+    { catalog_file = "catalogs/parcels-examples/catalog.yml" },
     { output_dir = "surf-data/parcels-examples" },
   ] },
-  { task = "download-catalogue", args = [
-    { catalogue_file = "catalogues/parcels-benchmarks/catalogue.yaml" },
+  { task = "download-catalog", args = [
+    { catalog_file = "catalogs/parcels-benchmarks/catalog.yml" },
     { output_dir = "surf-data/parcels-benchmarks" },
   ] }
 ]}
