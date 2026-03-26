@@ -1,10 +1,31 @@
-import json
 import os
 from pathlib import Path
-from typing import Any
 
 import pooch
 import typer
+from pydantic import BaseModel, Field, HttpUrl
+
+
+class Dataset(BaseModel):
+    """A single dataset entry in the manifest."""
+
+    name: str = Field(..., description="Unique name for the dataset")
+    file: str = Field(..., description="Filename of the dataset zip file")
+    known_hash: str | None = Field(
+        None, description="SHA256 hash of the file in format 'sha256:xxxxx'"
+    )
+
+
+class DatasetsManifest(BaseModel):
+    """Root manifest structure containing all datasets."""
+
+    data_url: HttpUrl = Field(
+        ..., description="Base URL where dataset files are hosted"
+    )
+    datasets: list[Dataset] = Field(
+        default_factory=list, description="List of available datasets"
+    )
+
 
 app = typer.Typer(add_completion=False)
 
@@ -15,23 +36,18 @@ if PARCELS_DATADIR is not None:
 DEFAULT_MANIFEST = Path(__file__).with_name("datasets.json")
 
 
-def _load_manifest(path: Path) -> dict:
+def _load_manifest(path: Path) -> DatasetsManifest:
     if not path.is_file():
         raise FileNotFoundError(f"Manifest not found: {path}")
     with path.open("r", encoding="utf-8") as f:
-        manifest = json.load(f)
-
-    if "datasets" not in manifest or not isinstance(manifest["datasets"], list):
-        raise ValueError("Manifest must contain a top-level 'datasets' list")
-
-    return manifest
+        return DatasetsManifest.model_validate_json(f.read())
 
 
-def _save_manifest(path: Path, manifest: dict[str, Any]) -> None:
+def _save_manifest(path: Path, manifest: DatasetsManifest) -> None:
     # keep stable ordering by dataset name
-    manifest["datasets"] = sorted(manifest["datasets"], key=lambda d: d.get("name", ""))
+    manifest.datasets = sorted(manifest.datasets, key=lambda d: d.name)
     with path.open("w", encoding="utf-8") as f:
-        json.dump(manifest, f, indent=2)
+        f.write(manifest.model_dump_json(indent=2))
         f.write("\n")
 
 
@@ -41,42 +57,35 @@ def _cache_dir(data_home: Path | None) -> Path:
     return Path(data_home)
 
 
-def _datasets_by_name(manifest: dict) -> dict[str, dict]:
-    out: dict[str, dict] = {}
-    for d in manifest["datasets"]:
-        name = d.get("name")
-        file = d.get("file")
-        known_hash = d.get("known_hash")
-        if not name or not file:
-            raise ValueError(f"Each dataset needs at least 'name' and 'file': {d}")
-        if name in out:
-            raise ValueError(f"Duplicate dataset name in manifest: {name}")
-        out[name] = {
-            "name": name,
-            "file": file,
-            "known_hash": known_hash,
-        }
+def _datasets_by_name(manifest: DatasetsManifest) -> dict[str, Dataset]:
+    out: dict[str, Dataset] = {}
+    for dataset in manifest.datasets:
+        if dataset.name in out:
+            raise ValueError(f"Duplicate dataset name in manifest: {dataset.name}")
+        out[dataset.name] = dataset
     return out
 
 
-def _create_pooch_registry(manifest: dict) -> dict[str, str | None]:
+def _create_pooch_registry(manifest: DatasetsManifest) -> dict[str, str | None]:
     """Collapses the mapping of dataset names to filenames into a pooch registry.
 
     Hashes are set to None for all files.
     """
     registry: dict[str, str | None] = {}
-    for data in manifest["datasets"]:
-        registry[data["file"]] = data.get("known_hash")
+    for dataset in manifest.datasets:
+        registry[dataset.file] = dataset.known_hash
     return registry
 
 
-def _get_pooch(manifest: dict, data_home: Path | None = None) -> pooch.Pooch:
+def _get_pooch(
+    manifest: DatasetsManifest, data_home: Path | None = None
+) -> pooch.Pooch:
     cache_dir = _cache_dir(data_home)
     registry = _create_pooch_registry(manifest)
     cache_dir.parent.mkdir(parents=True, exist_ok=True)
     return pooch.create(
         path=cache_dir,
-        base_url=manifest["data_url"],
+        base_url=str(manifest.data_url),
         registry=registry,
     )
 
@@ -114,7 +123,7 @@ def download_example_dataset(
             + ", ".join(datasets.keys())
         )
     odie = _get_pooch(manifest, data_home=data_home)
-    zip_name = datasets[dataset]["file"]
+    zip_name = datasets[dataset].file
     listing = odie.fetch(zip_name, processor=pooch.Unzip())
 
     # as pooch currently returns a file listing while we want a dir,
@@ -177,13 +186,13 @@ def add_dataset(
         raise typer.BadParameter(f"Dataset {name!r} already exists in manifest.")
 
     # Also prevent duplicates by file
-    existing_files = {d.get("file") for d in m["datasets"]}
+    existing_files = {d.file for d in m.datasets}
     if file in existing_files:
         raise typer.BadParameter(
             f"File {file!r} is already referenced in the manifest."
         )
 
-    base_url = m["data_url"]
+    base_url = str(m.data_url)
     cache_dir = _cache_dir(data_home)
     url = f"{base_url}{file}"
     cache_dir.mkdir(parents=True, exist_ok=True)
@@ -214,7 +223,7 @@ def add_dataset(
     typer.echo(f"  Unzipped -> {common_parent_dir}")
 
     # Append to manifest
-    m["datasets"].append({"name": name, "file": file, "known_hash": known_hash})
+    m.datasets.append(Dataset(name=name, file=file, known_hash=known_hash))
     _save_manifest(manifest, m)
     typer.echo(f"Added {name!r} to {manifest}")
 
@@ -231,7 +240,7 @@ def list_datasets(
     m = _load_manifest(manifest)
     by_name = _datasets_by_name(m)
     for name, entry in sorted(by_name.items(), key=lambda kv: kv[0]):
-        typer.echo(f"{name}: {entry['file']} ({entry.get('known_hash', 'no-hash')})")
+        typer.echo(f"{name}: {entry.file} ({entry.known_hash or 'no-hash'})")
 
 
 def main() -> None:
