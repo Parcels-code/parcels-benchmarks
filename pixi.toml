@@ -15,7 +15,7 @@ download-catalogue = { cmd = "python scripts/download-catalogue.py {{ catalogue_
 
 setup-data = { depends-on = [
   { task = "download-catalogue", args = [
-    { catalogue_file = "catalogues/parcels-benchmarks/catalogue.yaml" },
+    { catalogue_file = "catalogues/parcels-examples/catalogue.yaml" },
     { output_dir = "surf-data/parcels-examples" },
   ] },
   { task = "download-catalogue", args = [
@@ -39,6 +39,7 @@ intake-xarray = ">=2.0.0,<3"
 parcels = ">=3.1.4,<4"
 ipython = ">=9.11.0,<10"
 netcdf4 = ">=1.7.4,<2"
+curl = "*"
 
 [pypi-dependencies]
 parcels_benchmarks = { path = ".", editable = true }

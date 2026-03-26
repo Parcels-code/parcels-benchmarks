@@ -6,7 +6,7 @@ import shutil
 import zipfile
 from pathlib import Path
 
-import requests
+import subprocess
 import os
 
 try:
@@ -26,13 +26,9 @@ def extract_zip_url(catalogue_path: Path) -> str:
 
 
 def download_file(url: str, dest_dir: Path) -> Path:
-    response = requests.get(url, stream=True)
-    response.raise_for_status()
     dest = dest_dir / "data.zip"
     print(f"Downloading {url} -> {dest}")
-    with dest.open("wb") as f:
-        for chunk in response.iter_content(chunk_size=8192):
-            f.write(chunk)
+    subprocess.run(["curl", "-L", "-o", str(dest), url], check=True)
     return dest
 
 
