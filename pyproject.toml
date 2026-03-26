@@ -12,6 +12,7 @@ dependencies = [
   "xarray",
   "pooch",
   "typer>=0.9",
+  "pydantic",
 ]
 
 # This creates an installable CLI command: `benchmark-setup ...`
