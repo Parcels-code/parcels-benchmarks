@@ -1,0 +1,25 @@
+# zip_url: https://surfdrive.surf.nl/index.php/s/cmdSy8wBtCLDaGJ/download?path=%2F&files=
+plugins:
+  source:
+    - module: intake_xarray
+sources:
+  croco:
+    description: CROCO_idealized
+    driver: netcdf
+    #cache:
+    #  - argkey: urlpath
+    #    regex: ''
+    #    type: file
+    args:
+      urlpath: "{{ CATALOG_DIR }}/parcels-examples/CROCOidealized_data/CROCO_idealized.nc"
+      chunks: {}
+      xarray_kwargs:
+        engine: "netcdf4"
+  GlobCurrent_example_data:
+    description: GlobCurrent_example_data
+    driver: netcdf
+    args:
+      urlpath: "{{ CATALOG_DIR }}/parcels-examples/GlobCurrent_example_data/*.nc"
+      chunks: {}
+      xarray_kwargs:
+        engine: "netcdf4"
