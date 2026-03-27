@@ -6,10 +6,15 @@ import xgcm
 
 import parcels
 from parcels.interpolators import XLinear
-from parcels_benchmarks.benchmark_setup import PARCELS_DATADIR, download_dataset
 
 runtime = np.timedelta64(2, "D")
 dt = np.timedelta64(15, "m")
+
+
+PARCELS_DATADIR = ... # TODO: Replace with intake
+def download_dataset(*args, **kwargs): ...# TODO: Replace with intake
+
+
 
 
 def _load_ds(datapath, chunk):
