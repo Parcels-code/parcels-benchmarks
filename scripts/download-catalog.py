@@ -2,17 +2,19 @@
 """Download and extract a catalog zip archive, unzipping all zip archives contained within."""
 
 import argparse
+import os
 import shutil
+import subprocess
 import zipfile
 from pathlib import Path
-
-import subprocess
-import os
 
 try:
     PARCELS_BENCHMARKS_DATA_FOLDER = Path(os.environ["PARCELS_BENCHMARKS_DATA_FOLDER"])
 except KeyError as e:
-    raise RuntimeError("Set the PARCELS_BENCHMARKS_DATA_FOLDER environment variable to specify where the data is/should be downloaded.") from e
+    raise RuntimeError(
+        "Set the PARCELS_BENCHMARKS_DATA_FOLDER environment variable to specify where the data is/should be downloaded."
+    ) from e
+
 
 def extract_zip_url(catalog_path: Path) -> str:
     with catalog_path.open() as f:
@@ -60,7 +62,11 @@ def main() -> None:
         description="Download and extract a catalog archive."
     )
     parser.add_argument("catalog", type=Path, help="Path to catalog.yml")
-    parser.add_argument("output_dir", type=str, help="Subdirectory in PARCELS_BENCHMARKS_DATA_FOLDER to extract into")
+    parser.add_argument(
+        "output_dir",
+        type=str,
+        help="Subdirectory in PARCELS_BENCHMARKS_DATA_FOLDER to extract into",
+    )
     args = parser.parse_args()
     output_dir = PARCELS_BENCHMARKS_DATA_FOLDER / args.output_dir
     catalog_path = output_dir / args.catalog.name

@@ -1,14 +1,14 @@
 import numpy as np
 import uxarray as ux
-
+import xarray as xr
 from parcels import (
     FieldSet,
     Particle,
     ParticleSet,
     convert,
 )
-import xarray as xr
 from parcels.kernels import AdvectionRK2_3D
+
 from . import PARCELS_BENCHMARKS_DATA_FOLDER
 
 runtime = np.timedelta64(1, "D")
@@ -18,11 +18,15 @@ dt = np.timedelta64(2400, "s")
 def _load_ds():
     """Helper function to load uxarray dataset from datapath"""
 
-    grid_file = xr.open_mfdataset(f"{PARCELS_BENCHMARKS_DATA_FOLDER}/surf-data/parcels-benchmarks/data/Parcelsv4_Benchmarking_data/Parcels_Benchmarks_FESOM-baroclinic-gyre/data/mesh/fesom.mesh.diag.nc")
-    data_files = xr.open_mfdataset(f"{PARCELS_BENCHMARKS_DATA_FOLDER}/surf-data/parcels-benchmarks/data/Parcelsv4_Benchmarking_data/Parcels_Benchmarks_FESOM-baroclinic-gyre/data/*.nc")
+    grid_file = xr.open_mfdataset(
+        f"{PARCELS_BENCHMARKS_DATA_FOLDER}/surf-data/parcels-benchmarks/data/Parcelsv4_Benchmarking_data/Parcels_Benchmarks_FESOM-baroclinic-gyre/data/mesh/fesom.mesh.diag.nc"
+    )
+    data_files = xr.open_mfdataset(
+        f"{PARCELS_BENCHMARKS_DATA_FOLDER}/surf-data/parcels-benchmarks/data/Parcelsv4_Benchmarking_data/Parcels_Benchmarks_FESOM-baroclinic-gyre/data/*.nc"
+    )
 
     grid = ux.open_grid(grid_file)
-    return ux.UxDataset(data_files, uxgrid = grid)
+    return ux.UxDataset(data_files, uxgrid=grid)
 
 
 class FESOM2:

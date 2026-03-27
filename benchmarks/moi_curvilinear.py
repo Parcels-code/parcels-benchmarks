@@ -1,20 +1,19 @@
 from glob import glob
 
 import numpy as np
+import parcels
 import xarray as xr
 import xgcm
-
-import parcels
 from parcels.interpolators import XLinear
 
 runtime = np.timedelta64(2, "D")
 dt = np.timedelta64(15, "m")
 
 
-PARCELS_DATADIR = ... # TODO: Replace with intake
-def download_dataset(*args, **kwargs): ...# TODO: Replace with intake
+PARCELS_DATADIR = ...  # TODO: Replace with intake
 
 
+def download_dataset(*args, **kwargs): ...  # TODO: Replace with intake
 
 
 def _load_ds(datapath, chunk):

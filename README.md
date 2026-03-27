@@ -21,7 +21,6 @@ In brief, you can set up the data and run the benchmarks by doing:
 - `pixi install`
 - `PARCELS_BENCHMARKS_DATA_FOLDER=./data pixi run benchmarks`
 
-
 > [!IMPORTANT]
 > Currently, you will need at least 50GB of disk space available to store the benchmark data.
 > You need to be explicit to determine where the benchmark data will be saved by
