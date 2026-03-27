@@ -1,0 +1,64 @@
+# zip_url: https://surfdrive.surf.nl/index.php/s/7xlfdOFaUGDEmpD/download?path=%2F&files=
+# ^ Do not remove this line! Used by the download script to find the data source
+plugins:
+  source:
+    - module: intake_xarray
+sources: #!TODO Update
+  croco:
+    description: CROCO_idealized
+    driver: netcdf
+    #cache:
+    #  - argkey: urlpath
+    #    regex: ''
+    #    type: file
+    args:
+      urlpath: "{{ CATALOG_DIR }}/data/CROCOidealized_data/CROCO_idealized.nc"
+      chunks: {}
+      xarray_kwargs:
+        engine: "netcdf4"
+  GlobCurrent_example_data:
+    description: GlobCurrent_example_data
+    driver: netcdf
+    args:
+      urlpath: "{{ CATALOG_DIR }}/data/GlobCurrent_example_data/*.nc"
+      chunks: {}
+      xarray_kwargs:
+        engine: "netcdf4"
+  MITgcm_example_data:
+    description: MITgcm_example_data
+    driver: netcdf
+    args:
+      urlpath: "{{ CATALOG_DIR }}/data/MITgcm_example_data/*.nc"
+      chunks: {}
+      xarray_kwargs:
+        engine: "netcdf4"
+  MovingEddies_data:
+    description: MovingEddies_data
+    driver: netcdf
+    args:
+      urlpath: "{{ CATALOG_DIR }}/data/MovingEddies_data/*.nc"
+      chunks: {}
+      xarray_kwargs:
+        engine: "netcdf4"
+
+  # NemoCurvilinear_data:
+  # NemoNorthSeaORCA025-N006_data:
+  # OFAM_example_data
+  # Peninsula_data
+  # SWASH_data
+  SWASH_data:
+    description: SWASH_data
+    driver: netcdf
+    args:
+      urlpath: "{{ CATALOG_DIR }}/data/SWASH_data/*.nc"
+      chunks: {}
+      xarray_kwargs:
+        engine: "netcdf4"
+  WOA_data:
+    description: WOA_data
+    driver: netcdf
+    args:
+      urlpath: "{{ CATALOG_DIR }}/data/WOA_data/*.nc"
+      chunks: {}
+      xarray_kwargs:
+        engine: "netcdf4"

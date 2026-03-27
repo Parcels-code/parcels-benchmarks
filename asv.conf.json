@@ -2,7 +2,8 @@
   "version": 1,
   "project": "parcels",
   "project_url": "https://github.com/Parcels-Code/parcels",
-  "repo": "https://github.com/Parcels-Code/parcels.git",
+  "repo": "./Parcels",
+  "dvcs": "git",
   "branches": ["main"],
   "environment_type": "rattler",
   "conda_channels": [
@@ -14,12 +15,17 @@
   "env_dir": ".asv/env",
   "results_dir": "results",
   "html_dir": "html",
-  "build_command": [],
-  "install_command": [
-    "in-dir={conf_dir} python -m pip install .",
-    "in-dir={build_dir} python -m pip install ."
-  ],
-  "uninstall_command": [
-    "return-code=any python -m pip uninstall -y parcels parcels_benchmarks"
-  ]
+  "build_command": ["python -m build --wheel -o {build_cache_dir} {build_dir}"],
+  // "install_command": [
+  //   "in-dir={conf_dir} python -m pip install .",
+  //   "in-dir={build_dir} python -m pip install ."
+  // ],
+  // "uninstall_command": [
+  //   "return-code=any python -m pip uninstall -y parcels parcels_benchmarks"
+  // ]
+  "matrix": {
+    "req": {
+      "intake-xarray": []
+    }
+  }
 }
