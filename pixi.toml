@@ -7,11 +7,10 @@ platforms = ["win-64", "linux-64", "osx-64", "osx-arm64"]
 [tasks]
 
 lint = "pre-commit run --all-files"
-# Downloads the datasets. The catalog file which should be used will be housed at `output_dir/catalog_file.name`
 download-catalog = { cmd = "python scripts/download-catalog.py {{ catalog_file }} {{ output_dir }}", args = [
   "catalog_file",
   "output_dir",
-] }
+], description = "Downloads the datasets. The catalog file which should be used in scripts will be housed at `output_dir/catalog_file.name`"}
 
 setup-data = { depends-on = [
   { task = "download-catalog", args = [
@@ -22,11 +21,12 @@ setup-data = { depends-on = [
     { catalog_file = "catalogs/parcels-benchmarks/catalog.yml" },
     { output_dir = "surf-data/parcels-benchmarks" },
   ] }
-]}
+], description="Setup all data to be used in the benchmarks."}
 
 [tasks.benchmark]
 cmd = "asv run"
 depends-on = ["setup-data"]
+description = "Run the benchmarks, setting up the data first."
 
 [dependencies]
 
