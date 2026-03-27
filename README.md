@@ -6,15 +6,28 @@ This repository houses performance benchmarks for [Parcels](https://github.com/O
 
 ## Development instructions
 
+This project uses a combination of [Pixi](https://pixi.sh/dev/installation/), [ASV](https://asv.readthedocs.io/), and [intake-xarray](https://github.com/intake/intake-xarray) to coordinate the setting up and running of benchmarks.
+
+- Scripts are used to download the datasets required into the correct location
+- intake-xarray is used to define data catalogues which can be easily accessed from within benchmark scripts
+- ASV is used to run the benchmarks (see the [Writing the benchmarks](#writing-the-benchmarks) section).
+- Pixi is used to orchestrate all the above into a convenient, user friendly workflow
+
+You can run `pixi task list` to see the list of available tasks in the workspace.
+
+In brief, you can set up the data and run the benchmarks by doing:
+
 - [install Pixi](https://pixi.sh/dev/installation/) `curl -fsSL https://pixi.sh/install.sh | bash`
 - `pixi install`
-- `pixi run asv run`
+- `PARCELS_BENCHMARKS_DATA_FOLDER=./data pixi run benchmarks`
 
-You can run the linting with `pixi run lint`
 
 > [!IMPORTANT]
-> The default path for the benchmark data is set by [pooch.os_cache](https://www.fatiando.org/pooch/latest/api/generated/pooch.os_cache.html), which typically is a subdirectory of your home directory. Currently, you will need at least 50GB of disk space available to store the benchmark data.
-> To change the location of the benchmark data cache, you can set the environment variable `PARCELS_DATADIR` to a preferred location to store the benchmark data.
+> Currently, you will need at least 50GB of disk space available to store the benchmark data.
+> You need to be explicit to determine where the benchmark data will be saved by
+> setting the `PARCELS_BENCHMARKS_DATA_FOLDER` environment variable. This
+> environment variable is used in the downloading of the data and definition of
+> the benchmarks.
 
 To view the benchmark data
 
@@ -61,13 +74,9 @@ Adding benchmarks for parcels typically involves adding a dataset and defining t
 ### Adding new data
 
 Data is hosted remotely on a SurfDrive managed by the Parcels developers. You will need to open an issue on this repository to start the process of getting your data hosted in the shared SurfDrive.
-Once your data is hosted in the shared SurfDrive, you can easily add your dataset to the benchmark dataset manifest using
+Once your data is hosted in the shared SurfDrive, you can easily add your dataset to the benchmark dataset catalogue by modifying `catalogs/parcels-benchmarks/catalog.yml`.
 
-```
-pixi run benchmark-setup add-dataset --name "Name for your dataset" --file "Path to ZIP archive in the SurfDrive"
-```
-
-During this process, the dataset will be downloaded and a complete entry will be added to the [parcels_benchmarks/datasets.json](./parcels_benchmarks/datasets.json) manifest file. Once updated, this file can be committed to this repository and contributed via a pull request.
+In the benchmark you can now use this catalogue entry.
 
 ### Writing the benchmarks
 
