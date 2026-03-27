@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Download and extract a catalog zip archive."""
+"""Download and extract a catalog zip archive, unzipping all zip archives contained within."""
 
 import argparse
 import shutil
