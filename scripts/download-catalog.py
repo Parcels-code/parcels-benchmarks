@@ -39,11 +39,18 @@ def unzip_recursive(directory: Path) -> None:
         return
     for zip_path in found:
         print(f"Extracting {zip_path}")
-        extract_to = zip_path.parent
+        extract_to = zip_path.parent / zip_path.stem
+        extract_to.mkdir(exist_ok=True)
         with zipfile.ZipFile(zip_path) as zf:
             zf.extractall(extract_to)
         zip_path.unlink()
         print(f"Deleted {zip_path}")
+        # Collapse data/data -> data if the only child is a same-named folder
+        sole_child = extract_to / zip_path.stem
+        if sole_child.is_dir() and len(list(extract_to.iterdir())) == 1:
+            for item in sole_child.iterdir():
+                item.rename(extract_to / item.name)
+            sole_child.rmdir()
     # recurse in case extracted zips contained more zips
     unzip_recursive(directory)
 
