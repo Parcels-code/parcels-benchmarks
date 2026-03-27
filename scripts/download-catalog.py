@@ -63,20 +63,24 @@ def main() -> None:
     parser.add_argument("output_dir", type=str, help="Subdirectory in PARCELS_BENCHMARKS_DATA_FOLDER to extract into")
     args = parser.parse_args()
     output_dir = PARCELS_BENCHMARKS_DATA_FOLDER / args.output_dir
-    if output_dir.exists():
-        print("Output directory already exists! Exiting...")
-        return
+    catalog_path = output_dir / args.catalog.name
 
     if not args.catalog.is_file():
         raise SystemExit(f"catalog file not found: {args.catalog}")
+    if output_dir.exists():
+        shutil.copy(args.catalog, catalog_path)
+        print(f"Copied catalogue across to {catalog_path}")
+        print("Output directory already exists! Exiting...")
+        return
 
-    output_dir.mkdir(parents=True, exist_ok=True)
+    output_dir.mkdir(parents=True)
+    shutil.copy(args.catalog, catalog_path)
+    print(f"Copied catalogue across to {catalog_path}")
 
     url = extract_zip_url(args.catalog)
     download_file(url, output_dir)
     unzip_recursive(output_dir)
 
-    shutil.copy(args.catalog, output_dir / args.catalog.name)
     print("Done.")
 
 
