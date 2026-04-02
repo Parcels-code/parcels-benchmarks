@@ -48,7 +48,7 @@ class FESOM2:
         lat = np.linspace(32.0, 19.0, npart)
 
         pset = ParticleSet(fieldset=fieldset, pclass=Particle, lon=lon, lat=lat)
-        pset.execute(runtime=runtime, dt=dt, pyfunc=integrator)
+        pset.execute(kernels=integrator, runtime=runtime, dt=dt)
 
     def time_pset_execute(self, npart, integrator):
         self.pset_execute(npart, integrator)
