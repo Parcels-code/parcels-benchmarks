@@ -1,7 +1,6 @@
 import numpy as np
 import uxarray as ux
 import xarray as xr
-
 from parcels import (
     FieldSet,
     Particle,
