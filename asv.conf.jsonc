@@ -9,7 +9,7 @@
   "conda_channels": [
     "conda-forge",
     "defaults",
-    "https://repo.prefix.dev/parcels"
+    "https://repo.prefix.dev/parcels",
   ],
   "default_benchmark_timeout": 1800,
   "env_dir": ".asv/env",
@@ -25,7 +25,7 @@
   // ]
   "matrix": {
     "req": {
-      "intake-xarray": []
-    }
-  }
+      "intake-xarray": [],
+    },
+  },
 }
