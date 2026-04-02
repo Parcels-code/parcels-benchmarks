@@ -19,7 +19,7 @@ include = ["benchmarks*"]
 select = [
   "E", # Error
   "F", # pyflakes
-  "I", # isort
+  # "I", # isort #? Pre-commit in CI was wrestling with the local install
   "B", # Bugbear
   "UP", # pyupgrade
   "LOG", # logging
