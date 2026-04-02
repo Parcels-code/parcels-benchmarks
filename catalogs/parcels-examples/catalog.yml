@@ -7,12 +7,16 @@ sources:
   croco:
     description: CROCO_idealized
     driver: netcdf
-    #cache:
-    #  - argkey: urlpath
-    #    regex: ''
-    #    type: file
     args:
-      urlpath: "{{ CATALOG_DIR }}/data/CROCOidealized_data/CROCO_idealized.nc"
+      urlpath: "{{ CATALOG_DIR }}/data/parcels-examples/CROCOidealized_data/CROCO_idealized.nc"
+      chunks: {}
+      xarray_kwargs:
+        engine: "netcdf4"
+  DecayingMovingEddy_data:
+    description: DecayingMovingEddy_data
+    driver: netcdf
+    args:
+      urlpath: "{{ CATALOG_DIR }}/data/parcels-examples/DecayingMovingEddy_data/*.nc"
       chunks: {}
       xarray_kwargs:
         engine: "netcdf4"
@@ -20,7 +24,7 @@ sources:
     description: GlobCurrent_example_data
     driver: netcdf
     args:
-      urlpath: "{{ CATALOG_DIR }}/data/GlobCurrent_example_data/*.nc"
+      urlpath: "{{ CATALOG_DIR }}/data/parcels-examples/GlobCurrent_example_data/*.nc"
       chunks: {}
       xarray_kwargs:
         engine: "netcdf4"
@@ -28,7 +32,7 @@ sources:
     description: MITgcm_example_data
     driver: netcdf
     args:
-      urlpath: "{{ CATALOG_DIR }}/data/MITgcm_example_data/*.nc"
+      urlpath: "{{ CATALOG_DIR }}/data/parcels-examples/MITgcm_example_data/*.nc"
       chunks: {}
       xarray_kwargs:
         engine: "netcdf4"
@@ -36,21 +40,95 @@ sources:
     description: MovingEddies_data
     driver: netcdf
     args:
-      urlpath: "{{ CATALOG_DIR }}/data/MovingEddies_data/*.nc"
+      urlpath: "{{ CATALOG_DIR }}/data/parcels-examples/MovingEddies_data/*.nc"
       chunks: {}
       xarray_kwargs:
         engine: "netcdf4"
-
-  # NemoCurvilinear_data:
-  # NemoNorthSeaORCA025-N006_data:
-  # OFAM_example_data
-  # Peninsula_data
-  # SWASH_data
+  NemoCurvilinear_data:
+    description: NemoCurvilinear_data
+    driver: netcdf
+    args:
+      urlpath: "{{ CATALOG_DIR }}/data/parcels-examples/NemoCurvilinear_data/*.nc4"
+      chunks: {}
+      xarray_kwargs:
+        engine: "netcdf4"
+  NemoNorthSeaORCA025_data:
+    description: NemoNorthSeaORCA025-N006 velocity data
+    driver: netcdf
+    args:
+      urlpath: "{{ CATALOG_DIR }}/data/parcels-examples/NemoNorthSeaORCA025-N006_data/ORCA025*.nc"
+      chunks: {}
+      xarray_kwargs:
+        engine: "netcdf4"
+        concat_dim: "time_counter"
+        combine: "nested"
+        data_vars: "minimal"
+        coords: "minimal"
+        compat: "override"
+  NemoNorthSeaORCA025_coords:
+    description: NemoNorthSeaORCA025-N006 coordinates
+    driver: netcdf
+    args:
+      urlpath: "{{ CATALOG_DIR }}/data/parcels-examples/NemoNorthSeaORCA025-N006_data/coordinates.nc"
+      chunks: {}
+      xarray_kwargs:
+        engine: "netcdf4"
+        decode_times: false
+  OFAM_example_data:
+    description: OFAM_example_data
+    driver: netcdf
+    args:
+      urlpath: "{{ CATALOG_DIR }}/data/parcels-examples/OFAM_example_data/*.nc"
+      chunks: {}
+      xarray_kwargs:
+        engine: "netcdf4"
+  Peninsula_U:
+    description: Peninsula U velocity
+    driver: netcdf
+    args:
+      urlpath: "{{ CATALOG_DIR }}/data/parcels-examples/Peninsula_data/peninsulaU.nc"
+      chunks: {}
+      xarray_kwargs:
+        engine: "netcdf4"
+  Peninsula_V:
+    description: Peninsula V velocity
+    driver: netcdf
+    args:
+      urlpath: "{{ CATALOG_DIR }}/data/parcels-examples/Peninsula_data/peninsulaV.nc"
+      chunks: {}
+      xarray_kwargs:
+        engine: "netcdf4"
+  Peninsula_T:
+    description: Peninsula temperature
+    driver: netcdf
+    args:
+      urlpath: "{{ CATALOG_DIR }}/data/parcels-examples/Peninsula_data/peninsulaT.nc"
+      chunks: {}
+      xarray_kwargs:
+        engine: "netcdf4"
+  Peninsula_P:
+    description: Peninsula pressure
+    driver: netcdf
+    args:
+      urlpath: "{{ CATALOG_DIR }}/data/parcels-examples/Peninsula_data/peninsulaP.nc"
+      chunks: {}
+      xarray_kwargs:
+        engine: "netcdf4"
+  POPSouthernOcean_data:
+    description: POPSouthernOcean_data
+    driver: netcdf
+    args:
+      urlpath: "{{ CATALOG_DIR }}/data/parcels-examples/POPSouthernOcean_data/*.nc"
+      chunks: {}
+      xarray_kwargs:
+        engine: "netcdf4"
+        concat_dim: "time"
+        combine: "nested"
   SWASH_data:
     description: SWASH_data
     driver: netcdf
     args:
-      urlpath: "{{ CATALOG_DIR }}/data/SWASH_data/*.nc"
+      urlpath: "{{ CATALOG_DIR }}/data/parcels-examples/SWASH_data/*.nc"
       chunks: {}
       xarray_kwargs:
         engine: "netcdf4"
@@ -58,7 +136,8 @@ sources:
     description: WOA_data
     driver: netcdf
     args:
-      urlpath: "{{ CATALOG_DIR }}/data/WOA_data/*.nc"
+      urlpath: "{{ CATALOG_DIR }}/data/parcels-examples/WOA_data/*.nc"
       chunks: {}
       xarray_kwargs:
         engine: "netcdf4"
+        decode_times: false

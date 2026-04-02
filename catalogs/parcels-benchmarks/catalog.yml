@@ -3,61 +3,219 @@
 plugins:
   source:
     - module: intake_xarray
-sources: #!TODO Update
-  croco:
-    description: CROCO_idealized
+sources:
+  fesom_baroclinic_gyre_data:
+    description: FESOM baroclinic gyre velocity data (legacy)
     driver: netcdf
-    #cache:
-    #  - argkey: urlpath
-    #    regex: ''
-    #    type: file
     args:
-      urlpath: "{{ CATALOG_DIR }}/data/CROCOidealized_data/CROCO_idealized.nc"
+      urlpath: "{{ CATALOG_DIR }}/data/Parcelsv4_Benchmarking_data/Parcels_Benchmarks_FESOM-baroclinic-gyre/data/*.nc"
       chunks: {}
       xarray_kwargs:
         engine: "netcdf4"
-  GlobCurrent_example_data:
-    description: GlobCurrent_example_data
+  fesom_baroclinic_gyre_mesh:
+    description: FESOM baroclinic gyre mesh (legacy)
     driver: netcdf
     args:
-      urlpath: "{{ CATALOG_DIR }}/data/GlobCurrent_example_data/*.nc"
+      urlpath: "{{ CATALOG_DIR }}/data/Parcelsv4_Benchmarking_data/Parcels_Benchmarks_FESOM-baroclinic-gyre/data/mesh/fesom.mesh.diag.nc"
       chunks: {}
       xarray_kwargs:
         engine: "netcdf4"
-  MITgcm_example_data:
-    description: MITgcm_example_data
+  fesom_baroclinic_gyre_v2_data:
+    description: FESOM baroclinic gyre velocity data (v2025.10.2.2)
     driver: netcdf
     args:
-      urlpath: "{{ CATALOG_DIR }}/data/MITgcm_example_data/*.nc"
+      urlpath: "{{ CATALOG_DIR }}/data/Parcelsv4_Benchmarking_data/Parcels_Benchmarks_FESOM-baroclinic-gyre_v2025.10.2.2/*.nc"
       chunks: {}
       xarray_kwargs:
         engine: "netcdf4"
-  MovingEddies_data:
-    description: MovingEddies_data
+  fesom_baroclinic_gyre_v2_mesh:
+    description: FESOM baroclinic gyre mesh (v2025.10.2.2)
     driver: netcdf
     args:
-      urlpath: "{{ CATALOG_DIR }}/data/MovingEddies_data/*.nc"
+      urlpath: "{{ CATALOG_DIR }}/data/Parcelsv4_Benchmarking_data/Parcels_Benchmarks_FESOM-baroclinic-gyre_v2025.10.2.2/mesh/fesom.mesh.diag.nc"
       chunks: {}
       xarray_kwargs:
         engine: "netcdf4"
-
-  # NemoCurvilinear_data:
-  # NemoNorthSeaORCA025-N006_data:
-  # OFAM_example_data
-  # Peninsula_data
-  SWASH_data:
-    description: SWASH_data
+  icon_data:
+    description: ICON ocean model data
     driver: netcdf
     args:
-      urlpath: "{{ CATALOG_DIR }}/data/SWASH_data/*.nc"
+      urlpath: "{{ CATALOG_DIR }}/data/Parcelsv4_Benchmarking_data/Parcels_Benchmarks_ICON/epoc2_010_oce_ml_1d_mean_19900102T000000Z.nc"
       chunks: {}
       xarray_kwargs:
         engine: "netcdf4"
-  WOA_data:
-    description: WOA_data
+  icon_grid:
+    description: ICON ocean grid
     driver: netcdf
     args:
-      urlpath: "{{ CATALOG_DIR }}/data/WOA_data/*.nc"
+      urlpath: "{{ CATALOG_DIR }}/data/Parcelsv4_Benchmarking_data/Parcels_Benchmarks_ICON/icon_grid_O.nc"
+      chunks: {}
+      xarray_kwargs:
+        engine: "netcdf4"
+  moi_u:
+    description: MOi curvilinear U velocity
+    driver: netcdf
+    args:
+      urlpath: "{{ CATALOG_DIR }}/data/Parcelsv4_Benchmarking_data/Parcels_Benchmarks_MOi_data/psy4v3r1-daily_U_*.nc"
+      chunks: {}
+      xarray_kwargs:
+        engine: "netcdf4"
+        concat_dim: "time_counter"
+        combine: "nested"
+        data_vars: "minimal"
+        coords: "minimal"
+        compat: "override"
+  moi_v:
+    description: MOi curvilinear V velocity
+    driver: netcdf
+    args:
+      urlpath: "{{ CATALOG_DIR }}/data/Parcelsv4_Benchmarking_data/Parcels_Benchmarks_MOi_data/psy4v3r1-daily_V_*.nc"
+      chunks: {}
+      xarray_kwargs:
+        engine: "netcdf4"
+        concat_dim: "time_counter"
+        combine: "nested"
+        data_vars: "minimal"
+        coords: "minimal"
+        compat: "override"
+  moi_w:
+    description: MOi curvilinear W velocity
+    driver: netcdf
+    args:
+      urlpath: "{{ CATALOG_DIR }}/data/Parcelsv4_Benchmarking_data/Parcels_Benchmarks_MOi_data/psy4v3r1-daily_W_*.nc"
+      chunks: {}
+      xarray_kwargs:
+        engine: "netcdf4"
+        concat_dim: "time_counter"
+        combine: "nested"
+        data_vars: "minimal"
+        coords: "minimal"
+        compat: "override"
+  moi_mesh:
+    description: MOi curvilinear horizontal grid
+    driver: netcdf
+    args:
+      urlpath: "{{ CATALOG_DIR }}/data/Parcelsv4_Benchmarking_data/Parcels_Benchmarks_MOi_data/PSY4V3R1_mesh_hgr.nc"
+      chunks: {}
+      xarray_kwargs:
+        engine: "netcdf4"
+  nested_locate_regional:
+    description: Nested LOCATE regional IBI data
+    driver: netcdf
+    args:
+      urlpath: "{{ CATALOG_DIR }}/data/Parcelsv4_Benchmarking_data/Parcels_Benchmarks_Nested_LOCATE/regional/*.nc"
+      chunks: {}
+      xarray_kwargs:
+        engine: "netcdf4"
+  nested_locate_regional_resampled:
+    description: Nested LOCATE regional IBI data (resampled)
+    driver: netcdf
+    args:
+      urlpath: "{{ CATALOG_DIR }}/data/Parcelsv4_Benchmarking_data/Parcels_Benchmarks_Nested_LOCATE/regional_resampled/*.nc"
+      chunks: {}
+      xarray_kwargs:
+        engine: "netcdf4"
+  nested_locate_bcn_coastal:
+    description: Nested LOCATE BCN coastal data
+    driver: netcdf
+    args:
+      urlpath: "{{ CATALOG_DIR }}/data/Parcelsv4_Benchmarking_data/Parcels_Benchmarks_Nested_LOCATE/BCN/coastal/*.nc"
+      chunks: {}
+      xarray_kwargs:
+        engine: "netcdf4"
+  nested_locate_bcn_coastal_resampled:
+    description: Nested LOCATE BCN coastal data (resampled)
+    driver: netcdf
+    args:
+      urlpath: "{{ CATALOG_DIR }}/data/Parcelsv4_Benchmarking_data/Parcels_Benchmarks_Nested_LOCATE/BCN/coastal_resampled/*.nc"
+      chunks: {}
+      xarray_kwargs:
+        engine: "netcdf4"
+  nested_locate_bcn_harbour:
+    description: Nested LOCATE BCN harbour data
+    driver: netcdf
+    args:
+      urlpath: "{{ CATALOG_DIR }}/data/Parcelsv4_Benchmarking_data/Parcels_Benchmarks_Nested_LOCATE/BCN/harbour/*.nc"
+      chunks: {}
+      xarray_kwargs:
+        engine: "netcdf4"
+  nested_locate_bcn_harbour_resampled:
+    description: Nested LOCATE BCN harbour data (resampled)
+    driver: netcdf
+    args:
+      urlpath: "{{ CATALOG_DIR }}/data/Parcelsv4_Benchmarking_data/Parcels_Benchmarks_Nested_LOCATE/BCN/harbour_resampled/*.nc"
+      chunks: {}
+      xarray_kwargs:
+        engine: "netcdf4"
+  nested_locate_tar_coastal:
+    description: Nested LOCATE TAR coastal data
+    driver: netcdf
+    args:
+      urlpath: "{{ CATALOG_DIR }}/data/Parcelsv4_Benchmarking_data/Parcels_Benchmarks_Nested_LOCATE/TAR/coastal/*.nc"
+      chunks: {}
+      xarray_kwargs:
+        engine: "netcdf4"
+  nested_locate_tar_coastal_resampled:
+    description: Nested LOCATE TAR coastal data (resampled)
+    driver: netcdf
+    args:
+      urlpath: "{{ CATALOG_DIR }}/data/Parcelsv4_Benchmarking_data/Parcels_Benchmarks_Nested_LOCATE/TAR/coastal_resampled/*.nc"
+      chunks: {}
+      xarray_kwargs:
+        engine: "netcdf4"
+  nested_locate_tar_harbour:
+    description: Nested LOCATE TAR harbour data
+    driver: netcdf
+    args:
+      urlpath: "{{ CATALOG_DIR }}/data/Parcelsv4_Benchmarking_data/Parcels_Benchmarks_Nested_LOCATE/TAR/harbour/*.nc"
+      chunks: {}
+      xarray_kwargs:
+        engine: "netcdf4"
+  nested_locate_tar_harbour_resampled:
+    description: Nested LOCATE TAR harbour data (resampled)
+    driver: netcdf
+    args:
+      urlpath: "{{ CATALOG_DIR }}/data/Parcelsv4_Benchmarking_data/Parcels_Benchmarks_Nested_LOCATE/TAR/harbour_resampled/*.nc"
+      chunks: {}
+      xarray_kwargs:
+        engine: "netcdf4"
+  smoc:
+    description: SMOC ocean model data
+    driver: netcdf
+    args:
+      urlpath: "{{ CATALOG_DIR }}/data/Parcelsv4_Benchmarking_data/Parcels_Benchmarks_SMOC_data/*.nc"
+      chunks: {}
+      xarray_kwargs:
+        engine: "netcdf4"
+  creg12_u:
+    description: CREG12 NEMO U velocity (parcels-2521)
+    driver: netcdf
+    args:
+      urlpath: "{{ CATALOG_DIR }}/data/Parcelsv4_Benchmarking_data/parcels-2521-data/data/CREG12.L75-REF12_y2001m02.1d_gridU.nc"
+      chunks: {}
+      xarray_kwargs:
+        engine: "netcdf4"
+  creg12_v:
+    description: CREG12 NEMO V velocity (parcels-2521)
+    driver: netcdf
+    args:
+      urlpath: "{{ CATALOG_DIR }}/data/Parcelsv4_Benchmarking_data/parcels-2521-data/data/CREG12.L75-REF12_y2001m02.1d_gridV.nc"
+      chunks: {}
+      xarray_kwargs:
+        engine: "netcdf4"
+  creg12_w:
+    description: CREG12 NEMO W velocity (parcels-2521)
+    driver: netcdf
+    args:
+      urlpath: "{{ CATALOG_DIR }}/data/Parcelsv4_Benchmarking_data/parcels-2521-data/data/CREG12.L75-REF12_y2001m02.1d_gridW.nc"
+      chunks: {}
+      xarray_kwargs:
+        engine: "netcdf4"
+  creg12_mesh:
+    description: CREG12 NEMO mesh (parcels-2521)
+    driver: netcdf
+    args:
+      urlpath: "{{ CATALOG_DIR }}/data/Parcelsv4_Benchmarking_data/parcels-2521-data/data/trimmed_mesh_file.nc"
       chunks: {}
       xarray_kwargs:
         engine: "netcdf4"

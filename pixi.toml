@@ -23,6 +23,12 @@ setup-data = { depends-on = [
   ] },
 ], description = "Setup all data to be used in the benchmarks." }
 
+[tasks.test-open-catalogs]
+cmd = "python scripts/test_load_all_catalog_entries.py"
+depends-on = ["setup-data"]
+description = "Go through all the intake catalogues and try to open each dataset."
+
+
 [tasks.benchmark]
 cmd = "asv run"
 depends-on = ["setup-data"]
