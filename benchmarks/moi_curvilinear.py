@@ -1,9 +1,10 @@
 from glob import glob
 
 import numpy as np
-import parcels
 import xarray as xr
 import xgcm
+
+import parcels
 from parcels.interpolators import XLinear
 
 runtime = np.timedelta64(2, "D")
