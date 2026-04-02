@@ -176,7 +176,7 @@ environments:
       - pypi: https://files.pythonhosted.org/packages/b4/db/08f4ca10c5018813e7e0b59e4472302328b3d2ab1512f5a2157a814540e0/polars-1.39.3-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/b0/15/fc3e43f3fdf3f20b7dfb5abe871ab6162cf8fb4aeabf4cfad822d5dc4c79/polars_runtime_32-1.39.3-cp310-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
       - pypi: https://files.pythonhosted.org/packages/2a/2d/d4bf65e47cea8ff2c794a600c4fd1273a7902f268757c531e0ee9f18aa58/pooch-1.9.0-py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/5a/86/6e0202ddd5ffc1c9cb1be80c9981a67061413e05ab6073939fa9c9dc0821/py_rattler-0.23.2-cp38-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+      - pypi: https://files.pythonhosted.org/packages/63/af/658ab85515ffd470f6fe845cbdf2a4099a718b8304ebaa15c7826dcb8ea7/py_rattler-0.15.0-cp38-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
       - pypi: https://files.pythonhosted.org/packages/2c/a5/da83046273d990f256cb79796a190bbf7ec999269705ddc609403f8c6b06/pyarrow-23.0.1-cp312-cp312-manylinux_2_28_x86_64.whl
       - pypi: https://files.pythonhosted.org/packages/8c/b2/23f4032cd1c9744aa8e9ecda43cd4d755fcb209f7f40fae035248f31a679/pyct-0.6.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/79/4f/a6a2e2b202d7fd97eadfe90979845b8706676b41cbd3b42ba75adf329d1f/Pympler-1.1-py3-none-any.whl
@@ -362,7 +362,7 @@ environments:
       - pypi: https://files.pythonhosted.org/packages/b4/db/08f4ca10c5018813e7e0b59e4472302328b3d2ab1512f5a2157a814540e0/polars-1.39.3-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/3b/74/1b41205f7368c9375ab1dea91178eaa20435fe3eff036390a53a7660b416/polars_runtime_32-1.39.3-cp310-abi3-macosx_10_12_x86_64.whl
       - pypi: https://files.pythonhosted.org/packages/2a/2d/d4bf65e47cea8ff2c794a600c4fd1273a7902f268757c531e0ee9f18aa58/pooch-1.9.0-py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/3a/39/e6e984b7ca34a2e30f1a984bd40cb1ef561a705bc1b36b9e960c975234f3/py_rattler-0.23.2-cp38-abi3-macosx_10_12_x86_64.macosx_11_0_arm64.macosx_10_12_universal2.whl
+      - pypi: https://files.pythonhosted.org/packages/52/40/cf00e0612bb52142876726a92f7bdeaad27ec108c8979384de8f4803d306/py_rattler-0.15.0-cp38-abi3-macosx_10_12_x86_64.macosx_11_0_arm64.macosx_10_12_universal2.whl
       - pypi: https://files.pythonhosted.org/packages/e1/da/3f941e3734ac8088ea588b53e860baeddac8323ea40ce22e3d0baa865cc9/pyarrow-23.0.1-cp312-cp312-macosx_12_0_x86_64.whl
       - pypi: https://files.pythonhosted.org/packages/8c/b2/23f4032cd1c9744aa8e9ecda43cd4d755fcb209f7f40fae035248f31a679/pyct-0.6.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/79/4f/a6a2e2b202d7fd97eadfe90979845b8706676b41cbd3b42ba75adf329d1f/Pympler-1.1-py3-none-any.whl
@@ -557,7 +557,7 @@ environments:
       - pypi: https://files.pythonhosted.org/packages/b4/db/08f4ca10c5018813e7e0b59e4472302328b3d2ab1512f5a2157a814540e0/polars-1.39.3-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/90/bf/297716b3095fe719be20fcf7af1d2b6ab069c38199bbace2469608a69b3a/polars_runtime_32-1.39.3-cp310-abi3-macosx_11_0_arm64.whl
       - pypi: https://files.pythonhosted.org/packages/2a/2d/d4bf65e47cea8ff2c794a600c4fd1273a7902f268757c531e0ee9f18aa58/pooch-1.9.0-py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/3a/39/e6e984b7ca34a2e30f1a984bd40cb1ef561a705bc1b36b9e960c975234f3/py_rattler-0.23.2-cp38-abi3-macosx_10_12_x86_64.macosx_11_0_arm64.macosx_10_12_universal2.whl
+      - pypi: https://files.pythonhosted.org/packages/52/40/cf00e0612bb52142876726a92f7bdeaad27ec108c8979384de8f4803d306/py_rattler-0.15.0-cp38-abi3-macosx_10_12_x86_64.macosx_11_0_arm64.macosx_10_12_universal2.whl
       - pypi: https://files.pythonhosted.org/packages/9a/4b/4166bb5abbfe6f750fc60ad337c43ecf61340fa52ab386da6e8dbf9e63c4/pyarrow-23.0.1-cp312-cp312-macosx_12_0_arm64.whl
       - pypi: https://files.pythonhosted.org/packages/8c/b2/23f4032cd1c9744aa8e9ecda43cd4d755fcb209f7f40fae035248f31a679/pyct-0.6.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/79/4f/a6a2e2b202d7fd97eadfe90979845b8706676b41cbd3b42ba75adf329d1f/Pympler-1.1-py3-none-any.whl
@@ -744,7 +744,7 @@ environments:
       - pypi: https://files.pythonhosted.org/packages/b4/db/08f4ca10c5018813e7e0b59e4472302328b3d2ab1512f5a2157a814540e0/polars-1.39.3-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/54/ce/200b310cf91f98e652eb6ea09fdb3a9718aa0293ebf113dce325797c8572/polars_runtime_32-1.39.3-cp310-abi3-win_amd64.whl
       - pypi: https://files.pythonhosted.org/packages/2a/2d/d4bf65e47cea8ff2c794a600c4fd1273a7902f268757c531e0ee9f18aa58/pooch-1.9.0-py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/4c/e1/011b49f954b3bcc773f81d73f4ee873d21d8e394366df316e66e857fedfe/py_rattler-0.23.2-cp38-abi3-win_amd64.whl
+      - pypi: https://files.pythonhosted.org/packages/2e/e7/3732ea0d57c658f17b16ac38d5ad6ea3e6778587f7343adefcba2b448667/py_rattler-0.15.0-cp38-abi3-win_amd64.whl
       - pypi: https://files.pythonhosted.org/packages/f6/70/1fdda42d65b28b078e93d75d371b2185a61da89dda4def8ba6ba41ebdeb4/pyarrow-23.0.1-cp312-cp312-win_amd64.whl
       - pypi: https://files.pythonhosted.org/packages/8c/b2/23f4032cd1c9744aa8e9ecda43cd4d755fcb209f7f40fae035248f31a679/pyct-0.6.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/79/4f/a6a2e2b202d7fd97eadfe90979845b8706676b41cbd3b42ba75adf329d1f/Pympler-1.1-py3-none-any.whl
@@ -1404,12 +1404,12 @@ packages:
 - pypi: ./
   name: benchmarks
   version: 0.1.0
-  sha256: 65ccbd7a76df77e2a582558448481dd616333c37090714805373f6b399b9d383
+  sha256: 78444b1cf3dd42c88f261a8b56dae925863671bc5aa9724d17c8604a070e96fe
   requires_dist:
   - intake-xarray
   - parcels @ file:///Users/Hodgs004/coding/repos/parcels-benchmarks/Parcels
-  - asv
-  - py-rattler
+  - asv>=0.6.5
+  - py-rattler==0.15.*
   requires_python: '>=3.12'
 - pypi: https://files.pythonhosted.org/packages/cd/3a/577b549de0cc09d95f11087ee63c739bba856cd3952697eec4c4bb91350a/bleach-6.3.0-py3-none-any.whl
   name: bleach
@@ -6363,20 +6363,20 @@ packages:
   - pkg:pypi/pure-eval?source=hash-mapping
   size: 16668
   timestamp: 1733569518868
-- pypi: https://files.pythonhosted.org/packages/3a/39/e6e984b7ca34a2e30f1a984bd40cb1ef561a705bc1b36b9e960c975234f3/py_rattler-0.23.2-cp38-abi3-macosx_10_12_x86_64.macosx_11_0_arm64.macosx_10_12_universal2.whl
+- pypi: https://files.pythonhosted.org/packages/2e/e7/3732ea0d57c658f17b16ac38d5ad6ea3e6778587f7343adefcba2b448667/py_rattler-0.15.0-cp38-abi3-win_amd64.whl
   name: py-rattler
-  version: 0.23.2
-  sha256: 87be072cae015d9323dbb2eee3adcb0fef85db6a96b3a0dfd4e2e71603544636
+  version: 0.15.0
+  sha256: d8a060e9821c764282ab245cac871c53478f9eea33242710090c07fd7369d5a3
   requires_python: '>=3.8'
-- pypi: https://files.pythonhosted.org/packages/4c/e1/011b49f954b3bcc773f81d73f4ee873d21d8e394366df316e66e857fedfe/py_rattler-0.23.2-cp38-abi3-win_amd64.whl
+- pypi: https://files.pythonhosted.org/packages/52/40/cf00e0612bb52142876726a92f7bdeaad27ec108c8979384de8f4803d306/py_rattler-0.15.0-cp38-abi3-macosx_10_12_x86_64.macosx_11_0_arm64.macosx_10_12_universal2.whl
   name: py-rattler
-  version: 0.23.2
-  sha256: dcf730a9af43aba38bad0c047e39e669fd120d41faa247e455aafa4e3ef6623c
+  version: 0.15.0
+  sha256: 7dcd3413ab85a89b35dc9e8597ebe6765e1eb982b5cf497198330fb989ea1e57
   requires_python: '>=3.8'
-- pypi: https://files.pythonhosted.org/packages/5a/86/6e0202ddd5ffc1c9cb1be80c9981a67061413e05ab6073939fa9c9dc0821/py_rattler-0.23.2-cp38-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+- pypi: https://files.pythonhosted.org/packages/63/af/658ab85515ffd470f6fe845cbdf2a4099a718b8304ebaa15c7826dcb8ea7/py_rattler-0.15.0-cp38-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
   name: py-rattler
-  version: 0.23.2
-  sha256: a502192d3f3c13a6c332e1d790e85c49bd8cbdf814c6d312841586b5b5988acb
+  version: 0.15.0
+  sha256: 19ccd381bfcaa8eddcdc0edef684c78797719ca36489b0c109285e1975571aa7
   requires_python: '>=3.8'
 - pypi: https://files.pythonhosted.org/packages/2c/a5/da83046273d990f256cb79796a190bbf7ec999269705ddc609403f8c6b06/pyarrow-23.0.1-cp312-cp312-manylinux_2_28_x86_64.whl
   name: pyarrow

@@ -7,8 +7,8 @@ requires-python = ">=3.12"
 dependencies = [
   "intake-xarray",
   "parcels @ file:///${PROJECT_ROOT}/Parcels",
-  "asv",
-  "py-rattler",
+  "asv>=0.6.5",
+  "py-rattler==0.15.*",
 ]
 
 
