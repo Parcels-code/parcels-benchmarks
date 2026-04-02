@@ -7,14 +7,35 @@ platforms = ["win-64", "linux-64", "osx-64", "osx-arm64"]
 [tasks]
 
 lint = "pre-commit run --all-files"
+download-catalog = { cmd = "python scripts/download-catalog.py {{ catalog_file }} {{ output_dir }}", args = [
+  "catalog_file",
+  "output_dir",
+], description = "Downloads and upzips data corresponding with an Intake catalogue. If target folder already exists - skips. The catalog file which should be used in scripts will be housed at `output_dir/catalog_file.name`" }
+
+setup-data = { depends-on = [
+  { task = "download-catalog", args = [
+    { catalog_file = "catalogs/parcels-examples/catalog.yml" },
+    { output_dir = "surf-data/parcels-examples" },
+  ] },
+  { task = "download-catalog", args = [
+    { catalog_file = "catalogs/parcels-benchmarks/catalog.yml" },
+    { output_dir = "surf-data/parcels-benchmarks" },
+  ] },
+], description = "Setup all data to be used in the benchmarks." }
+
+[tasks.benchmark]
+cmd = "asv run"
+depends-on = ["setup-data"]
+description = "Run the benchmarks, setting up the data first."
 
 [dependencies]
 
 python = "3.12.*"
-asv = ">=0.6.5"
-pooch = ">=1.8.2"
 pre_commit = "*"
-py-rattler = "0.15.*"
+ipython = ">=9.11.0,<10"
+netcdf4 = ">=1.7.4,<2"
+curl = "*"
+proj = "*"
 
 [pypi-dependencies]
-parcels_benchmarks = { path = ".", editable = true }
+benchmarks = { path = "." }

@@ -10,6 +10,9 @@ credentials.json
 *.egg-info
 __pycache__
 build/
-parcels/
 .asv/
 html/
+.DS_Store
+
+data
+.env
