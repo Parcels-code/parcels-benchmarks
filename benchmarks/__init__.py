@@ -1,24 +1,27 @@
+import logging
 import os
 from pathlib import Path
 
-import intake
+logger = logging.getLogger(__name__)
 
-PARCELS_BENCHMARKS_DATA_FOLDER: str
-PROJECT_ROOT = Path(__file__).parent.parent.resolve()
+PIXI_PROJECT_ROOT = os.environ.get("PIXI_PROJECT_ROOT")
+if PIXI_PROJECT_ROOT is not None:
+    PIXI_PROJECT_ROOT = Path(PIXI_PROJECT_ROOT)
+
+PIXI_PROJECT_ROOT: Path | None
 
 try:
     PARCELS_BENCHMARKS_DATA_FOLDER = Path(os.environ["PARCELS_BENCHMARKS_DATA_FOLDER"])
-except KeyError as e:
-    raise RuntimeError(
-        "Set the PARCELS_BENCHMARKS_DATA_FOLDER environment variable to specify where the data is/should be downloaded."
-    ) from e
+except KeyError:
+    # Default to `./data`
+    PARCELS_BENCHMARKS_DATA_FOLDER = Path("./data")
+    logger.info("PARCELS_BENCHMARKS_DATA_FOLDER was not set. Defaulting to `./data`")
 
 if not PARCELS_BENCHMARKS_DATA_FOLDER.is_absolute():
-    PARCELS_BENCHMARKS_DATA_FOLDER = PROJECT_ROOT / str(PARCELS_BENCHMARKS_DATA_FOLDER)
-
-CAT_EXAMPLES = intake.open_catalog(
-    f"{PARCELS_BENCHMARKS_DATA_FOLDER}/surf-data/parcels-examples/catalog.yml"
-)
-CAT_BENCHMARKS = intake.open_catalog(
-    f"{PARCELS_BENCHMARKS_DATA_FOLDER}/surf-data/parcels-benchmarks/catalog.yml"
-)
+    if PIXI_PROJECT_ROOT is None:
+        raise RuntimeError(
+            "PARCELS_BENCHMARKS_DATA_FOLDER is a relative path, but PIXI_PROJECT_ROOT env variable is not set. We don't know where to store the data."
+        )
+    PARCELS_BENCHMARKS_DATA_FOLDER = PIXI_PROJECT_ROOT / str(
+        PARCELS_BENCHMARKS_DATA_FOLDER
+    )
