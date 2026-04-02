@@ -31,12 +31,11 @@ description = "Run the benchmarks, setting up the data first."
 [dependencies]
 
 python = "3.12.*"
-asv = ">=0.6.5"
-pooch = ">=1.8.2"
 pre_commit = "*"
-py-rattler = "0.15.*"
-intake-xarray = ">=2.0.0,<3"
-parcels = ">=3.1.4,<4"
 ipython = ">=9.11.0,<10"
 netcdf4 = ">=1.7.4,<2"
 curl = "*"
+proj = "*"
+
+[pypi-dependencies]
+benchmarks = { path = "." }

@@ -1,3 +1,20 @@
+[project]
+name = "benchmarks"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+  "intake-xarray",
+  "parcels @ file:///${PROJECT_ROOT}/Parcels",
+  "asv",
+  "py-rattler",
+]
+
+
+[tool.setuptools.packages.find]
+include = ["benchmarks*"]
+
 [tool.ruff.lint]
 select = [
   "E", # Error
