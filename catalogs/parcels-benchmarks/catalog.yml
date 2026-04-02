@@ -45,7 +45,6 @@ sources: #!TODO Update
   # NemoNorthSeaORCA025-N006_data:
   # OFAM_example_data
   # Peninsula_data
-  # SWASH_data
   SWASH_data:
     description: SWASH_data
     driver: netcdf
