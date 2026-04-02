@@ -1,38 +1,25 @@
-[build-system]
-requires = ["setuptools>=61", "wheel"]
-build-backend = "setuptools.build_meta"
-
 [project]
-name = "parcels_benchmarks"
+name = "benchmarks"
 version = "0.1.0"
-description = "Helper utilities for Parcels benchmarks"
-requires-python = ">=3.10"
-authors = [{ name = "Parcels team" }]
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
 dependencies = [
-  "xarray",
-  "pooch",
-  "typer>=0.9",
+  "intake-xarray",
+  "parcels @ file:///${PROJECT_ROOT}/Parcels",
+  "asv>=0.6.5",
+  "py-rattler==0.15.*",
 ]
-
-# This creates an installable CLI command: `benchmark-setup ...`
-[project.scripts]
-benchmark-setup = "parcels_benchmarks.benchmark_setup:main"
 
 
 [tool.setuptools.packages.find]
-where = ["."]
-include = ["parcels_benchmarks"]
-
-# Include the benchmarks manifest in the wheel/sdist
-[tool.setuptools.package-data]
-parcels_benchmarks = ["*.json"]
-
+include = ["benchmarks*"]
 
 [tool.ruff.lint]
 select = [
   "E", # Error
   "F", # pyflakes
-  "I", # isort
+  # "I", # isort #? Pre-commit in CI was wrestling with the local install
   "B", # Bugbear
   "UP", # pyupgrade
   "LOG", # logging
