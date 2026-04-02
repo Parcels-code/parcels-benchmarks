@@ -21,8 +21,11 @@ In brief, you can set up the data and run the benchmarks by doing:
 - `pixi install`
 - `PARCELS_BENCHMARKS_DATA_FOLDER=./data pixi run benchmarks`
 
+> [!NOTE]
+> The syntax `PARCELS_BENCHMARKS_DATA_FOLDER=./data pixi run ...` set's the environment variable for the task, but you can set environment variables [in other ways](https://askubuntu.com/a/58828) as well.
+
 > [!IMPORTANT]
-> Currently, you will need at least 50GB of disk space available to store the benchmark data.
+> Currently, you will need at least 50GB of disk space available to store the unzipped benchmark data. Since the zips are deleted after downloaded and extracted, this ends up being about 80GB of disk space needed.
 > You need to be explicit to determine where the benchmark data will be saved by
 > setting the `PARCELS_BENCHMARKS_DATA_FOLDER` environment variable. This
 > environment variable is used in the downloading of the data and definition of
