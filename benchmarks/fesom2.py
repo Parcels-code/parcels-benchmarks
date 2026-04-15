@@ -1,6 +1,5 @@
 import numpy as np
 import uxarray as ux
-import xarray as xr
 from parcels import (
     FieldSet,
     Particle,
@@ -9,7 +8,7 @@ from parcels import (
 )
 from parcels.kernels import AdvectionRK2_3D
 
-from . import PARCELS_BENCHMARKS_DATA_FOLDER
+from .catalogs import Catalogs
 
 runtime = np.timedelta64(1, "D")
 dt = np.timedelta64(2400, "s")
@@ -18,12 +17,9 @@ dt = np.timedelta64(2400, "s")
 def _load_ds():
     """Helper function to load uxarray dataset from datapath"""
 
-    grid_file = xr.open_mfdataset(
-        f"{PARCELS_BENCHMARKS_DATA_FOLDER}/surf-data/parcels-benchmarks/data/Parcelsv4_Benchmarking_data/Parcels_Benchmarks_FESOM-baroclinic-gyre/data/mesh/fesom.mesh.diag.nc"
-    )
-    data_files = xr.open_mfdataset(
-        f"{PARCELS_BENCHMARKS_DATA_FOLDER}/surf-data/parcels-benchmarks/data/Parcelsv4_Benchmarking_data/Parcels_Benchmarks_FESOM-baroclinic-gyre/data/*.nc"
-    )
+    cat = Catalogs.CAT_BENCHMARKS
+    grid_file = cat.fesom_baroclinic_gyre_mesh().to_dask()
+    data_files = cat.fesom_baroclinic_gyre_data().to_dask()
 
     grid = ux.open_grid(grid_file)
     return ux.UxDataset(data_files, uxgrid=grid)
@@ -48,7 +44,7 @@ class FESOM2:
         lat = np.linspace(32.0, 19.0, npart)
 
         pset = ParticleSet(fieldset=fieldset, pclass=Particle, lon=lon, lat=lat)
-        pset.execute(runtime=runtime, dt=dt, pyfunc=integrator)
+        pset.execute(kernels=integrator, runtime=runtime, dt=dt)
 
     def time_pset_execute(self, npart, integrator):
         self.pset_execute(npart, integrator)

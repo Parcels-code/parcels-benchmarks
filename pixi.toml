@@ -23,6 +23,14 @@ setup-data = { depends-on = [
   ] },
 ], description = "Setup all data to be used in the benchmarks." }
 
+_fetch_latest_parcels = { cmd = "git submodule update --recursive --remote" }
+
+[tasks.test-open-catalogs]
+cmd = "python scripts/test_load_all_catalog_entries.py"
+depends-on = ["setup-data", "_fetch_latest_parcels"]
+description = "Go through all the intake catalogues and try to open each dataset."
+
+
 [tasks.benchmark]
 cmd = "asv run"
 depends-on = ["setup-data"]
@@ -36,6 +44,7 @@ ipython = ">=9.11.0,<10"
 netcdf4 = ">=1.7.4,<2"
 curl = "*"
 proj = "*"
+ty = "*"
 
 [pypi-dependencies]
 benchmarks = { path = "." }
