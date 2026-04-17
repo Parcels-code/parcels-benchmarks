@@ -31,7 +31,7 @@ depends-on = ["setup-data", "_fetch_latest_parcels"]
 description = "Go through all the intake catalogues and try to open each dataset."
 
 
-[tasks.benchmark]
+[tasks.benchmarks]
 cmd = "asv run"
 depends-on = ["setup-data"]
 description = "Run the benchmarks, setting up the data first."
