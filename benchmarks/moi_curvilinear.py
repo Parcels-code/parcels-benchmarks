@@ -65,8 +65,9 @@ class MOICurvilinear:
 
         lon = np.linspace(-10, 10, npart)
         lat = np.linspace(-30, -20, npart)
+        z= np.ones(npart) * 10  # 10 m depth
 
-        pset = parcels.ParticleSet(fieldset=fieldset, pclass=pclass, lon=lon, lat=lat)
+        pset = parcels.ParticleSet(fieldset=fieldset, pclass=pclass, lon=lon, lat=lat, z=z)
 
         pset.execute(
             parcels.kernels.AdvectionEE, runtime=runtime, dt=dt, verbose_progress=False
