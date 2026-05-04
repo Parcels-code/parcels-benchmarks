@@ -6,7 +6,7 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
   "intake-xarray",
-  "parcels @ file:///${PROJECT_ROOT}/Parcels",
+  "parcels",
   "asv>=0.6.5",
   "py-rattler==0.15.*",
 ]
