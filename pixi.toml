@@ -66,3 +66,11 @@ netcdf4 = ">=1.7.4,<2"
 #curl = "*" # for some reason SSL key signing wasn't working on Lorenz with this curl - instead use curl which is installed on the system
 proj = "*"
 ty = "*"
+
+# Profiling deps
+snakeviz = "*"
+line_profiler = "*"
+py-spy = "*"
+scalene = "*"
+viztracer = "*"
+memray = "*"
