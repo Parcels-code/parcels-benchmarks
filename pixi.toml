@@ -63,6 +63,6 @@ benchmarks = { path = "." }
 pre_commit = "*"
 ipython = ">=9.11.0,<10"
 netcdf4 = ">=1.7.4,<2"
-curl = "*"
+#curl = "*" # for some reason SSL key signing wasn't working on Lorenz with this curl - instead use curl which is installed on the system
 proj = "*"
 ty = "*"
