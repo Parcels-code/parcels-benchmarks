@@ -53,7 +53,7 @@ description = "Go through all the intake catalogues and try to open each dataset
 
 
 [tasks.benchmarks]
-cmd = "asv run --python=same"
+cmd = "asv run --environment existing:./.pixi/envs/default/bin/python"
 depends-on = ["setup-data"]
 description = "Run the benchmarks, setting up the data first."
 
