@@ -2,7 +2,28 @@
 authors = ["parcels-benchmarks contributors"]
 channels = ["conda-forge"]
 name = "parcels-benchmarks"
-platforms = ["win-64", "linux-64", "osx-64", "osx-arm64"]
+platforms = ["linux-64", "osx-64", "osx-arm64"]
+preview = ["pixi-build"]
+requires-pixi = ">=0.67.0"
+
+[package]
+name = "benchmarks"
+version = "0.1.0"
+
+[package.build]
+backend = { name = "pixi-build-python", version = "0.4.*" }
+
+[package.host-dependencies]
+setuptools = "*"
+setuptools_scm = "*"
+
+[package.run-dependencies]
+python = ">=3.12"
+intake-xarray = "*"
+py-rattler = "0.15.*"
+asv = ">=0.6.5"
+parcels = { path = "./Parcels" }
+
 
 [tasks]
 
@@ -32,19 +53,16 @@ description = "Go through all the intake catalogues and try to open each dataset
 
 
 [tasks.benchmarks]
-cmd = "asv run"
+cmd = "asv run --python=same"
 depends-on = ["setup-data"]
 description = "Run the benchmarks, setting up the data first."
 
 [dependencies]
 
-python = "3.12.*"
+benchmarks = { path = "." }
 pre_commit = "*"
 ipython = ">=9.11.0,<10"
 netcdf4 = ">=1.7.4,<2"
-curl = "*"
+#curl = "*" # for some reason SSL key signing wasn't working on Lorenz with this curl - instead use curl which is installed on the system
 proj = "*"
 ty = "*"
-
-[pypi-dependencies]
-benchmarks = { path = "." }
