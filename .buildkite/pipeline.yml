@@ -6,6 +6,7 @@ steps:
       export PARCELS_BENCHMARKS_DATA_FOLDER="/apps/parcels-ci"
       pixi install
       pixi run setup-data
+      pixi run asv machine --yes
       pixi run asv run
 
     env:
