@@ -5,6 +5,7 @@ import numpy as np
 import time
 import argparse
 
+
 def run_copernicusmarine_benchmark(load_mode="as_file"):
     copernicusmarine.login()
 
@@ -26,7 +27,7 @@ def run_copernicusmarine_benchmark(load_mode="as_file"):
 
     if load_mode == "as_file":
         ds.to_netcdf("tmp.nc")
-        del(ds)
+        del ds
         ds = xr.open_dataset("tmp.nc")
     elif load_mode == "ds_load":
         ds.load()
@@ -55,6 +56,7 @@ def run_copernicusmarine_benchmark(load_mode="as_file"):
     # check for correctness of the benchmark result
     np.testing.assert_allclose(pset.x, -14.034891, atol=1e-2)
     np.testing.assert_allclose(pset.y, -2.1642778, atol=1e-2)
+
 
 def main():
     parser = argparse.ArgumentParser()
