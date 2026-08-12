@@ -1,6 +1,6 @@
 {
     "fesom2.FESOM2.peakmem_pset_execute": {
-        "code": "class FESOM2:\n    def peakmem_pset_execute(self,npart,integrator):\n        self.pset_execute(npart,integrator)\n\n    def setup(self,npart,integrator):\n        # Ensure the dataset is downloaded in the desired data_home\n        # and obtain the path to the dataset\n        self.datapath = download_example_dataset(\"FESOM-baroclinic-gyre\", data_home=PARCELS_DATADIR)",
+        "code": "class FESOM2:\n    def peakmem_pset_execute(self, npart, integrator):\n        self.pset_execute(npart, integrator)",
         "name": "fesom2.FESOM2.peakmem_pset_execute",
         "param_names": [
             "npart",
@@ -16,10 +16,10 @@
         ],
         "type": "peakmemory",
         "unit": "bytes",
-        "version": "ab7f8816471a66025031355439b0d0e5758db62a01943003c975155bf7937a41"
+        "version": "e0ca35c05908ba8cf51631810076fb124dacec78bb28ca9f6418868621599f11"
     },
     "fesom2.FESOM2.time_load_data": {
-        "code": "class FESOM2:\n    def time_load_data(self,npart,integrator):\n        ds = _load_ds(self.datapath)\n        for i in range(min(ds.coords[\"time\"].size, 2)):\n            u = ds[\"u\"].isel(time=i).compute()\n            v = ds[\"v\"].isel(time=i).compute()\n\n    def setup(self,npart,integrator):\n        # Ensure the dataset is downloaded in the desired data_home\n        # and obtain the path to the dataset\n        self.datapath = download_example_dataset(\"FESOM-baroclinic-gyre\", data_home=PARCELS_DATADIR)",
+        "code": "class FESOM2:\n    def time_load_data(self, npart, integrator):\n        ds = _load_ds()\n        for i in range(min(ds.coords[\"time\"].size, 2)):\n            _u = ds[\"u\"].isel(time=i).compute()\n            _v = ds[\"v\"].isel(time=i).compute()",
         "min_run_count": 2,
         "name": "fesom2.FESOM2.time_load_data",
         "number": 0,
@@ -40,11 +40,11 @@
         "sample_time": 0.01,
         "type": "time",
         "unit": "seconds",
-        "version": "7defb4b61a8585cb3c651b48644d56889df18164cf2e698aae38c77ec76fb217",
+        "version": "677dedb2e345698a7a5d694e791d973e7473079c1d31e29649c8b7a031a8e34f",
         "warmup_time": -1
     },
     "fesom2.FESOM2.time_pset_execute": {
-        "code": "class FESOM2:\n    def time_pset_execute(self,npart,integrator):\n        self.pset_execute(npart,integrator)\n\n    def setup(self,npart,integrator):\n        # Ensure the dataset is downloaded in the desired data_home\n        # and obtain the path to the dataset\n        self.datapath = download_example_dataset(\"FESOM-baroclinic-gyre\", data_home=PARCELS_DATADIR)",
+        "code": "class FESOM2:\n    def time_pset_execute(self, npart, integrator):\n        self.pset_execute(npart, integrator)",
         "min_run_count": 2,
         "name": "fesom2.FESOM2.time_pset_execute",
         "number": 0,
@@ -65,11 +65,11 @@
         "sample_time": 0.01,
         "type": "time",
         "unit": "seconds",
-        "version": "6882e5d728e7deaae781532989e23a08bcb4c0f83a9d39856368789cfd1b6422",
+        "version": "e01ba5517d4c621511f1b8b633bce2f9f9a3735be3f6fd984c076d422e1840cd",
         "warmup_time": -1
     },
     "moi_curvilinear.MOICurvilinear.peakmem_pset_execute_3d": {
-        "code": "class MOICurvilinear:\n    def peakmem_pset_execute_3d(self,interpolator,chunk,npart):\n        self.pset_execute_3d(interpolator,chunk,npart)\n\n    def setup(self,interpolator,chunk,npart):\n        self.datapath = download_example_dataset(\"MOi-curvilinear\", data_home=PARCELS_DATADIR)",
+        "code": "class MOICurvilinear:\n    def peakmem_pset_execute_3d(self, interpolator, chunk, npart):\n        self.pset_execute_3d(interpolator, chunk, npart)",
         "name": "moi_curvilinear.MOICurvilinear.peakmem_pset_execute_3d",
         "param_names": [
             "interpolator",
@@ -89,10 +89,10 @@
         ],
         "type": "peakmemory",
         "unit": "bytes",
-        "version": "1670e704892efb7d270195da9c37d8662e61c8cd8f1f32313bcc9cfe582fbe0a"
+        "version": "c4d06ff90aeb611fb69edc2f6bcd3d210ad93efbf294b86703669948fa7bb974"
     },
     "moi_curvilinear.MOICurvilinear.time_load_data_3d": {
-        "code": "class MOICurvilinear:\n    def time_load_data_3d(self,interpolator,chunk,npart):\n        \"\"\"Benchmark that times loading the 'U' and 'V' data arrays only for 3-D\"\"\"\n    \n        # To have a reasonable runtime, we only consider the time it takes to load two time levels\n        # and two depth levels (at most)\n        ds = _load_ds(self.datapath,chunk)\n        for j in range(min(ds.coords[\"deptht\"].size,2)):\n            for i in range(min(ds.coords[\"time\"].size, 2)):\n                u = ds[\"U\"].isel(deptht=j,time=i).compute()\n                v = ds[\"V\"].isel(deptht=j,time=i).compute()\n\n    def setup(self,interpolator,chunk,npart):\n        self.datapath = download_example_dataset(\"MOi-curvilinear\", data_home=PARCELS_DATADIR)",
+        "code": "class MOICurvilinear:\n    def time_load_data_3d(self, interpolator, chunk, npart):\n        \"\"\"Benchmark that times loading the 'U' and 'V' data arrays only for 3-D\"\"\"\n    \n        # To have a reasonable runtime, we only consider the time it takes to load two time levels\n        # and two depth levels (at most)\n        ds = _load_ds(chunk)\n        for j in range(min(ds.coords[\"depth_center\"].size, 2)):\n            for i in range(min(ds.coords[\"time\"].size, 2)):\n                _u = ds[\"U\"].isel(depth_center=j, time=i).compute()\n                _v = ds[\"V\"].isel(depth_center=j, time=i).compute()",
         "min_run_count": 2,
         "name": "moi_curvilinear.MOICurvilinear.time_load_data_3d",
         "number": 0,
@@ -117,11 +117,11 @@
         "sample_time": 0.01,
         "type": "time",
         "unit": "seconds",
-        "version": "4a280bad870a3ba30b64c7d0c2e6b0bd6203a9eb48f9177a4fa6c787dfe27bdd",
+        "version": "6a8282d69ee573d758cb4dd10245176365d0c57e5d05a5fdbcb13777ed3513ab",
         "warmup_time": -1
     },
     "moi_curvilinear.MOICurvilinear.time_pset_execute_3d": {
-        "code": "class MOICurvilinear:\n    def time_pset_execute_3d(self,interpolator,chunk,npart):\n        self.pset_execute_3d(interpolator,chunk,npart)\n\n    def setup(self,interpolator,chunk,npart):\n        self.datapath = download_example_dataset(\"MOi-curvilinear\", data_home=PARCELS_DATADIR)",
+        "code": "class MOICurvilinear:\n    def time_pset_execute_3d(self, interpolator, chunk, npart):\n        self.pset_execute_3d(interpolator, chunk, npart)",
         "min_run_count": 2,
         "name": "moi_curvilinear.MOICurvilinear.time_pset_execute_3d",
         "number": 0,
@@ -146,7 +146,7 @@
         "sample_time": 0.01,
         "type": "time",
         "unit": "seconds",
-        "version": "b594c41edc1306b933a679751dba7268cf03f760f34f74b8823dbf25be7641bf",
+        "version": "71b6c22d75b7eb0afa575b0dc859175de05009434637c4425c3187f20858486f",
         "warmup_time": -1
     },
     "version": 2
