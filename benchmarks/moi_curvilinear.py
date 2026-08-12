@@ -1,11 +1,17 @@
 import numpy as np
 import parcels
-from parcels.interpolators import XLinear
+from parcels.interpolators import XLinear_Velocity
 
 from .catalogs import Catalogs
 
 runtime = np.timedelta64(2, "D")
 dt = np.timedelta64(15, "m")
+
+
+def _delete_error_particles(particles, fieldset):
+    """Delete any particle that errors out (e.g. runs aground or off the grid)"""
+    any_error = particles.state >= 50
+    particles[any_error].state = parcels.StatusCode.Delete
 
 
 def _load_ds(chunk):
@@ -47,17 +53,17 @@ class MOICurvilinear:
         # To have a reasonable runtime, we only consider the time it takes to load two time levels
         # and two depth levels (at most)
         ds = _load_ds(chunk)
-        for j in range(min(ds.coords["deptht"].size, 2)):
+        for j in range(min(ds.coords["depth_center"].size, 2)):
             for i in range(min(ds.coords["time"].size, 2)):
-                _u = ds["U"].isel(deptht=j, time=i).compute()
-                _v = ds["V"].isel(deptht=j, time=i).compute()
+                _u = ds["U"].isel(depth_center=j, time=i).compute()
+                _v = ds["V"].isel(depth_center=j, time=i).compute()
 
     def pset_execute_3d(self, interpolator, chunk, npart):
         ds = _load_ds(chunk)
         fieldset = parcels.FieldSet.from_sgrid_conventions(ds)
+        fieldset = fieldset.to_windowed_arrays()
         if interpolator == "XLinear":
-            fieldset.U.interp_method = XLinear
-            fieldset.V.interp_method = XLinear
+            fieldset.UV.interp_method = XLinear_Velocity()
         else:
             raise ValueError(f"Unknown interpolator: {interpolator}")
 
@@ -66,10 +72,13 @@ class MOICurvilinear:
         lon = np.linspace(-10, 10, npart)
         lat = np.linspace(-30, -20, npart)
 
-        pset = parcels.ParticleSet(fieldset=fieldset, pclass=pclass, lon=lon, lat=lat)
+        pset = parcels.ParticleSet(fieldset=fieldset, pclass=pclass, x=lon, y=lat)
 
         pset.execute(
-            parcels.kernels.AdvectionEE, runtime=runtime, dt=dt, verbose_progress=False
+            [parcels.kernels.AdvectionEE, _delete_error_particles],
+            runtime=runtime,
+            dt=dt,
+            verbose_progress=False,
         )
 
     def time_pset_execute_3d(self, interpolator, chunk, npart):
