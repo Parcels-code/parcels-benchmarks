@@ -4,6 +4,7 @@ from parcels import (
     FieldSet,
     Particle,
     ParticleSet,
+    StatusCode,
     convert,
 )
 from parcels.kernels import AdvectionRK2_3D
@@ -12,6 +13,12 @@ from .catalogs import Catalogs
 
 runtime = np.timedelta64(1, "D")
 dt = np.timedelta64(2400, "s")
+
+
+def _delete_error_particles(particles, fieldset):
+    """Delete any particle that errors out (e.g. runs aground or off the grid)"""
+    any_error = particles.state >= 50
+    particles[any_error].state = StatusCode.Delete
 
 
 def _load_ds():
@@ -39,12 +46,13 @@ class FESOM2:
         ds = _load_ds()
         ds = convert.fesom_to_ugrid(ds)
         fieldset = FieldSet.from_ugrid_conventions(ds)
+        fieldset = fieldset.to_windowed_arrays()
 
         lon = np.linspace(2.0, 15.0, npart)
         lat = np.linspace(32.0, 19.0, npart)
 
-        pset = ParticleSet(fieldset=fieldset, pclass=Particle, lon=lon, lat=lat)
-        pset.execute(kernels=integrator, runtime=runtime, dt=dt)
+        pset = ParticleSet(fieldset=fieldset, pclass=Particle, x=lon, y=lat)
+        pset.execute(kernels=[integrator, _delete_error_particles], runtime=runtime, dt=dt)
 
     def time_pset_execute(self, npart, integrator):
         self.pset_execute(npart, integrator)
