@@ -1,6 +1,5 @@
 import numpy as np
 import parcels
-from parcels.interpolators import XLinear_Velocity
 
 from .catalogs import Catalogs
 
