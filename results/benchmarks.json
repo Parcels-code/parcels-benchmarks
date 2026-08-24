@@ -69,17 +69,13 @@
         "warmup_time": -1
     },
     "moi_curvilinear.MOICurvilinear.peakmem_pset_execute_3d": {
-        "code": "class MOICurvilinear:\n    def peakmem_pset_execute_3d(self, interpolator, chunk, npart):\n        self.pset_execute_3d(interpolator, chunk, npart)",
+        "code": "class MOICurvilinear:\n    def peakmem_pset_execute_3d(self, chunk, npart):\n        self.pset_execute_3d(chunk, npart)",
         "name": "moi_curvilinear.MOICurvilinear.peakmem_pset_execute_3d",
         "param_names": [
-            "interpolator",
             "chunk",
             "npart"
         ],
         "params": [
-            [
-                "'XLinear'"
-            ],
             [
                 "256"
             ],
@@ -89,22 +85,18 @@
         ],
         "type": "peakmemory",
         "unit": "bytes",
-        "version": "c4d06ff90aeb611fb69edc2f6bcd3d210ad93efbf294b86703669948fa7bb974"
+        "version": "816503a8c26a6c0ca71a6fe0a37a480034a18872d30f1aa398d04bb02a6388dc"
     },
     "moi_curvilinear.MOICurvilinear.time_load_data_3d": {
-        "code": "class MOICurvilinear:\n    def time_load_data_3d(self, interpolator, chunk, npart):\n        \"\"\"Benchmark that times loading the 'U' and 'V' data arrays only for 3-D\"\"\"\n    \n        # To have a reasonable runtime, we only consider the time it takes to load two time levels\n        # and two depth levels (at most)\n        ds = _load_ds(chunk)\n        for j in range(min(ds.coords[\"depth_center\"].size, 2)):\n            for i in range(min(ds.coords[\"time\"].size, 2)):\n                _u = ds[\"U\"].isel(depth_center=j, time=i).compute()\n                _v = ds[\"V\"].isel(depth_center=j, time=i).compute()",
+        "code": "class MOICurvilinear:\n    def time_load_data_3d(self, chunk, npart):\n        \"\"\"Benchmark that times loading the 'U' and 'V' data arrays only for 3-D\"\"\"\n    \n        # To have a reasonable runtime, we only consider the time it takes to load two time levels\n        # and two depth levels (at most)\n        ds = _load_ds(chunk)\n        for j in range(min(ds.coords[\"depth_center\"].size, 2)):\n            for i in range(min(ds.coords[\"time\"].size, 2)):\n                _u = ds[\"U\"].isel(depth_center=j, time=i).compute()\n                _v = ds[\"V\"].isel(depth_center=j, time=i).compute()",
         "min_run_count": 2,
         "name": "moi_curvilinear.MOICurvilinear.time_load_data_3d",
         "number": 0,
         "param_names": [
-            "interpolator",
             "chunk",
             "npart"
         ],
         "params": [
-            [
-                "'XLinear'"
-            ],
             [
                 "256"
             ],
@@ -117,23 +109,19 @@
         "sample_time": 0.01,
         "type": "time",
         "unit": "seconds",
-        "version": "6a8282d69ee573d758cb4dd10245176365d0c57e5d05a5fdbcb13777ed3513ab",
+        "version": "24161189f340eefbcd92caa7244a28daf6f2281051130dbf4c8137a7986aae4c",
         "warmup_time": -1
     },
     "moi_curvilinear.MOICurvilinear.time_pset_execute_3d": {
-        "code": "class MOICurvilinear:\n    def time_pset_execute_3d(self, interpolator, chunk, npart):\n        self.pset_execute_3d(interpolator, chunk, npart)",
+        "code": "class MOICurvilinear:\n    def time_pset_execute_3d(self, chunk, npart):\n        self.pset_execute_3d(chunk, npart)",
         "min_run_count": 2,
         "name": "moi_curvilinear.MOICurvilinear.time_pset_execute_3d",
         "number": 0,
         "param_names": [
-            "interpolator",
             "chunk",
             "npart"
         ],
         "params": [
-            [
-                "'XLinear'"
-            ],
             [
                 "256"
             ],
@@ -146,7 +134,7 @@
         "sample_time": 0.01,
         "type": "time",
         "unit": "seconds",
-        "version": "71b6c22d75b7eb0afa575b0dc859175de05009434637c4425c3187f20858486f",
+        "version": "ec68ebc8b2ace56f99133773f993bf7232640a1580fbf9c60d25e997492c5998",
         "warmup_time": -1
     },
     "version": 2
