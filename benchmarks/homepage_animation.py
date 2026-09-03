@@ -8,7 +8,7 @@ import parcels
 
 # Code based on the docs/user_guide/examples/tutorial_homepage_animation.md form the main Parcels repo
 
-INPUT_FILE = "copernicusmarine_2024_globalsurface.nc"
+INPUT_FILE = "../data/copernicusmarine_2024_globalsurface.nc"
 
 def filter_particles_in_ocean(fieldset, lon, lat, parcels_version):
     # Filter out particles that are not in the ocean (i.e. where speed is zero)
@@ -38,8 +38,10 @@ def AdvectionRK2_periodic_v4(particles, fieldset):  # pragma: no cover
     (u2, v2) = fieldset.UV[
         particles.t + 0.5 * particles.dt, particles.z, y1, x1, particles
     ]
-    particles.dx += u2 * particles.dt
-    particles.dx = ((particles.dx + particles.x + 180) % 360) - (particles.x + 180)
+    # avoid round-off errors in modulo operator
+    new_x = particles.x + particles.dx + u2 * particles.dt
+    new_x = ((new_x + 180) % 360) - 180
+    particles.dx = new_x - particles.x
     particles.dy += v2 * particles.dt
 
 def AdvectionRK2_periodic_v3(particle, fieldset, time):  # pragma: no cover
@@ -72,7 +74,7 @@ def run_global_copernicusmarine(dx, load_mode):
         if load_mode == "numpy":
             ds = xr.open_dataset(INPUT_FILE)
         else:
-            ds = xr.open_dataset(INPUT_FILE, chunks={})
+            ds = xr.open_dataset(INPUT_FILE, chunks={"time": 1})
         ds_wrap = xr.concat(
             [
                 ds,
