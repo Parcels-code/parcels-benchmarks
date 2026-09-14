@@ -18,8 +18,6 @@ def run_copernicusmarine_benchmark(load_mode="as_file"):
         end_datetime="2024-01-31",
         minimum_depth=0.5,
         maximum_depth=5,
-        service="arco-geo-series",
-        chunk_size_limit=1,
     )
     ds = parcels.convert.copernicusmarine_to_sgrid(
         fields={"U": ds["uo"], "V": ds["vo"]}
@@ -35,7 +33,7 @@ def run_copernicusmarine_benchmark(load_mode="as_file"):
     fieldset = parcels.FieldSet.from_sgrid_conventions(ds)
 
     if load_mode == "streaming":
-        fieldset.to_windowed_arrays()
+        fieldset.to_chunk_cached_arrays()
 
     fieldset.describe()
 
