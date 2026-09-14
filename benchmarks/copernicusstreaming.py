@@ -7,8 +7,6 @@ import argparse
 
 
 def run_copernicusmarine_benchmark(load_mode="as_file"):
-    copernicusmarine.login()
-
     ds = copernicusmarine.open_dataset(
         dataset_id="cmems_mod_glo_phy-cur_anfc_0.083deg_P1D-m",
         variables=["uo", "vo"],
