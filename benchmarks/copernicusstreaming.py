@@ -10,14 +10,10 @@ def run_copernicusmarine_benchmark(load_mode="as_file"):
     ds = copernicusmarine.open_dataset(
         dataset_id="cmems_mod_glo_phy-cur_anfc_0.083deg_P1D-m",
         variables=["uo", "vo"],
-        minimum_longitude=-20,
-        maximum_longitude=20,
-        minimum_latitude=-20,
-        maximum_latitude=20,
         start_datetime="2024-01-01",
         end_datetime="2024-01-31",
-        minimum_depth=0.5,
-        maximum_depth=5,
+        service="arco-geo-series",
+        chunk_size_limit=1,
     )
     ds = parcels.convert.copernicusmarine_to_sgrid(
         fields={"U": ds["uo"], "V": ds["vo"]}
