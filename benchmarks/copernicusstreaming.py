@@ -14,6 +14,8 @@ def run_copernicusmarine_benchmark(load_mode="as_file"):
         end_datetime="2024-01-31",
         service="arco-geo-series",
         chunk_size_limit=1,
+        minimum_depth=1,
+        maximum_depth=3,
     )
     ds = parcels.convert.copernicusmarine_to_sgrid(
         fields={"U": ds["uo"], "V": ds["vo"]}
