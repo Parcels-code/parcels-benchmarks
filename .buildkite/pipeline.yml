@@ -1,0 +1,20 @@
+steps:
+  - label: "Run all benchmarks (NVMe)"
+    key: "test-nvme"
+    command: |
+      # Sets the data directory to local NVMe scratch disk
+      export PARCELS_DATADIR="/scratch/buildkite"
+      pixi install
+      pixi update
+      pixi run benchmark-setup download-all --data-home $PARCELS_DATADIR
+      pixi run asv run
+
+    env:
+      slurm_partition: "main"
+      slurm_time: "01:00:00"
+      slurm_nodes: 1
+      slurm_nodelist: "noether"
+      slurm_ntasks_per_node: 1
+      slurm_cpus_per_task: 16
+    agents:
+      queue: "galapagos"
