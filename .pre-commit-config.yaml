@@ -10,7 +10,7 @@ repos:
         types: [text]
         files: \.(json|ipynb)$
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.17.4
+    rev: v0.17.5
     hooks:
       - id: ruff
         name: ruff lint (.py)
@@ -18,7 +18,7 @@ repos:
       - id: ruff-format
         types_or: [python, jupyter]
   - repo: https://github.com/rbubley/mirrors-prettier # Update mirror as official mirror is deprecated
-    rev: v3.9.10
+    rev: v3.10.1
     hooks:
       - id: prettier
   - repo: https://github.com/kynan/nbstripout
